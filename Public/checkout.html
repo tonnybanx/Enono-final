@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Enono</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        .heading-font { font-family: 'Playfair Display', serif; }
+        .body-font { font-family: 'Inter', system-ui, sans-serif; }
+
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            border-color: #8B4513;
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        .left-panel {
+            max-width: 520px;           /* Prevents form from stretching too wide */
+        }
+    </style>
+</head>
+<body class="body-font text-gray-800 min-h-screen">
+
+    <!-- Top Banner -->
+    <div class="bg-purple-700 text-white text-center py-3 text-sm">
+        Understand African Heritage and craft • 10% discount on your first order
+    </div>
+
+    <div class="flex min-h-[calc(100vh-48px)]">
+        
+        <!-- Left - Form (Scrollable + Max Width) -->
+        <div class="flex-1 overflow-auto p-6 md:p-12 lg:p-16 xl:p-24 ">
+            <div class="left-panel mx-auto">
+                <a href="#" onclick="history.back()" 
+                   class="inline-flex items-center gap-2 text-gray-600 hover:text-[#8B4513] mb-10 text-base font-medium">
+                    ← Return to store
+                </a>
+
+                <div class="space-y-12">
+                    <!-- Contact -->
+                    <div>
+                        <h2 class="heading-font text-xl font-semibold mb-2">Contact</h2>
+                        <div class="space-y-4">
+                            <input type="email" placeholder="Email address" 
+                                   class="form-input w-full border border-gray-300 focus:border-[#8B4513] rounded-lg px-4 py-2 outline-none text-base">
+                            <input type="tel" placeholder="Contact number" 
+                                   class="form-input w-full border border-gray-300 focus:border-[#8B4513] rounded-lg px-4 py-2 outline-none text-base">
+                        </div>
+                    </div>
+
+                    <!-- Delivery -->
+                    <div>
+                        <h2 class="heading-font text-xl font-semibold mb-2">Delivery</h2>
+                        <div class="space-y-5">
+                            <input type="text" placeholder="Full name" 
+                                   class="form-input w-full border border-gray-300 focus:border-[#8B4513] rounded-lg px-4 py-2 outline-none">
+                            
+                            <select class="form-input w-full border border-gray-300 focus:border-[#8B4513] rounded-lg px-4 py-2 outline-none bg-white">
+                                <option>Uganda</option>
+                            </select>
+                            
+                            <input type="text" placeholder="Address" 
+                                   class="form-input w-full border border-gray-300 focus:border-[#8B4513] rounded-lg px-4 py-2 outline-none">
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="text" placeholder="City" 
+                                       class="form-input border border-gray-300 focus:border-[#8B4513] rounded-lg px-4 py-2 outline-none">
+                                <input type="text" placeholder="Postal code" 
+                                       class="form-input border border-gray-300 focus:border-[#8B4513] rounded-lg px-4 py-2 outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment -->
+                    <div>
+                        <h2 class="heading-font text-xl font-semibold mb-2">Payment</h2>
+                        <p class="text-gray-600 mb-2">Choose payment method</p>
+                        
+                        <div class="grid grid-cols-3 gap-4">
+                            <!-- MTN -->
+                            <button onclick="selectPayment(this)" 
+                                    class="payment-btn border-2 border-transparent hover:border-[#8B4513] bg-white p-6 rounded-3xl flex flex-col items-center gap-3 transition-all">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzmowaypHadzjiejbyAMF-bK8F1ABsHG5vN-QPjFiD5Q&s" 
+                                     class="h-12 object-contain" alt="MTN Mobile Money">
+                                <span class="text-sm font-medium">MTN MoMo</span>
+                            </button>
+
+                            <!-- Airtel -->
+                            <button onclick="selectPayment(this)" 
+                                    class="payment-btn border-2 border-transparent hover:border-[#8B4513] bg-white p-6 rounded-3xl flex flex-col items-center gap-3 transition-all">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuYhGSJ4PKawoeO0WWHzoKp3fi5VBxiyZDIjvO43t_Dw&s=10" 
+                                     class="h-12 object-contain" alt="Airtel Money">
+                                <span class="text-sm font-medium">Airtel Money</span>
+                            </button>
+
+                            <!-- Bank -->
+                            <button onclick="selectPayment(this)" 
+                                    class="payment-btn border-2 border-transparent hover:border-[#8B4513] bg-white p-6 rounded-3xl flex flex-col items-center gap-3 transition-all">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFi-6ddHxd0--NAK0O1mnkboFueeozBHzDpexhP2VS1A&s=10" 
+                                     class="h-12 object-contain" alt="Bank Transfer">
+                                <span class="text-sm font-medium">Bank Transfer</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right - Order Summary (Full height background) -->
+        <div class="hidden md:flex w-full md:w-2/5 lg:w-2/5 bg-[#faf9f6] border-l border-gray-200 items-start">
+            <div class="sticky top-0 w-full h-screen p-8 lg:p-12 overflow-auto">
+                <div class="checkout-card  p-8  max-w-md mx-auto">
+                    <h2 class="heading-font text-xl font-semibold mb-8">Order Summary</h2>
+                    
+                    <div class="space-y-6 mb-10">
+                        <div class="flex gap-4">
+                            <img src="https://picsum.photos/id/251/80/80" class="w-[50px] h-[50px] object-cover rounded-lg flex-shrink-0" alt="">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between gap-2">
+                                    <p class="font-medium leading-tight text-sm">Beaded Brass Necklace</p>
+                                    <p class="font-medium whitespace-nowrap text-[#9b4925]">UGX 130,000</p>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-0.5">Default</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <img src="https://picsum.photos/id/301/80/80" class="w-[50px] h-[50px] object-cover rounded-2xl flex-shrink-0" alt="">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between gap-2">
+                                    <p class="font-medium leading-tight text-sm">Carved Wooden Smoking Pipe</p>
+                                    <p class="font-medium whitespace-nowrap text-[#9b4925]">UGX 48,000</p>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-0.5">Default</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="border-t pt-6 space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Subtotal</span>
+                            <span class="font-medium">UGX 178,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Shipping</span>
+                            <span class="text-green-600">Free</span>
+                        </div>
+                        <div class="flex justify-between text-xl font-semibold pt-4 border-t">
+                            <span>Total</span>
+                            <span class="text-[#9b4925]">UGX 178,000</span>
+                        </div>
+                    </div>
+
+                    <button onclick="completeOrder()" 
+                            class="w-full mt-12 bg-[#8B4513] hover:bg-amber-900 text-white py-2 rounded-lg font-semibold text-md transition-all duration-300">
+                        Complete Order 
+                    </button>
+
+                    <p class="text-center text-xs text-gray-500 mt-8">
+                        Secure checkout powered by Enono
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function completeOrder() {
+            alert("Thank you for your purchase! 🎉 (Demo)");
+        }
+
+        function selectPayment(btn) {
+            document.querySelectorAll('.payment-btn').forEach(b => {
+                b.classList.remove('border-[#8B4513]', 'bg-[#f8f5f0]');
+            });
+            btn.classList.add('border-[#8B4513]', 'bg-[#f8f5f0]');
+        }
+    </script>
+</body>
+</html>

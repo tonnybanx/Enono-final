@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - enono MARKET</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
+        
+        .heading-font { font-family: 'Playfair Display', sans-serif; }
+        
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+            padding-bottom: 4px;
+        }
+        
+        .nav-link.active {
+            color: #fbbf24 !important;
+            font-weight: 600;
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #fbbf24;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        
+        .faq-answer {
+            display: none;
+            padding: 20px 0 30px 0;
+            color: #374151;
+            line-height: 1.7;
+        }
+        
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        .category-item {
+            transition: all 0.2s ease;
+        }
+        
+        .category-item.active {
+            background-color: #fef3c7;
+            color: #d97706;
+            font-weight: 600;
+            border-left: 4px solid #fbbf24;
+        }
+    </style>
+</head>
+<body class="bg-white">
+
+<div class="max-w-7xl mx-auto px-4 py-12">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-semibold heading-font">Help Center</h1>
+        <p class="text-gray-600 mt-3">Find answers or contact our support team</p>
+    </div>
+
+    <!-- Full Width Image - Improved -->
+    <div class="mb-16 -mx-4 md:-mx-6 lg:-mx-8 overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=2000&h=620&fit=crop" 
+             alt="Happy customer support team - enono MARKET" 
+             class="w-full h-[420px] md:h-[520px] object-cover">
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        <!-- Recommended Topics -->
+        <div class="lg:col-span-4 relative pr-8">
+            <h3 class="font-semibold text-lg mb-6 flex items-center gap-3">
+                <i class="fa-solid fa-circle-question text-amber-500"></i> 
+                Recommended Topics
+            </h3>
+            
+            <div class="bg-white rounded-3xl p-6 shadow-sm">
+                <div onclick="filterCategory(this)" data-category="all" class="category-item active flex justify-between items-center py-4 px-4 rounded-2xl cursor-pointer mb-1">
+                    <span>All Topics</span>
+                </div>
+                <div onclick="filterCategory(this)" data-category="order" class="category-item flex justify-between items-center py-4 px-4 rounded-2xl cursor-pointer mb-1">
+                    <span>Order Issues</span>
+                </div>
+                <div onclick="filterCategory(this)" data-category="shipping" class="category-item flex justify-between items-center py-4 px-4 rounded-2xl cursor-pointer mb-1">
+                    <span>Shipping & Delivery</span>
+                </div>
+                <div onclick="filterCategory(this)" data-category="return" class="category-item flex justify-between items-center py-4 px-4 rounded-2xl cursor-pointer mb-1">
+                    <span>Return & Refund</span>
+                </div>
+                <div onclick="filterCategory(this)" data-category="account" class="category-item flex justify-between items-center py-4 px-4 rounded-2xl cursor-pointer mb-1">
+                    <span>Managing my Account</span>
+                </div>
+            </div>
+
+            <!-- Vertical Line on the right -->
+            <div class="hidden lg:block absolute top-0 bottom-0 right-0 w-px bg-gray-200"></div>
+        </div>
+
+        <!-- FAQ Content -->
+        <div class="lg:col-span-8 bg-white p-8" id="faq-container"></div>
+    </div>
+
+    <!-- Contact -->
+    <div class="mt-20 text-center">
+        <p class="text-gray-600 mb-6 text-lg">Still can't solve the problem?</p>
+        <button onclick="contactUs()" 
+                class="inline-flex items-center gap-3 bg-white hover:bg-amber-50 border border-gray-300 px-10 py-5 rounded-full text-lg font-medium">
+            <i class="fa-solid fa-comment-dots text-amber-500"></i>
+            Contact Us
+        </button>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-[#2C1A0F] text-white pt-16 pb-10">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-4 gap-10">
+            <div>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="text-4xl">🌍</div>
+                    <div class="heading-font text-3xl">enono</div>
+                </div>
+                <p class="text-white/70 text-sm">Connecting you to Africa's richest cultural heritage.</p>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold mb-4">Shop</h4>
+                <ul class="space-y-2 text-sm text-white/70">
+                    <li>Kanzu Collection</li>
+                    <li>Lubuggo Sheets</li>
+                    <li>Traditional Pipes</li>
+                    <li>Cultural Jewelry</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold mb-4">Company</h4>
+                <ul class="space-y-2 text-sm text-white/70">
+                    <li><a href="artisans/artisans.html" class="nav-link-mobile">Our Artisans</a></li>
+                    <li><a href="aboutus.html" class="nav-link-mobile">About Us</a></li>
+                    <li><a href="blog.html" class="nav-link-mobile">Blog</a></li>
+                    <li><a href="help.html" class="nav-link-mobile">Contact Us</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-semibold mb-4">Follow Us</h4>
+                <div class="flex gap-5 text-2xl">
+                    <i class="fa-brands fa-instagram cursor-pointer hover:text-amber-400"></i>
+                    <i class="fa-brands fa-facebook cursor-pointer hover:text-amber-400"></i>
+                    <i class="fa-brands fa-tiktok cursor-pointer hover:text-amber-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center text-white/50 text-sm mt-16 border-t border-white/10 pt-8">
+            © 2026 enono MARKET • All Rights Reserved
+        </div>
+    </div>
+</footer>
+
+
+<script>
+    // Mobile Menu Function (kept in case you need it later)
+    function toggleMobileMenu() {
+        // Currently not used since header is removed
+    }
+
+    function toggleLogin() {
+        alert("Sign In modal would appear here ✨");
+    }
+
+    const faqs = [
+        { category: "order", question: "How can I track my order?", answer: "Go to 'Track Order' in the top menu or your account dashboard. Enter your order number to see real-time updates." },
+        { category: "order", question: "My order is delayed, what should I do?", answer: "Please allow 2-5 business days for processing. If it's been longer, contact our support with your order number." },
+        { category: "shipping", question: "What is the delivery time for an item? How long will it take to arrive?", answer: "Orders will be shipped as soon as possible. Standard delivery usually takes 5-14 business days depending on your location." },
+        { category: "shipping", question: "What are your shipping options?", answer: "We offer standard shipping (free over $50) and express shipping. International shipping is also available." },
+        { category: "return", question: "What is your return policy?", answer: "You can return unused items within 30 days of delivery. The item must be in its original condition with packaging." },
+        { category: "return", question: "How do I initiate a return?", answer: "Log into your account, go to 'My Orders', select the item and click 'Return Item'. Follow the instructions provided." },
+        { category: "account", question: "How do I reset my password?", answer: "Click 'Forgot Password' on the sign-in page and follow the instructions sent to your email." },
+        { category: "account", question: "How do I update my shipping address?", answer: "Go to your Account Settings > Addresses and edit or add a new address." },
+        { category: "order", question: "Can I change my order after placing it?", answer: "Yes, you can make changes within 2 hours of placing the order. After that, please contact support." }
+    ];
+
+    function renderFaqs(filteredFaqs) {
+        const container = document.getElementById('faq-container');
+        container.innerHTML = '<h2 class="text-2xl font-semibold mb-8">Frequently Asked Questions</h2>';
+
+        filteredFaqs.forEach(faq => {
+            const div = document.createElement('div');
+            div.className = 'faq-item py-6 cursor-pointer';
+            div.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <p class="font-medium text-lg pr-8">${faq.question}</p>
+                    <i class="fa-solid fa-chevron-down text-gray-400 mt-1 transition-transform"></i>
+                </div>
+                <div class="faq-answer text-gray-600 leading-relaxed">${faq.answer}</div>
+            `;
+            container.appendChild(div);
+
+            div.addEventListener('click', () => {
+                div.classList.toggle('open');
+            });
+        });
+    }
+
+    function filterCategory(el) {
+        document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+        el.classList.add('active');
+
+        const category = el.getAttribute('data-category');
+        const filtered = category === 'all' ? faqs : faqs.filter(f => f.category === category);
+        renderFaqs(filtered);
+    }
+
+    window.onload = () => renderFaqs(faqs);
+
+    function contactUs() {
+        alert("Our support team is ready to help!\n\nEmail: support@enonomarket.com");
+    }
+</script>
+</body>
+</html>

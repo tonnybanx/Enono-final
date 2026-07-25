@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Carved Stool (Entebe) - Enono</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        .heading-font { font-family: 'Playfair Display', serif; }
+        .body-font { font-family: 'Inter', system-ui, sans-serif; }
+        
+        .thumbnail {
+            transition: all 0.3s ease;
+            max-height: 60px;
+        }
+        .thumbnail.active {
+            border: 3px solid #8B4513;
+            box-shadow: 0 0 0 4px rgba(139, 69, 19, 0.15);
+        }
+
+        .main-image-container {
+            max-height: 640px;
+        }
+
+        /* Full width heritage section on mobile */
+        .heritage-full {
+            margin-left: -24px;
+            margin-right: -24px;
+        }
+        @media (min-width: 768px) {
+            .heritage-full {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body class="body-font text-gray-800">
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        
+        <!-- Back Button -->
+        <a href="#" onclick="history.back()" class="inline-flex items-center gap-2 text-gray-600 hover:text-[#8B4513] mb-8">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span class="font-medium">Back</span>
+        </a>
+
+        <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+            
+            <!-- Image Section -->
+            <div class="flex flex-col md:flex-row gap-6 lg:gap-8">
+                
+                <!-- Thumbnails -->
+                <div class="thumbnails-container flex flex-row md:flex-col gap-3 md:gap-4 order-2 md:order-1">
+                    <img onclick="changeImage(this)" 
+                         src="https://picsum.photos/id/201/300/300" 
+                         class="thumbnail active w-16 md:w-full aspect-square object-cover rounded-xl cursor-pointer border-2 border-transparent">
+                    <img onclick="changeImage(this)" 
+                         src="https://picsum.photos/id/202/300/300" 
+                         class="thumbnail w-16 md:w-full aspect-square object-cover rounded-xl cursor-pointer border-2 border-transparent">
+                    <img onclick="changeImage(this)" 
+                         src="https://picsum.photos/id/203/300/300" 
+                         class="thumbnail w-16 md:w-full aspect-square object-cover rounded-xl cursor-pointer border-2 border-transparent">
+                    <img onclick="changeImage(this)" 
+                         src="https://picsum.photos/id/204/300/300" 
+                         class="thumbnail w-16 md:w-full aspect-square object-cover rounded-xl cursor-pointer border-2 border-transparent">
+                </div>
+
+                <!-- Main Image -->
+                <div class="flex-1 order-1 md:order-2">
+                    <div class="bg-white rounded-xl overflow-hidden shadow-sm main-image-container">
+                        <img id="main-image" 
+                             src="https://picsum.photos/id/201/800/900" 
+                             alt="Royal Carved Stool" 
+                             class="w-full h-full object-contain">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Product Info -->
+            <div class="space-y-8 flex flex-col">
+                <div>
+                    <h1 class="heading-font text-xl md:text-2xl font-semibold leading-tight">Royal Carved Stool (Entebe)</h1>
+                    <p class="text-3xl font-semibold text-[#9b4925] mt-4">UGX 130,000</p>
+                </div>
+
+                <p class="text-gray-600 leading-relaxed text-lg">
+                    Polished hardwood stool carved from one piece. A timeless symbol of authority, respect, and ancestral connection in Buganda culture.
+                </p>
+
+                <!-- Quantity -->
+                <div class="flex items-center gap-6">
+                    <span class="text-sm font-medium text-gray-600">Quantity</span>
+                    <div class="flex items-center border border-gray-300 rounded-xl">
+                        <button onclick="decreaseQty()" class="px-5 py-3 text-xl font-medium hover:bg-gray-100 rounded-l-xl">-</button>
+                        <span id="quantity" class="px-6 py-3 font-medium">1</span>
+                        <button onclick="increaseQty()" class="px-5 py-3 text-xl font-medium hover:bg-gray-100 rounded-r-xl">+</button>
+                    </div>
+                </div>
+
+                <!-- Add to Cart -->
+                <button onclick="addToCart()" 
+                        class="mt-auto w-full px-12 py-4 bg-[#8B4513] hover:bg-amber-900 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-cart-plus"></i>
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="w-full bg-[#f8f5f0]">
+        <!-- Introductory Text - Now properly aligned -->
+        <div class="w-full max-w-7xl mx-auto px-6 pt-2">
+            <div class="mt-16 max-w-2xl">
+                <p class="uppercase tracking-widest text-amber-800 text-sm font-medium">A Living Legacy</p>
+                <h2 class="heading-font text-4xl font-semibold leading-tight mt-3">
+                    More than a stool — a sacred vessel of memory and power.
+                </h2>
+            </div>
+        </div>
+
+        <!-- Heritage Section -->
+        <div class="heritage-full mt-12 relative overflow-hidden min-h-[520px] flex items-center max-w-7xl mx-auto">
+            <!-- Background Image -->
+            <img src="../images/africanacity1.jpg" 
+                 alt="Ancient Buganda Heritage" 
+                 class="absolute inset-0 w-full h-full object-cover">
+
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-black/30"></div>
+
+            <!-- Content -->
+            <div class="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 py-12">
+                <div class="grid md:grid-cols-2 gap-8">
+                    
+                    <!-- Heritage & History -->
+                    <div class="bg-white/10 backdrop-blur-md border border-white/30 rounded-3xl p-8">
+                        <h3 class="font-semibold text-2xl mb-5 text-white">Heritage &amp; History</h3>
+                        <p class="text-white/90 leading-relaxed">
+                            Carved from a single sacred log, the Entebe served as the official seat of authority for kings, clan chiefs, and family heads in the Buganda Kingdom. 
+                            Its height and detailed carvings were deliberate symbols of rank and respect. No one was permitted to step over it — doing so was seen as a grave cultural offense.
+                        </p>
+                    </div>
+
+                    <!-- Spirits & Meaning -->
+                    <div class="bg-white/10 backdrop-blur-md border border-white/30 rounded-3xl p-8">
+                        <h3 class="font-semibold text-2xl mb-5 text-white flex items-center gap-3">
+                            <span>✦ Spirits &amp; Meaning</span>
+                        </h3>
+                        <p class="text-white/90 leading-relaxed">
+                            Deeply spiritual, the Entebe was believed to be the resting place of ancestral guardian spirits (Mizimu). 
+                            After the death of a chief or elder, the stool was preserved and venerated in the family shrine, serving as a bridge between the living and the ancestors for generations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let quantity = 1;
+        const qtyElement = document.getElementById('quantity');
+
+        function updateQty() {
+            qtyElement.textContent = quantity;
+        }
+
+        function increaseQty() {
+            quantity++;
+            updateQty();
+        }
+
+        function decreaseQty() {
+            if (quantity > 1) quantity--;
+            updateQty();
+        }
+
+        function changeImage(thumb) {
+            const mainImage = document.getElementById('main-image');
+            mainImage.src = thumb.src;
+            
+            document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+            thumb.classList.add('active');
+        }
+
+        function addToCart() {
+            alert(`Added ${quantity} item(s) to cart! 🎉`);
+        }
+    </script>
+</body>
+</html>
