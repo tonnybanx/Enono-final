@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enono Market - Add Product</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    
+    <style>
+        .sidebar {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        .dropzone {
+            transition: all 0.3s ease;
+        }
+        .dropzone.dragover {
+            background-color: #f0f9ff;
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="w-full h-screen flex overflow-hidden bg-gray-50">
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar w-[280px] h-full bg-[#0f172a] shadow-xl flex flex-col fixed lg:relative z-50">
+        <div class="w-full h-[70px] border-b border-gray-700 flex items-center pl-6 text-white">
+            <div>
+                <div class="text-3xl font-bold tracking-tight">Enono</div>
+                <div class="text-xs font-light text-yellow-400 -mt-1">MARKET</div>
+            </div>
+        </div>
+
+        <div class="text-white text-sm flex flex-col gap-1 mt-8 px-3">
+            <a href="home.html" onclick="setActive(this)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-700">
+                <i class="fa fa-home w-5"></i><span>Dashboard</span>
+            </a>
+            <a href="product.html" onclick="setActive(this)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-700">
+                <i class="fa fa-cube w-5"></i><span>Products</span>
+            </a>
+            <a href="add-product.html" onclick="setActive(this)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-700">
+                <i class="fa fa-plus-square w-5"></i><span>Add Product</span>
+            </a>
+            <a href="order.html" onclick="setActive(this)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-700">
+                <i class="fa fa-shopping-cart w-5"></i><span>Orders</span>
+            </a>
+            <a href="customers.html" onclick="setActive(this)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-700">
+                <i class="fa fa-users w-5"></i><span>Customers</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+
+        <!-- Top Bar -->
+        <div class="h-[70px] bg-white border-b border-gray-100 flex items-center px-6 shadow-sm z-40">
+            <button id="toggleSidebar" class="lg:hidden text-2xl text-gray-600 hover:text-gray-900 mr-4">
+                <i class="fa fa-bars"></i>
+            </button>
+            
+            <div class="flex-1 max-w-md">
+                <div class="relative">
+                    <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="Search products, orders..." 
+                           class="w-full bg-gray-100 border border-transparent focus:border-gray-300 rounded-2xl py-3 pl-12 pr-5 focus:outline-none text-sm">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6 ml-auto">
+                <button class="text-gray-600 hover:text-gray-900 relative">
+                    <i class="fa fa-bell text-xl"></i>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
+                </button>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-sm font-semibold">Sarah</div>
+                        <div class="text-xs text-gray-500">Admin</div>
+                    </div>
+                    <img src="https://picsum.photos/id/64/128/128" alt="Profile" 
+                         class="w-9 h-9 rounded-2xl object-cover border border-gray-200">
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="flex-1 overflow-auto p-4 md:p-6">
+            <div class="max-w-6xl mx-auto">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800">Add Product</h1>
+                        <p class="text-gray-500">Fill in the details below</p>
+                    </div>
+                    
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        <button onclick="cancelProduct()" 
+                            class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-medium border border-gray-300 hover:bg-gray-100">
+                            Cancel
+                        </button>
+                        <button onclick="saveProduct()" 
+                            class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+                            Save Product
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <!-- Product Details -->
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-2xl shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-5">Product Details</h2>
+                            
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block font-medium text-gray-700 mb-1">Product Name <span class="text-red-500">*</span></label>
+                                    <input type="text" required
+                                           class="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none px-4 py-3 rounded-xl" 
+                                           placeholder="Enter product name">
+                                </div>
+
+                                <div>
+                                    <label class="block font-medium text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
+                                    <textarea required rows="4"
+                                        class="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none px-4 py-3 rounded-xl"
+                                        placeholder="Describe the product..."></textarea>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block font-medium text-gray-700 mb-1">Category</label>
+                                        <select class="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none px-4 py-3 rounded-xl">
+                                            <option value="">Select Category</option>
+                                            <option value="garments">Garments</option>
+                                            <option value="jewelry">Jewelry</option>
+                                            <option value="sculptures">Sculptures</option>
+                                            <option value="pipes">Pipes</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block font-medium text-gray-700 mb-1">Color</label>
+                                        <select class="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none px-4 py-3 rounded-xl">
+                                            <option value="">Select Color</option>
+                                            <option value="black">Black</option>
+                                            <option value="blue">Blue</option>
+                                            <option value="red">Red</option>
+                                            <option value="green">Green</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block font-medium text-gray-700 mb-1">Size</label>
+                                        <select class="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none px-4 py-3 rounded-xl">
+                                            <option value="">Select Size</option>
+                                            <option value="s">Small</option>
+                                            <option value="m">Medium</option>
+                                            <option value="l">Large</option>
+                                            <option value="xl">X-Large</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pricing & Inventory -->
+                        <div class="bg-white rounded-2xl shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-5">Pricing & Inventory</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block font-medium text-gray-700 mb-1">Regular Price <span class="text-red-500">*</span></label>
+                                    <input type="number" required
+                                           class="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none px-4 py-3 rounded-xl" 
+                                           placeholder="0.00">
+                                </div>
+                                <div>
+                                    <label class="block font-medium text-gray-700 mb-1">Sale Price</label>
+                                    <input type="number" 
+                                           class="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none px-4 py-3 rounded-xl" 
+                                           placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <div class="mt-5">
+                                <label class="block font-medium text-gray-700 mb-1">Stock Quantity <span class="text-red-500">*</span></label>
+                                <input type="number" required
+                                       class="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none px-4 py-3 rounded-xl" 
+                                       placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image & Organization -->
+                    <div class="space-y-6">
+                        <!-- Image Upload -->
+                        <div class="bg-white rounded-2xl shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">Product Image</h2>
+                            <div id="dropzone" 
+                                 class="dropzone border-2 border-dashed border-gray-300 rounded-2xl h-64 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400">
+                                <i class="fa fa-cloud-upload-alt text-5xl text-gray-400 mb-3"></i>
+                                <p class="font-medium text-gray-600">Click to upload or drag image here</p>
+                                <p class="text-sm text-gray-500 mt-1">PNG, JPG, WEBP (max 5MB)</p>
+                                <input type="file" id="imageUpload" accept="image/*" class="hidden">
+                            </div>
+                            <div id="preview" class="hidden mt-4">
+                                <img id="imagePreview" class="w-full h-64 object-contain rounded-xl border" alt="Preview">
+                            </div>
+                        </div>
+
+                        <!-- Organization Details -->
+                        <div class="bg-white rounded-2xl shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-5">Organization Details</h2>
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block font-medium text-gray-700 mb-1">Supplier</label>
+                                    <select class="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none px-4 py-3 rounded-xl">
+                                        <option value="">Select Supplier</option>
+                                        <option value="supplier1">Supplier A</option>
+                                        <option value="supplier2">Supplier B</option>
+                                        <option value="supplier3">Local Manufacturer</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block font-medium text-gray-700 mb-1">Status</label>
+                                    <select class="w-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none px-4 py-3 rounded-xl">
+                                        <option value="active">Active</option>
+                                        <option value="draft">Draft</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div id="overlay" onclick="toggleSidebar()" class="overlay fixed inset-0 z-40 lg:hidden bg-black/50 hidden"></div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+        }
+
+        function setActive(el) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('bg-gray-700'));
+            el.classList.add('bg-gray-700');
+        }
+
+        // Image Upload + Preview
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('imageUpload');
+        const previewContainer = document.getElementById('preview');
+        const imagePreview = document.getElementById('imagePreview');
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', handleImage);
+
+        function handleImage(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                imagePreview.src = ev.target.result;
+                previewContainer.classList.remove('hidden');
+                dropzone.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Drag and Drop
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('dragover');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            fileInput.files = e.dataTransfer.files;
+            handleImage({ target: fileInput });
+        });
+
+        function saveProduct() {
+            alert("Product saved successfully! (Demo)");
+        }
+
+        function cancelProduct() {
+            if (confirm("Are you sure you want to cancel?")) {
+                window.location.href = "#"; // Change to your products page
+            }
+        }
+
+        // Close sidebar on resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('overlay').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

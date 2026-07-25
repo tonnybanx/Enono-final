@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enono Market - Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <style>
+        .sidebar {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 340px;
+            width: 100%;
+        }
+
+        .overlay {
+            display: none;
+        }
+        
+        @media (max-width: 1024px) {
+            .overlay {
+                display: block;
+                background: rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="w-full h-screen flex overflow-hidden bg-gray-50">
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar w-[280px] h-full bg-[#0f172a] shadow-xl flex flex-col fixed lg:relative z-50">
+        <div class="w-full h-[70px] border-b border-gray-700 flex items-center pl-6 text-white">
+            <div>
+                <div class="text-3xl font-bold tracking-tight">Enono</div>
+                <div class="text-xs font-light text-yellow-400 -mt-1">MARKET</div>
+            </div>
+        </div>
+
+        <div class="text-white text-sm flex flex-col gap-1 mt-8 px-3">
+            <a href="home.html" onclick="setActive(this)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-700">
+                <i class="fa fa-home w-5"></i><span>Dashboard</span>
+            </a>
+            <a href="product.html" onclick="setActive(this)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-700">
+                <i class="fa fa-cube w-5"></i><span>Products</span>
+            </a>
+            <a href="add-product.html" onclick="setActive(this)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-700">
+                <i class="fa fa-plus-square w-5"></i><span>Add Product</span>
+            </a>
+            <a href="order.html" onclick="setActive(this)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-700">
+                <i class="fa fa-shopping-cart w-5"></i><span>Orders</span>
+            </a>
+            <a href="customers.html" onclick="setActive(this)" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-700">
+                <i class="fa fa-users w-5"></i><span>Customers</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+
+        <!-- Top Bar -->
+        <div class="h-[70px] bg-white border-b border-gray-100 flex items-center px-6 shadow-sm z-40">
+            <button id="toggleSidebar" class="lg:hidden text-2xl text-gray-600 hover:text-gray-900 mr-4">
+                <i class="fa fa-bars"></i>
+            </button>
+            
+            <div class="flex-1 max-w-md">
+                <div class="relative">
+                    <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="Search products, orders..." 
+                           class="w-full bg-gray-100 border border-transparent focus:border-gray-300 rounded-2xl py-3 pl-12 pr-5 focus:outline-none text-sm">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6 ml-auto">
+                <button class="text-gray-600 hover:text-gray-900 relative">
+                    <i class="fa fa-bell text-xl"></i>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">3</span>
+                </button>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-sm font-semibold">Sarah</div>
+                        <div class="text-xs text-gray-500">Admin</div>
+                    </div>
+                    <img src="https://picsum.photos/id/64/128/128" alt="Profile" 
+                         class="w-9 h-9 rounded-2xl object-cover border border-gray-200">
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="flex-1 overflow-auto p-6 space-y-8">
+
+            <!-- Header -->
+            <div class="flex justify-between items-end">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+                    <p class="text-gray-500">A snapshot of your business today</p>
+                </div>
+                <button onclick="addProduct()" 
+                        class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-medium transition-colors">
+                    <i class="fa fa-plus"></i>
+                    <span>Add Product</span>
+                </button>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-3xl p-6 shadow-sm card-hover border border-gray-100">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Sales</p>
+                            <p class="text-4xl font-bold text-gray-800 mt-2">UGX 3.7M</p>
+                            <p class="text-emerald-500 text-sm flex items-center gap-1 mt-3">
+                                <i class="fa fa-arrow-trend-up"></i> +18% this week
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600">
+                            <i class="fa fa-chart-line text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-sm card-hover border border-gray-100">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Orders</p>
+                            <p class="text-4xl font-bold text-gray-800 mt-2">142</p>
+                            <p class="text-emerald-500 text-sm flex items-center gap-1 mt-3">
+                                <i class="fa fa-arrow-trend-up"></i> +12% this week
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600">
+                            <i class="fa fa-shopping-cart text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-sm card-hover border border-gray-100">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Pending Orders</p>
+                            <p class="text-4xl font-bold text-gray-800 mt-2">27</p>
+                            <p class="text-orange-500 text-sm flex items-center gap-1 mt-3">
+                                <i class="fa fa-clock"></i> Needs attention
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600">
+                            <i class="fa fa-hourglass-half text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-sm card-hover border border-gray-100">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Customers</p>
+                            <p class="text-4xl font-bold text-gray-800 mt-2">89</p>
+                            <p class="text-emerald-500 text-sm flex items-center gap-1 mt-3">
+                                <i class="fa fa-arrow-trend-up"></i> +8% this week
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600">
+                            <i class="fa fa-users text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Weekly Sales -->
+                <div class="bg-white rounded-3xl p-6 shadow-sm">
+                    <h3 class="font-semibold text-lg mb-6">Weekly Sales Trend</h3>
+                    <div class="chart-container">
+                        <canvas id="weeklySalesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Top Products -->
+                <div class="bg-white rounded-3xl p-6 shadow-sm">
+                    <h3 class="font-semibold text-lg mb-6">Top Selling Products</h3>
+                    <div class="chart-container">
+                        <canvas id="topProductsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-semibold text-lg">Orders to Process</h3>
+                    <a href="#" class="text-blue-600 hover:text-blue-700 text-sm flex items-center gap-1">
+                        View all <i class="fa fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[700px]">
+                        <thead>
+                            <tr class="border-b text-left text-gray-500 text-sm">
+                                <th class="pb-4 font-medium">Order</th>
+                                <th class="pb-4 font-medium">Customer</th>
+                                <th class="pb-4 font-medium">Items</th>
+                                <th class="pb-4 font-medium">Total</th>
+                                <th class="pb-4 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y" id="ordersTable">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div id="overlay" onclick="toggleSidebar()" class="overlay fixed inset-0 z-40 lg:hidden"></div>
+
+    <script>
+        let weeklySalesChart, topProductsChart;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            
+            // Only show overlay when sidebar is open on mobile
+            if (window.innerWidth <= 1024) {
+                overlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+            }
+        }
+
+        function setActive(el) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('bg-gray-700'));
+            el.classList.add('bg-gray-700');
+        }
+
+        function createCharts() {
+            // Weekly Sales
+            weeklySalesChart = new Chart(document.getElementById('weeklySalesChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Sales',
+                        data: [420000, 680000, 520000, 910000, 1240000, 890000, 1120000],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } },
+                        x: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } }
+                    }
+                }
+            });
+
+            // Top Products
+            topProductsChart = new Chart(document.getElementById('topProductsChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Kanzu', 'Mats', 'Drums', 'Pipes', 'Hat'],
+                    datasets: [{
+                        data: [42, 31, 28, 19, 15],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#f1f5f9' } },
+                        y: { grid: { color: '#f1f5f9' } }
+                    }
+                }
+            });
+        }
+
+        // Sample Orders Data (matching your image style)
+        const orders = [
+            { id: "#3421", customer: "Mukisa Thomas", items: 2, total: "UGX 1,339", status: "Pending" },
+            { id: "#3420", customer: "Lwanga Benson", items: 2, total: "UGX 323", status: "Packed" },
+            { id: "#3419", customer: "Mukibi Dian", items: 1, total: "UGX 145", status: "Shipped" },
+            { id: "#3418", customer: "Bwambale John", items: 2, total: "UGX 1,480", status: "Delivered" },
+            { id: "#3417", customer: "Achieng", items: 2, total: "UGX 243", status: "Pending" }
+        ];
+
+        function populateOrders() {
+            const tbody = document.getElementById('ordersTable');
+            let html = '';
+
+            orders.forEach(order => {
+                let statusHTML = '';
+                if (order.status === "Pending") {
+                    statusHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium"><span class="status-dot bg-yellow-500"></span>Pending</span>`;
+                } else if (order.status === "Packed") {
+                    statusHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium"><span class="status-dot bg-blue-500"></span>Packed</span>`;
+                } else if (order.status === "Shipped") {
+                    statusHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium"><span class="status-dot bg-purple-500"></span>Shipped</span>`;
+                } else if (order.status === "Delivered") {
+                    statusHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium"><span class="status-dot bg-green-500"></span>Delivered</span>`;
+                }
+
+                html += `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="py-4 font-medium text-blue-600">${order.id}</td>
+                        <td class="py-4">${order.customer}</td>
+                        <td class="py-4">${order.items}</td>
+                        <td class="py-4 font-medium">${order.total}</td>
+                        <td class="py-4">${statusHTML}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function addProduct() {
+            alert("Add Product page would open here (demo)");
+        }
+
+        window.onload = function() {
+            createCharts();
+            populateOrders();
+            
+            const toggleBtn = document.getElementById('toggleSidebar');
+            toggleBtn.addEventListener('click', toggleSidebar);
+        };
+    </script>
+</body>
+</html>
