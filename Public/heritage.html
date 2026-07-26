@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spiritual Heritage - Enono Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        .heading-font { font-family: 'Playfair Display', serif; }
+        .body-font { font-family: 'Inter', system-ui, sans-serif; }
+
+        .items-scroll {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .items-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .spirit-arrows-wrapper {
+            position: sticky;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
+        }
+    </style>
+</head>
+<body class="body-font bg-[#f8f5f0] text-gray-800 overflow-x-hidden">
+
+    <!-- ==================== TOP BANNER ==================== -->
+    <div class="bg-[#8B4513] text-white text-center py-3 text-sm">
+        Understand African Heritage and craft and get each at a 10% discount from the regular price
+        <span class="font-mono bg-white/20 px-3 py-1 rounded ml-2">Enono</span>
+    </div>
+
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="bg-white sticky top-0 z-50 border-b shadow-md">
+        <div class="max-w-7xl  px-4 md:px-6 py-5 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="../images/drum_logo.jpg" class="w-10 h-12 object-cover rounded" alt="Enono Logo">
+                <div>
+                    <span class="heading-font text-3xl font-bold">Enono</span>
+                    <p class="text-xs tracking-widest text-gray-500">Market</p>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex gap-8 text-sm font-medium">
+                <a href="../index.html" class="hover:text-[#8B4513]">Home</a>
+                <a href="shopping.html" class="hover:text-[#8B4513]">Shop</a>
+                <a href="heritage.html" class="hover:text-[#8B4513] text-[#8B4513] font-semibold">Heritage</a>
+                <a href="aboutus.html" class="hover:text-[#8B4513]">Our Story</a>
+                <a href="contactus.html" class="hover:text-[#8B4513]">Contact Us</a>
+            </div>
+
+            <div class="flex items-center gap-5">
+                <a href="Public/help.html" class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#8B4513]">
+                    <i class="fa-solid fa-headset"></i>
+                    <span class="hidden sm:inline">Help</span>
+                </a>
+                <a href="#" class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#8B4513]">
+                    <i class="fa-solid fa-user"></i>
+                    <span class="hidden sm:inline">Sign In</span>
+                </a>
+                <button onclick="toggleCart()" class="flex items-center gap-2 relative">
+                    <i class="fa-solid fa-cart-shopping text-2xl"></i>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-[#8B4513] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">0</span>
+                </button>
+                <button id="menu-btn" class="md:hidden text-3xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Overlay & Menu -->
+    <div id="mobile-overlay" class="hidden fixed inset-0 bg-black/60 z-[100] md:hidden"></div>
+    <div id="mobile-menu" class="hidden fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-[110] translate-x-full transition-transform duration-300 md:hidden">
+        <div class="p-6">
+            <button id="close-menu" class="text-4xl text-gray-400 hover:text-gray-600 float-right">×</button>
+            <div class="flex flex-col gap-6 mt-16 text-lg font-medium">
+                <a href="../index.html" class="hover:text-[#8B4513]">Home</a>
+                <a href="shopping.html" class="hover:text-[#8B4513]">Shop</a>
+                <a href="heritage.html" class="hover:text-[#8B4513] text-[#8B4513] font-semibold">Heritage</a>
+                <a href="aboutus.html" class="hover:text-[#8B4513]">About Us</a>
+                <a href="contactus.html" class="hover:text-[#8B4513]">Contact Us</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="relative bg-cover bg-center py-28 md:py-36" 
+             style="background-image: url('https://media.istockphoto.com/id/695152194/photo/african-drums.jpg?s=612x612&w=0&k=20&c=ixMwsApSM1kd1FMVephgxhmU5Xkm6b4Q2P09qOp2ZQQ=')">
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center text-white">
+            <p class="uppercase tracking-[0.25em] text-sm md:text-base mb-4 text-white/90">Living Traditions</p>
+            <h1 class="heading-font text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                Spiritual Heritage of Buganda
+            </h1>
+            <p class="mt-6 text-lg md:text-xl max-w-3xl mx-auto text-white/95 leading-relaxed">
+                Discover the great spirits (Balubaale) who shape the spiritual landscape of Buganda — 
+                and the sacred objects traditionally used to honour them.
+            </p>
+        </div>
+    </section>
+
+    <!-- ==================== INTRO ==================== -->
+    <section class="py-16 bg-[#f9f5ef]">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="heading-font text-3xl md:text-4xl font-semibold text-gray-900 mb-6">
+                The Living Spirits
+            </h2>
+            <p class="text-gray-700 text-lg leading-relaxed">
+                In Buganda tradition, the Balubaale are powerful ancestral and natural spirits who continue to 
+                influence daily life, protection, prosperity and the passage between worlds.  
+                Use the arrows to explore each spirit and the sacred objects associated with them.
+            </p>
+        </div>
+    </section>
+
+    <!-- ==================== SPIRIT CAROUSEL ==================== -->
+    <section class="py-10 md:py-14 bg-[#f9f5ef]" id="spirit-section">
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 md:px-6">
+
+            <div class="relative flex items-stretch gap-2 sm:gap-3 md:gap-5">
+
+                <!-- LEFT ARROW -->
+                <div class="spirit-arrows-wrapper flex-shrink-0 self-center">
+                    <button onclick="prevSpirit()" 
+                            class="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center text-[#9b4925] hover:bg-[#9b4925] hover:text-white transition-colors">
+                        <i class="fa-solid fa-chevron-left text-xs sm:text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- SPIRIT CONTENT -->
+                <div class="flex-1 min-w-0 bg-white rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-10 shadow-sm border border-[#e8d9c8]">
+                    
+                    <!-- Balanced Image + Text -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-center mb-8 md:mb-10">
+                        
+                        <!-- Text -->
+                        <div class="order-2 md:order-1">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
+                                <h3 id="spirit-name" class="heading-font text-2xl sm:text-3xl md:text-4xl font-semibold text-[#9b4925]">Mukasa</h3>
+                                <span id="spirit-tag" class="text-xs bg-[#9b4925]/10 text-[#9b4925] px-3 py-1 rounded-full w-fit">Guardian of the Waters</span>
+                            </div>
+                            <p id="spirit-desc" class="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg">
+                                One of the most revered spirits in Buganda, associated with Lake Victoria and all bodies of water. 
+                                Invoked for prosperity, fertility, safe journeys and protection of the home.
+                            </p>
+                        </div>
+
+                        <!-- Image (shorter aspect ratio) -->
+                        <div class="order-1 md:order-2">
+                            <div class="aspect-square max-h-[280px] md:max-h-[320px] rounded-xl md:rounded-2xl overflow-hidden bg-[#f3ebe0] mx-auto md:mx-0">
+                                <img id="spirit-image" src="../images/pipe5.jpg" alt="Spirit" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sacred items -->
+                    <div>
+                        <p class="text-sm sm:text-base text-gray-600 mb-4 font-medium">
+                            Some of the sacred items used to praise or represent the spirit are:
+                        </p>
+
+                        <div class="flex items-center gap-1.5 sm:gap-2">
+                            <button id="items-prev" onclick="scrollItems(-120)" 
+                                    class="hidden flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#f9f5ef] border border-gray-200 flex items-center justify-center text-[#9b4925] hover:bg-[#9b4925] hover:text-white transition-colors">
+                                <i class="fa-solid fa-chevron-left text-[10px] sm:text-xs"></i>
+                            </button>
+
+                            <div id="items-scroll" class="items-scroll flex-1 flex gap-3 sm:gap-5 overflow-x-auto py-1">
+                                <!-- items injected by JS -->
+                            </div>
+
+                            <button id="items-next" onclick="scrollItems(120)" 
+                                    class="hidden flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#f9f5ef] border border-gray-200 flex items-center justify-center text-[#9b4925] hover:bg-[#9b4925] hover:text-white transition-colors">
+                                <i class="fa-solid fa-chevron-right text-[10px] sm:text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Collection link -->
+                    <div class="mt-6">
+                        <a id="spirit-link" href="shopping.html?spirit=mukasa" 
+                           class="text-xs sm:text-sm font-medium text-[#9b4925] hover:underline inline-flex items-center gap-1.5">
+                            View full collection of Mukasa’s sacred items
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+
+                    <!-- Dots -->
+                    <div id="spirit-dots" class="flex justify-center gap-2 mt-7">
+                        <!-- dots injected by JS -->
+                    </div>
+                </div>
+
+                <!-- RIGHT ARROW -->
+                <div class="spirit-arrows-wrapper flex-shrink-0 self-center">
+                    <button onclick="nextSpirit()" 
+                            class="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center text-[#9b4925] hover:bg-[#9b4925] hover:text-white transition-colors">
+                        <i class="fa-solid fa-chevron-right text-xs sm:text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ==================== CLOSING ==================== -->
+    <section class="py-20 bg-white">
+        <div class="max-w-3xl mx-auto px-6 text-center">
+            <h2 class="heading-font text-3xl md:text-4xl font-semibold mb-6">A Living Connection</h2>
+            <p class="text-gray-700 text-lg leading-relaxed mb-8">
+                These spirits and the sacred objects associated with them remain part of a living tradition.  
+                At Enono we honour this heritage by carefully crafting and presenting authentic pieces 
+                that continue the conversation between the living and the ancestral realm.
+            </p>
+            <a href="shopping.html" class="inline-block bg-[#9b4925] text-white px-10 py-4 rounded-2xl font-medium text-lg hover:bg-[#7a3a1d] transition-colors">
+                Explore the Collection
+            </a>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-[#2C1A0F] text-white pt-16 pb-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-10">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="images/drum_logo.jpg" alt="Enono" class="h-12 rounded">
+                        <div>
+                            <div class="heading-font text-3xl">Enono</div>
+                            <span class="text-md text-[#fbbf24]">Market</span>
+                        </div>
+                    </div>
+                    <p class="text-white/70 text-sm mt-3">Connecting you to Africa's richest cultural heritage.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Shop</h4>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="shopping.html" class="hover:text-white">Kanzu Collection</a></li>
+                        <li><a href="shopping.html" class="hover:text-white">Lubugo Sheets</a></li>
+                        <li><a href="shopping.html" class="hover:text-white">Traditional Pipes</a></li>
+                        <li><a href="shopping.html" class="hover:text-white">Cultural Jewelry</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="aboutus.html" class="hover:text-white">About us</a></li>
+                        <li><a href="blog.html" class="hover:text-white">Blog</a></li>
+                        <li><a href="contactus.html" class="hover:text-white">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Follow Us</h4>
+                    <div class="flex gap-5 text-2xl">
+                        <a href="#"><i class="fa-brands fa-instagram hover:text-amber-400 transition-colors"></i></a>
+                        <a href="#"><i class="fa-brands fa-facebook hover:text-amber-400 transition-colors"></i></a>
+                        <a href="#"><i class="fa-brands fa-tiktok hover:text-amber-400 transition-colors"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center text-white/50 text-sm mt-16 border-t border-white/10 pt-8">
+                © 2026 Enono Market • All Rights Reserved
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== CART DRAWER ==================== -->
+    <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl translate-x-full transition-transform duration-300 z-[120] flex flex-col border-l border-gray-200">
+        <div class="p-6 border-b flex justify-between items-center">
+            <h2 class="text-2xl font-semibold">Shopping Cart</h2>
+            <button onclick="toggleCart()" class="text-3xl leading-none">×</button>
+        </div>
+        <div id="cart-items" class="flex-1 p-6 overflow-auto">
+            <div class="flex flex-col items-center justify-center h-full py-20 text-center text-gray-400">
+                <i class="fa-solid fa-cart-shopping text-6xl mb-6"></i>
+                <p>Your cart is empty.</p>
+            </div>
+        </div>
+        <div class="p-6 border-t">
+            <div class="flex justify-between text-xl font-medium mb-6">
+                <span>Total</span>
+                <span id="cart-total">USH 0</span>
+            </div>
+            <button onclick="checkout()" class="w-full bg-[#8B4513] text-white py-4 rounded-2xl font-medium">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        const spirits = [
+            {
+                id: 'mukasa',
+                name: 'Mukasa',
+                tag: 'Guardian of the Waters',
+                desc: 'One of the most revered spirits in Buganda, associated with Lake Victoria and all bodies of water. Invoked for prosperity, fertility, safe journeys and protection of the home.',
+                image: '../images/pipe5.jpg',
+                items: [
+                    { name: 'Sacred Pipe', img: '../images/pipe5.jpg' },
+                    { name: 'Water Vessel', img: '../images/pot8.jpg' },
+                    { name: 'Barkcloth', img: '../images/barkcloth4.jpg' },
+                    { name: 'Offering Bowl', img: '../images/callabash6.jpg' },
+                    { name: 'Sacred drum', img: '../images/drum2.jpg' }
+                ]
+            },
+            {
+                id: 'mutebi',
+                name: 'Mutebi',
+                tag: 'Protector of the Land',
+                desc: 'The steadfast guardian of the soil, forests and the boundaries of the kingdom. Called upon for stability, protection of territory and the well-being of the community.',
+                image: '../images/pipe2.jpg',
+                items: [
+                    { name: 'Mutebi’s Pipe', img: '../images/pipe2.jpg' },
+                    { name: 'Hat', img: '../images/hat2.jpg' },
+                    { name: 'Earth Bowl', img: '../images/calabash3.jpg' }
+                ]
+            },
+            {
+                id: 'walumbe',
+                name: 'Walumbe',
+                tag: 'Spirit of Transition',
+                desc: 'Associated with death, transition and the passage into the ancestral realm. Approached with reverence, he teaches respect for the cycle of life.',
+                image: '../images/pipe4.jpg',
+                items: [
+                    { name: 'Walumbe’s Pipe', img: '../images/pipe4.jpg' },
+                    { name: 'Ceremonial mask', img: '../images/mask1.jpg' },
+                    { name: 'Offering Basket', img: '../images/basket2.jpg' }
+                ]
+            },
+            {
+                id: 'nalubaale',
+                name: 'Nalubaale',
+                tag: 'Mother of the Lake',
+                desc: 'The great mother spirit of Lake Victoria — source of abundance, cleansing and maternal protection. She is honoured with items that celebrate water and fertility.',
+                image: '../images/pipe7.jpg',
+                items: [
+                    { name: 'Nalubaale’s Pipe', img: '../images/pipe7.jpg' },
+                    { name: 'Fertility Pot', img: '../images/pot6.jpg' },
+                    { name: 'Offering Bowl', img: '../images/calabash1.jpg' }
+                ]
+            },
+            {
+                id: 'kibuka',
+                name: 'Kibuka',
+                tag: 'Warrior of Protection',
+                desc: 'The fierce warrior spirit who defends the kingdom and its people. Invoked for courage, protection in conflict and the strength to stand firm.',
+                image: '../images/pipe3.jpg',
+                items: [
+                    { name: 'Kibuka’s Pipe', img: '../images/pipe3.jpg' },
+                    { name: 'Protective Amulet', img: '../images/jewelery2.jpg' },
+                    { name: 'Drum', img: '../images/drum3.jpg' }
+                ]
+            },
+            {
+                id: 'munyagwa',
+                name: 'Munyagwa',
+                tag: 'Keeper of Hidden Knowledge',
+                desc: 'Keeper of hidden knowledge, dreams and the mysteries of the night. Sought for insight, intuition and protection during the dark hours.',
+                image: 'https://picsum.photos/id/1024/400/400',
+                items: [
+                    { name: 'Munyagwa’s Pipe', img: '../images/pipe3.jpg' },
+                    { name: 'Dream Charm', img: '../images/jewelery9.jpg' },
+                    { name: 'Night Bowl', img: '../images/callabash6.jpg' }
+                ]
+            }
+        ];
+
+        let currentIndex = 0;
+
+        function renderSpirit() {
+            const spirit = spirits[currentIndex];
+
+            document.getElementById('spirit-name').textContent = spirit.name;
+            document.getElementById('spirit-tag').textContent = spirit.tag;
+            document.getElementById('spirit-desc').textContent = spirit.desc;
+            document.getElementById('spirit-image').src = spirit.image;
+            document.getElementById('spirit-image').alt = spirit.name;
+
+            document.getElementById('spirit-link').href = `shopping.html?spirit=${spirit.id}`;
+            document.getElementById('spirit-link').innerHTML = `
+                View full collection of ${spirit.name}’s sacred items
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            `;
+
+            const itemsContainer = document.getElementById('items-scroll');
+            itemsContainer.innerHTML = '';
+            spirit.items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex-shrink-0 w-20 sm:w-24 md:w-28 text-center';
+                div.innerHTML = `
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-lg md:rounded-xl overflow-hidden bg-[#f3ebe0] mb-1.5">
+                        <img src="${item.img}" class="w-full h-full object-cover" alt="${item.name}">
+                    </div>
+                    <p class="text-xs sm:text-sm font-medium text-gray-800 leading-tight">${item.name}</p>
+                `;
+                itemsContainer.appendChild(div);
+            });
+
+            setTimeout(checkItemsOverflow, 60);
+
+            const dotsContainer = document.getElementById('spirit-dots');
+            dotsContainer.innerHTML = '';
+            spirits.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.className = `w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-colors ${i === currentIndex ? 'bg-[#9b4925]' : 'bg-gray-300'}`;
+                dot.onclick = () => {
+                    currentIndex = i;
+                    renderSpirit();
+                };
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function checkItemsOverflow() {
+            const container = document.getElementById('items-scroll');
+            const prevBtn = document.getElementById('items-prev');
+            const nextBtn = document.getElementById('items-next');
+
+            if (container.scrollWidth > container.clientWidth + 8) {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+            } else {
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+            }
+        }
+
+        function nextSpirit() {
+            currentIndex = (currentIndex + 1) % spirits.length;
+            renderSpirit();
+        }
+
+        function prevSpirit() {
+            currentIndex = (currentIndex - 1 + spirits.length) % spirits.length;
+            renderSpirit();
+        }
+
+        function scrollItems(amount) {
+            document.getElementById('items-scroll').scrollBy({ left: amount, behavior: 'smooth' });
+        }
+
+        window.addEventListener('resize', checkItemsOverflow);
+
+        // Mobile Menu
+        function openMobileMenu() {
+            document.getElementById('mobile-menu').classList.remove('hidden');
+            document.getElementById('mobile-overlay').classList.remove('hidden');
+            setTimeout(() => document.getElementById('mobile-menu').classList.remove('translate-x-full'), 10);
+        }
+        function closeMobileMenu() {
+            document.getElementById('mobile-menu').classList.add('translate-x-full');
+            setTimeout(() => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.getElementById('mobile-overlay').classList.add('hidden');
+            }, 300);
+        }
+        document.getElementById('menu-btn')?.addEventListener('click', openMobileMenu);
+        document.getElementById('close-menu')?.addEventListener('click', closeMobileMenu);
+        document.getElementById('mobile-overlay')?.addEventListener('click', closeMobileMenu);
+
+        function toggleCart() {
+            document.getElementById('cart-drawer').classList.toggle('translate-x-full');
+        }
+        function checkout() {
+            alert("Thank you for your purchase! 🎉 This is a demo.");
+            toggleCart();
+        }
+
+        renderSpirit();
+    </script>
+</body>
+</html>

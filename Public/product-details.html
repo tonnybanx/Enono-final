@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Carved Stool (Entebe) - Enono</title>
+    <title>Ancestral Smoking Pipe - Enono</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -15,14 +15,43 @@
         .thumbnail {
             transition: all 0.3s ease;
             max-height: 60px;
+            flex-shrink: 0;
         }
         .thumbnail.active {
             border: 3px solid #8B4513;
             box-shadow: 0 0 0 4px rgba(139, 69, 19, 0.15);
         }
 
+        /* Fixed size for the main image – never changes between variants */
         .main-image-container {
-            max-height: 640px;
+            height: 560px;          /* fixed height */
+            width: 100%;
+        }
+
+        /* Scrollable thumbnails – scrollbar completely hidden */
+        .thumbnails-container {
+            max-height: 420px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: none;          /* Firefox */
+            -ms-overflow-style: none;       /* IE / Edge */
+        }
+        .thumbnails-container::-webkit-scrollbar {
+            display: none;                  /* Chrome, Safari, Opera */
+        }
+
+        /* Horizontal scroll on mobile (also hidden) */
+        @media (max-width: 767px) {
+            .thumbnails-container {
+                max-height: none;
+                overflow-y: hidden;
+                overflow-x: auto;
+                flex-direction: row;
+                padding-bottom: 6px;
+            }
+            .main-image-container {
+                height: 380px;              /* slightly shorter on mobile */
+            }
         }
 
         /* Full width heritage section on mobile */
@@ -35,6 +64,14 @@
                 margin-left: 0;
                 margin-right: 0;
             }
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238B4513'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.1em;
         }
     </style>
 </head>
@@ -53,43 +90,66 @@
             <!-- Image Section -->
             <div class="flex flex-col md:flex-row gap-6 lg:gap-8">
                 
-                <!-- Thumbnails -->
-                <div class="thumbnails-container flex flex-row md:flex-col gap-3 md:gap-4 order-2 md:order-1">
-                    <img onclick="changeImage(this)" 
-                         src="https://picsum.photos/id/201/300/300" 
-                         class="thumbnail active w-16 md:w-full aspect-square object-cover rounded-xl cursor-pointer border-2 border-transparent">
-                    <img onclick="changeImage(this)" 
-                         src="https://picsum.photos/id/202/300/300" 
-                         class="thumbnail w-16 md:w-full aspect-square object-cover rounded-xl cursor-pointer border-2 border-transparent">
-                    <img onclick="changeImage(this)" 
-                         src="https://picsum.photos/id/203/300/300" 
-                         class="thumbnail w-16 md:w-full aspect-square object-cover rounded-xl cursor-pointer border-2 border-transparent">
-                    <img onclick="changeImage(this)" 
-                         src="https://picsum.photos/id/204/300/300" 
-                         class="thumbnail w-16 md:w-full aspect-square object-cover rounded-xl cursor-pointer border-2 border-transparent">
+                <!-- Thumbnails (scrollable, no visible scrollbar) -->
+                <div class="thumbnails-container flex flex-row md:flex-col gap-3 md:gap-4 order-2 md:order-1 pr-1">
+                    <!-- injected by JS -->
                 </div>
 
-                <!-- Main Image -->
+                <!-- Main Image – fixed height container -->
                 <div class="flex-1 order-1 md:order-2">
-                    <div class="bg-white rounded-xl overflow-hidden shadow-sm main-image-container">
+                    <div class="bg-white rounded-xl overflow-hidden shadow-sm main-image-container flex items-center justify-center">
                         <img id="main-image" 
-                             src="https://picsum.photos/id/201/800/900" 
-                             alt="Royal Carved Stool" 
+                             src="../images/pipe5.jpg" 
+                             alt="Ancestral Smoking Pipe" 
                              class="w-full h-full object-contain">
                     </div>
                 </div>
             </div>
 
             <!-- Right: Product Info -->
-            <div class="space-y-8 flex flex-col">
+            <div class="space-y-6 flex flex-col">
                 <div>
-                    <h1 class="heading-font text-xl md:text-2xl font-semibold leading-tight">Royal Carved Stool (Entebe)</h1>
+                    <h1 id="product-title" class="heading-font text-xl md:text-2xl font-semibold leading-tight">Mukasa’s Pipe</h1>
                     <p class="text-3xl font-semibold text-[#9b4925] mt-4">UGX 130,000</p>
                 </div>
 
-                <p class="text-gray-600 leading-relaxed text-lg">
-                    Polished hardwood stool carved from one piece. A timeless symbol of authority, respect, and ancestral connection in Buganda culture.
+                <!-- Description is clipped so it never grows the layout -->
+                <p id="product-description" class="text-gray-600 leading-relaxed text-lg line-clamp-3 min-h-[4.5rem]">
+                    Hand-carved hardwood smoking pipe dedicated to Mukasa, the powerful guardian of the waters and bringer of prosperity. A sacred tool for connection and reflection.
                 </p>
+
+                <!-- Variant Dropdown -->
+                <div>
+                    <label for="variant-select" class="block text-sm font-medium text-gray-600 mb-2">Variant (Spirit)</label>
+                    <select id="variant-select" 
+                            onchange="onVariantChange()"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 pr-10 bg-white focus:outline-none focus:ring-2 focus:ring-[#8B4513]/focus:border-transparent">
+                        <!-- injected by JS -->
+                    </select>
+                </div>
+
+                <!-- Color & Size Dropdowns -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="color-select" class="block text-sm font-medium text-gray-600 mb-2">Color</label>
+                        <select id="color-select" 
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 pr-10 bg-white focus:outline-none focus:ring-2 focus:ring-[#8B4513]/focus:border-transparent">
+                            <option value="natural">Natural Wood</option>
+                            <option value="dark">Dark Ebony</option>
+                            <option value="amber">Amber Stain</option>
+                            <option value="black">Matte Black</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="size-select" class="block text-sm font-medium text-gray-600 mb-2">Size</label>
+                        <select id="size-select" 
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 pr-10 bg-white focus:outline-none focus:ring-2 focus:ring-[#8B4513]/focus:border-transparent">
+                            <option value="small">Small (12 cm)</option>
+                            <option value="medium" selected>Medium (16 cm)</option>
+                            <option value="large">Large (20 cm)</option>
+                        </select>
+                    </div>
+                </div>
 
                 <!-- Quantity -->
                 <div class="flex items-center gap-6">
@@ -113,47 +173,43 @@
     </div>
 
     <div class="w-full bg-[#f8f5f0]">
-        <!-- Introductory Text - Now properly aligned -->
+        <!-- Introductory Text -->
         <div class="w-full max-w-7xl mx-auto px-6 pt-2">
             <div class="mt-16 max-w-2xl">
                 <p class="uppercase tracking-widest text-amber-800 text-sm font-medium">A Living Legacy</p>
                 <h2 class="heading-font text-4xl font-semibold leading-tight mt-3">
-                    More than a stool — a sacred vessel of memory and power.
+                    More than a pipe — a sacred vessel of spirit and memory.
                 </h2>
             </div>
         </div>
 
         <!-- Heritage Section -->
         <div class="heritage-full mt-12 relative overflow-hidden min-h-[520px] flex items-center max-w-7xl mx-auto">
-            <!-- Background Image -->
             <img src="../images/africanacity1.jpg" 
                  alt="Ancient Buganda Heritage" 
                  class="absolute inset-0 w-full h-full object-cover">
 
-            <!-- Overlay -->
             <div class="absolute inset-0 bg-black/30"></div>
 
-            <!-- Content -->
             <div class="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 py-12">
                 <div class="grid md:grid-cols-2 gap-8">
                     
-                    <!-- Heritage & History -->
+                    <!-- Heritage & History (static) -->
                     <div class="bg-white/10 backdrop-blur-md border border-white/30 rounded-3xl p-8">
                         <h3 class="font-semibold text-2xl mb-5 text-white">Heritage &amp; History</h3>
                         <p class="text-white/90 leading-relaxed">
-                            Carved from a single sacred log, the Entebe served as the official seat of authority for kings, clan chiefs, and family heads in the Buganda Kingdom. 
-                            Its height and detailed carvings were deliberate symbols of rank and respect. No one was permitted to step over it — doing so was seen as a grave cultural offense.
+                            In Buganda tradition, carefully carved smoking pipes were more than tools — they were sacred objects used in ritual, counsel, and communion with the ancestors. 
+                            Each pipe was dedicated to a particular spirit and treated with deep respect. Passing a pipe was an act of trust and shared lineage.
                         </p>
                     </div>
 
-                    <!-- Spirits & Meaning -->
+                    <!-- Spirits & Meaning (dynamic) -->
                     <div class="bg-white/10 backdrop-blur-md border border-white/30 rounded-3xl p-8">
                         <h3 class="font-semibold text-2xl mb-5 text-white flex items-center gap-3">
                             <span>✦ Spirits &amp; Meaning</span>
                         </h3>
-                        <p class="text-white/90 leading-relaxed">
-                            Deeply spiritual, the Entebe was believed to be the resting place of ancestral guardian spirits (Mizimu). 
-                            After the death of a chief or elder, the stool was preserved and venerated in the family shrine, serving as a bridge between the living and the ancestors for generations.
+                        <p id="spirit-description" class="text-white/90 leading-relaxed">
+                            This pipe is dedicated to <strong>Mukasa</strong>, the great guardian of Lake Victoria and the waters. Mukasa is invoked for prosperity, fertility, safe journeys across water, and protection of the home. Smoking this pipe is a quiet offering of respect to the spirit who watches over the lakes and rivers of Buganda.
                         </p>
                     </div>
                 </div>
@@ -162,8 +218,110 @@
     </div>
 
     <script>
+        // Full variant data with unique titles & descriptions
+        const variants = [
+            {
+                id: 'mukasa',
+                name: 'Mukasa',
+                title: "Mukasa’s Pipe",
+                description: "Hand-carved hardwood smoking pipe dedicated to Mukasa, the powerful guardian of the waters and bringer of prosperity. A sacred tool for connection and reflection.",
+                spiritText: "This pipe is dedicated to <strong>Mukasa</strong>, the great guardian of Lake Victoria and the waters. Mukasa is invoked for prosperity, fertility, safe journeys across water, and protection of the home. Smoking this pipe is a quiet offering of respect to the spirit who watches over the lakes and rivers of Buganda.",
+                image: '../images/pipe5.jpg',
+                thumb: '../images/pipe5.jpg'
+            },
+            {
+                id: 'mutebi',
+                name: 'Mutebi',
+                title: "Mutebi’s Pipe",
+                description: "Hand-carved hardwood smoking pipe dedicated to Mutebi, the steadfast protector of the land and the people. A vessel of strength and ancestral grounding.",
+                spiritText: "This pipe is dedicated to <strong>Mutebi</strong>, the spirit who guards the soil, the forests, and the boundaries of the kingdom. Mutebi is called upon for stability, protection of territory, and the well-being of the community. Lighting this pipe invites the quiet strength of the land itself.",
+                image: '../images/pipe2.jpg',
+                thumb: '../images/pipe2.jpg'
+            },
+            {
+                id: 'walumbe',
+                name: 'Walumbe',
+                title: "Walumbe’s Pipe",
+                description: "Hand-carved hardwood smoking pipe dedicated to Walumbe, the spirit of transition and the threshold between life and the ancestral realm.",
+                spiritText: "This pipe is dedicated to <strong>Walumbe</strong>, the spirit associated with death, transition, and the passage into the world of the ancestors. Though often feared, Walumbe is also a teacher of impermanence and respect for the cycle of life. Smoking this pipe is an act of remembrance and humility before the ancestors.",
+                image: '../images/pipe4.jpg',
+                thumb: '../images/pipe4.jpg'
+            },
+            {
+                id: 'nalubaale',
+                name: 'Nalubaale',
+                title: "Nalubaale’s Pipe",
+                description: "Hand-carved hardwood smoking pipe dedicated to Nalubaale, the mother of the lake and source of life-giving waters.",
+                spiritText: "This pipe is dedicated to <strong>Nalubaale</strong>, the great mother spirit of Lake Victoria. She is the source of abundance, cleansing, and maternal protection. Smoking this pipe is a gentle act of gratitude to the waters that sustain the people of Buganda.",
+                image: '../images/pipe7.jpg',
+                thumb: '../images/pipe7.jpg'
+            },
+            {
+                id: 'kibuka',
+                name: 'Kibuka',
+                title: "Kibuka’s Pipe",
+                description: "Hand-carved hardwood smoking pipe dedicated to Kibuka, the fierce warrior spirit of protection and courage.",
+                spiritText: "This pipe is dedicated to <strong>Kibuka</strong>, the warrior spirit who defends the kingdom and its people. Kibuka is invoked for courage, protection in conflict, and the strength to stand firm. Lighting this pipe calls upon the protective fire of the ancestors.",
+                image: '../images/pipe3.jpg',
+                thumb: '../images/pipe3.jpg'
+            }
+        ];
+
         let quantity = 1;
-        const qtyElement = document.getElementById('quantity');
+        const qtyElement       = document.getElementById('quantity');
+        const mainImage        = document.getElementById('main-image');
+        const variantSelect    = document.getElementById('variant-select');
+        const thumbsContainer  = document.querySelector('.thumbnails-container');
+        const productTitle     = document.getElementById('product-title');
+        const productDesc      = document.getElementById('product-description');
+        const spiritDesc       = document.getElementById('spirit-description');
+
+        // Build thumbnails + select options
+        function initVariants() {
+            variants.forEach((v, index) => {
+                // Thumbnail
+                const img = document.createElement('img');
+                img.src = v.thumb;
+                img.alt = v.name;
+                img.dataset.id = v.id;
+                img.className = 'thumbnail w-16 md:w-full aspect-square object-cover rounded-xl cursor-pointer border-2 border-transparent' + (index === 0 ? ' active' : '');
+                img.onclick = () => selectVariant(v.id);
+                thumbsContainer.appendChild(img);
+
+                // Select option
+                const opt = document.createElement('option');
+                opt.value = v.id;
+                opt.textContent = v.name;
+                if (index === 0) opt.selected = true;
+                variantSelect.appendChild(opt);
+            });
+        }
+
+        function selectVariant(id) {
+            const variant = variants.find(v => v.id === id);
+            if (!variant) return;
+
+            // Image
+            mainImage.src = variant.image;
+            mainImage.alt = variant.title;
+
+            // Title & descriptions
+            productTitle.textContent = variant.title;
+            productDesc.textContent  = variant.description;
+            spiritDesc.innerHTML     = variant.spiritText;
+
+            // Select value
+            variantSelect.value = id;
+
+            // Active thumbnail
+            document.querySelectorAll('.thumbnail').forEach(t => {
+                t.classList.toggle('active', t.dataset.id === id);
+            });
+        }
+
+        function onVariantChange() {
+            selectVariant(variantSelect.value);
+        }
 
         function updateQty() {
             qtyElement.textContent = quantity;
@@ -179,17 +337,15 @@
             updateQty();
         }
 
-        function changeImage(thumb) {
-            const mainImage = document.getElementById('main-image');
-            mainImage.src = thumb.src;
-            
-            document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-            thumb.classList.add('active');
+        function addToCart() {
+            const variantName = variants.find(v => v.id === variantSelect.value)?.name || '';
+            const color = document.getElementById('color-select').options[document.getElementById('color-select').selectedIndex].text;
+            const size  = document.getElementById('size-select').options[document.getElementById('size-select').selectedIndex].text;
+            alert(`Added ${quantity} × ${variantName}’s Pipe (${color}, ${size}) to cart! 🎉`);
         }
 
-        function addToCart() {
-            alert(`Added ${quantity} item(s) to cart! 🎉`);
-        }
+        // Initialise
+        initVariants();
     </script>
 </body>
 </html>
