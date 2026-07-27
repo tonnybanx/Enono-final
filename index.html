@@ -61,20 +61,20 @@
             <div class="hidden md:flex gap-8 text-md font-medium">
                 <a href="index.html" class="text-[#8B4513]">Home</a>
                 <a href="Public/shopping.html" onclick="navigateToSection('shop')" class="hover:text-[#8B4513]">Shop</a>
-                <a href="Public/aboutus.html" class="hover:text-[#8B4513]">Our Story</a>
+                <a href="Public/aboutus.html" class="hover:text-[#8B4513]">About Us</a>
                 <a href="Public/heritage.html" class="hover:text-[#8B4513]">Heritage</a>
                  <a href="Public/contactus.html" class="hover:text-[#8B4513]">Contact Us</a>
             </div>
 
             <div class="flex items-center gap-5">
                 <!-- Sign In -->
-                <a href="Public/help.html" class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#8B4513]">
+                <a href="Public/help.html" class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#8B4513] max-sm:hidden">
                     <i class="fa-solid fa-headset"></i>
                     <span>help</span>
                 </a>
                 
                 <!-- Sign In -->
-                <a href="public/signin.html" class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#8B4513]">
+                <a href="public/signin.html" class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#8B4513] max-sm:hidden">
                     <i class="fa-solid fa-user"></i>
                     <span>Sign In</span>
                 </a>
@@ -93,6 +93,8 @@
 
     <!-- Mobile Overlay & Menu -->
     <div id="mobile-overlay" class="hidden fixed inset-0 bg-black/60 z-[100] md:hidden"></div>
+
+    <!-- Mobile menu -->
     <div id="mobile-menu" class="hidden fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-[110] translate-x-full transition-transform duration-300 md:hidden">
         <div class="p-6">
             <button id="close-menu" class="text-4xl text-gray-400 hover:text-gray-600 float-right">×</button>
@@ -101,6 +103,8 @@
                 <a href="Public/shopping.html" onclick="navigateToSection('shop');closeMobileMenu()" class="hover:text-[#8B4513]">Shop</a>
                 <a href="Public/aboutus.html" class="hover:text-[#8B4513]">About Us</a>
                 <a href="Public/contactus.html" class="hover:text-[#8B4513]">Contact Us</a>
+                <a href="Public/heritage.html" class="hover:text-[#8B4513]">Heritage</a>
+                <a href="Public/signin.html" class="hover:text-[#8B4513]">Sign in</a>
             </div>
         </div>
     </div>
