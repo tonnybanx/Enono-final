@@ -11,9 +11,19 @@ $activeNav = $activeNav ?? '';
 $scriptPath = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
 $inPublic   = (bool) preg_match('#/Public(/|$)#i', $scriptPath);
 
+
+$projectRoot = realpath(__DIR__ . '/..');
+$scriptDir   = realpath(dirname($_SERVER['SCRIPT_FILENAME'] ?? ''));
+
+$depth = 0;
+if ($projectRoot && $scriptDir && str_starts_with($scriptDir, $projectRoot)) {
+    $relative = trim(substr($scriptDir, strlen($projectRoot)), '/\\');
+    $depth = $relative === '' ? 0 : substr_count($relative, DIRECTORY_SEPARATOR) + 1;
+}
+
 $publicPrefix = $inPublic ? '' : 'Public/';
-$rootPrefix   = $inPublic ? '../' : '';
-$homeHref     = $inPublic ? '../index.php' : 'index.php';
+$rootPrefix   = str_repeat('../', $depth);
+$homeHref     = $rootPrefix . 'index.php';
 
 // Dashboard
 $dashboardHref = $rootPrefix . 'Dashboard/home.php';
@@ -48,7 +58,11 @@ if (!function_exists('e')) {
 
 // Auth helpers
 $isLoggedIn = isset($_SESSION['user_id']);
-$isAdmin    = $isLoggedIn && ($_SESSION['role'] ?? '') === 'admin';
+$userRole   = $_SESSION['role'] ?? '';
+$isAdmin    = $isLoggedIn && $userRole === 'admin';
+$isStaff    = $isLoggedIn && $userRole === 'staff';
+// Both admins and staff can reach the admin dashboard
+$canAccessDashboard = $isAdmin || $isStaff;
 
 $firstName = $_SESSION['first_name'] ?? '';
 $lastName  = $_SESSION['last_name'] ?? '';
@@ -78,27 +92,27 @@ if ($initials === '') $initials = 'U';
 <body class="body-font bg-[#F9F5EB] text-gray-800 overflow-x-hidden">
 
     <!-- TOP BANNER -->
-    <div class="bg-[#8B4513] text-white text-center py-3 text-sm">
+    <div class="bg-[#8B4513] text-white text-center py-2 text-xs">
         Understand African Heritage and craft and get each at a 10% discount from the regular price
-        <span class="font-mono bg-white/20 px-3 py-1 rounded ml-2"><?= e($company['company_name'] ?? 'Enono') ?></span>
+        <span class="font-mono bg-white/20 px-2.5 py-0.5 rounded ml-2"><?= e($company['company_name'] ?? 'Enono') ?></span>
     </div>
 
     <!-- NAVBAR -->
     <nav class="bg-white sticky top-0 z-50 border-b shadow-md">
-        <div class="max-w-7xl  px-4 md:px-6 py-4 flex justify-between items-center gap-4">
+        <div class="max-w-7xl  px-4 md:px-6 py-2.5 flex justify-between items-center gap-4">
             
             <!-- Logo -->
-            <a href="<?= e($homeHref) ?>" class="flex items-center gap-2.5 flex-shrink-0">
-                <img src="<?= e($resolvedLogo) ?>" class="w-9 h-11 object-cover rounded"
+            <a href="<?= e($homeHref) ?>" class="flex items-center gap-2 flex-shrink-0">
+                <img src="<?= e($resolvedLogo) ?>" class="w-8 h-9 object-cover rounded"
                      alt="<?= e($company['company_name'] ?? 'Enono') ?> Logo">
                 <div class="hidden sm:block">
-                    <span class="heading-font text-2xl lg:text-3xl font-bold leading-tight"><?= e($company['company_name'] ?? 'Enono') ?></span>
-                    <p class="text-[10px] lg:text-xs tracking-widest text-gray-500"><?= e($company['tagline'] ?? 'Market') ?></p>
+                    <span class="heading-font text-lg lg:text-xl font-bold leading-tight"><?= e($company['company_name'] ?? 'Enono') ?></span>
+                    <p class="text-[9px] lg:text-[10px] tracking-widest text-gray-500"><?= e($company['tagline'] ?? 'Market') ?></p>
                 </div>
             </a>
 
             <!-- Desktop Menu -->
-            <div class="hidden lg:flex items-center gap-5 xl:gap-7 text-sm font-medium">
+            <div class="hidden lg:flex items-center gap-4 xl:gap-6 text-[13px] font-medium">
                 <a href="<?= e($homeHref) ?>" class="<?= navClass('home', $activeNav) ?>">Home</a>
                 <a href="<?= e($publicPrefix) ?>shopping.php" class="<?= navClass('shop', $activeNav) ?>">Shop</a>
                 <a href="<?= e($publicPrefix) ?>aboutus.php" class="<?= navClass('aboutus', $activeNav) ?>">About</a>
@@ -109,18 +123,18 @@ if ($initials === '') $initials = 'U';
             </div>
 
             <!-- Right side icons -->
-            <div class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+            <div class="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
 
                 <!-- Help -->
-                <a href="<?= e($publicPrefix) ?>help.php" class="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-[#8B4513]">
-                    <i class="fa-solid fa-headset"></i>
+                <a href="<?= e($publicPrefix) ?>help.php" class="flex items-center gap-1.5 text-[13px] font-medium text-gray-700 hover:text-[#8B4513]">
+                    <i class="fa-solid fa-headset text-sm"></i>
                     <span class="hidden xl:inline">Help</span>
                 </a>
 
-                <!-- Dashboard – only for admins -->
-                <?php if ($isAdmin): ?>
-                    <a href="<?= e($dashboardHref) ?>" class="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-[#8B4513]">
-                        <i class="fa-solid fa-gauge-high"></i>
+                <!-- Dashboard – admins and staff -->
+                <?php if ($canAccessDashboard): ?>
+                    <a href="<?= e($dashboardHref) ?>" class="flex items-center gap-1.5 text-[13px] font-medium text-gray-700 hover:text-[#8B4513]">
+                        <i class="fa-solid fa-gauge-high text-sm"></i>
                         <span class="hidden xl:inline">Dashboard</span>
                     </a>
                 <?php endif; ?>
@@ -131,26 +145,26 @@ if ($initials === '') $initials = 'U';
                         <!-- Avatar button -->
                         <button id="account-btn" type="button"
                                 class="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#8B4513]/40 transition">
-                            <div class="w-9 h-9 rounded-full bg-[#8B4513] text-white flex items-center justify-center text-sm font-semibold tracking-wide shadow-sm">
+                            <div class="w-8 h-8 rounded-full bg-[#8B4513] text-white flex items-center justify-center text-xs font-semibold tracking-wide shadow-sm">
                                 <?= e($initials) ?>
                             </div>
                         </button>
 
                         <!-- Dropdown card -->
                         <div id="account-dropdown"
-                             class="hidden absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 z-[130] overflow-hidden">
+                             class="hidden absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-[130] overflow-hidden">
                             
                             <!-- User info -->
-                            <div class="px-5 py-4 border-b border-gray-100 bg-[#faf8f4]">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-11 h-11 rounded-full bg-[#8B4513] text-white flex items-center justify-center text-base font-semibold flex-shrink-0">
+                            <div class="px-4 py-3.5 border-b border-gray-100 bg-[#faf8f4]">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-full bg-[#8B4513] text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
                                         <?= e($initials) ?>
                                     </div>
                                     <div class="min-w-0">
-                                        <p class="font-semibold text-gray-900 truncate text-[15px]">
+                                        <p class="font-semibold text-gray-900 truncate text-sm">
                                             <?= e(trim("$firstName $lastName") ?: 'User') ?>
                                         </p>
-                                        <p class="text-sm text-gray-500 truncate">
+                                        <p class="text-xs text-gray-500 truncate">
                                             <?= e($email) ?>
                                         </p>
                                     </div>
@@ -158,44 +172,44 @@ if ($initials === '') $initials = 'U';
                             </div>
 
                             <!-- Menu links -->
-                            <div class="py-1.5">
+                            <div class="py-1">
                                 <a href="<?= e($publicPrefix) ?>orders.php"
-                                   class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                    <i class="fa-solid fa-box-open w-5 text-center text-gray-400"></i>
+                                   class="flex items-center gap-2.5 px-4 py-2 text-[13px] text-gray-700 hover:bg-gray-50 transition">
+                                    <i class="fa-solid fa-box-open w-4 text-center text-gray-400 text-sm"></i>
                                     My Orders
                                 </a>
 
-                                <?php if ($isAdmin): ?>
+                                <?php if ($canAccessDashboard): ?>
                                     <a href="<?= e($dashboardHref) ?>"
-                                       class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                        <i class="fa-solid fa-gauge-high w-5 text-center text-gray-400"></i>
+                                       class="flex items-center gap-2.5 px-4 py-2 text-[13px] text-gray-700 hover:bg-gray-50 transition">
+                                        <i class="fa-solid fa-gauge-high w-4 text-center text-gray-400 text-sm"></i>
                                         Dashboard
                                     </a>
                                 <?php endif; ?>
 
                                 <a href="<?= e($publicPrefix) ?>logout.php"
-                                   class="flex items-center gap-3 px-5 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">
-                                    <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
+                                   class="flex items-center gap-2.5 px-4 py-2 text-[13px] text-red-600 hover:bg-red-50 transition">
+                                    <i class="fa-solid fa-right-from-bracket w-4 text-center text-sm"></i>
                                     Sign out
                                 </a>
                             </div>
                         </div>
                     </div>
                 <?php else: ?>
-                    <a href="<?= e($publicPrefix) ?>signin.php" class="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-[#8B4513]">
-                        <i class="fa-solid fa-user"></i>
+                    <a href="<?= e($publicPrefix) ?>signin.php" class="flex items-center gap-1.5 text-[13px] font-medium text-gray-700 hover:text-[#8B4513]">
+                        <i class="fa-solid fa-user text-sm"></i>
                         <span class="hidden xl:inline">Sign In</span>
                     </a>
                 <?php endif; ?>
 
                 <!-- Cart -->
                 <button onclick="toggleCart()" class="flex items-center gap-2 relative">
-                    <i class="fa-solid fa-cart-shopping text-xl"></i>
-                    <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-[#8B4513] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">0</span>
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-[#8B4513] text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">0</span>
                 </button>
 
                 <!-- Hamburger -->
-                <button id="menu-btn" class="lg:hidden text-2xl ml-1">
+                <button id="menu-btn" class="lg:hidden text-xl ml-1">
                     <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
@@ -204,11 +218,11 @@ if ($initials === '') $initials = 'U';
 
     <!-- Mobile / Tablet Menu -->
     <div id="mobile-overlay" class="hidden fixed inset-0 bg-black/60 z-[100] lg:hidden"></div>
-    <div id="mobile-menu" class="hidden fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-[110] translate-x-full transition-transform duration-300 lg:hidden">
-        <div class="p-6">
-            <button id="close-menu" class="text-4xl text-gray-400 hover:text-gray-600 float-right">×</button>
+    <div id="mobile-menu" class="hidden fixed top-0 right-0 h-full w-64 bg-white shadow-2xl z-[110] translate-x-full transition-transform duration-300 lg:hidden">
+        <div class="p-5">
+            <button id="close-menu" class="text-3xl text-gray-400 hover:text-gray-600 float-right">×</button>
             
-            <div class="flex flex-col gap-5 mt-16 text-lg font-medium">
+            <div class="flex flex-col gap-4 mt-14 text-base font-medium">
                 <a href="<?= e($homeHref) ?>" class="<?= navClass('home', $activeNav) ?>">Home</a>
                 <a href="<?= e($publicPrefix) ?>shopping.php" class="<?= navClass('shop', $activeNav) ?>">Shop</a>
                 <a href="<?= e($publicPrefix) ?>aboutus.php" class="<?= navClass('aboutus', $activeNav) ?>">About Us</a>
@@ -218,9 +232,9 @@ if ($initials === '') $initials = 'U';
                 <a href="<?= e($publicPrefix) ?>contactus.php" class="<?= navClass('contact', $activeNav) ?>">Contact Us</a>
 
                 <?php if ($isLoggedIn): ?>
-                    <div class="pt-5 mt-2 border-t border-gray-100">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-full bg-[#8B4513] text-white flex items-center justify-center text-sm font-semibold">
+                    <div class="pt-4 mt-1 border-t border-gray-100">
+                        <div class="flex items-center gap-2.5 mb-3">
+                            <div class="w-9 h-9 rounded-full bg-[#8B4513] text-white flex items-center justify-center text-xs font-semibold">
                                 <?= e($initials) ?>
                             </div>
                             <div>
@@ -229,13 +243,13 @@ if ($initials === '') $initials = 'U';
                             </div>
                         </div>
 
-                        <a href="<?= e($publicPrefix) ?>orders.php" class="block py-2 text-base hover:text-[#8B4513]">My Orders</a>
+                        <a href="<?= e($publicPrefix) ?>orders.php" class="block py-1.5 text-sm hover:text-[#8B4513]">My Orders</a>
 
-                        <?php if ($isAdmin): ?>
-                            <a href="<?= e($dashboardHref) ?>" class="block py-2 text-base hover:text-[#8B4513]">Dashboard</a>
+                        <?php if ($canAccessDashboard): ?>
+                            <a href="<?= e($dashboardHref) ?>" class="block py-1.5 text-sm hover:text-[#8B4513]">Dashboard</a>
                         <?php endif; ?>
 
-                        <a href="<?= e($publicPrefix) ?>logout.php" class="block py-2 text-base text-red-600 hover:text-red-700">Sign out</a>
+                        <a href="<?= e($publicPrefix) ?>logout.php" class="block py-1.5 text-sm text-red-600 hover:text-red-700">Sign out</a>
                     </div>
                 <?php else: ?>
                     <a href="<?= e($publicPrefix) ?>signin.php" class="hover:text-[#8B4513]">Sign In</a>
@@ -251,17 +265,17 @@ if ($initials === '') $initials = 'U';
 
     <!-- CART DRAWER -->
     <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl translate-x-full transition-transform duration-300 z-[120] flex flex-col border-l border-gray-200">
-        <div class="p-6 border-b flex justify-between items-center">
-            <h2 class="text-2xl font-semibold">Shopping Cart</h2>
-            <button onclick="toggleCart()" class="text-3xl leading-none">×</button>
+        <div class="p-5 border-b flex justify-between items-center">
+            <h2 class="text-lg font-semibold">Shopping Cart</h2>
+            <button onclick="toggleCart()" class="text-2xl leading-none">×</button>
         </div>
-        <div id="cart-items" class="flex-1 p-6 overflow-auto"></div>
-        <div class="p-6 border-t">
-            <div class="flex justify-between text-xl font-medium mb-6">
+        <div id="cart-items" class="flex-1 p-5 overflow-auto"></div>
+        <div class="p-5 border-t">
+            <div class="flex justify-between text-base font-medium mb-4">
                 <span>Total</span>
                 <span id="cart-total">USH 0</span>
             </div>
-            <button onclick="checkout()" class="w-full bg-[#8B4513] text-white py-4 rounded-2xl font-medium">
+            <button onclick="checkout()" class="w-full bg-[#8B4513] text-white py-3.5 rounded-2xl font-medium text-sm">
                 Proceed to Checkout
             </button>
         </div>
@@ -287,6 +301,23 @@ if ($initials === '') $initials = 'U';
                     accountDropdown.classList.add('hidden');
                 }
             });
+        }
+
+        // ========== Image URL helper ==========
+        // Normalizes a stored image path (e.g. "images/pipe5.jpg") into a working
+        // src regardless of how deep the current page sits, and falls back to the
+        // logo placeholder only when there's truly no usable path.
+        function resolveImageUrl(rawPath, debugLabel) {
+            if (!rawPath) {
+                console.warn(`[cart image] "${debugLabel}" — no image path in the cart data at all, falling back to placeholder.`);
+                return ROOT_PREFIX + 'images/drum_logo.jpg';
+            }
+            let path = String(rawPath).trim().replace(/\\/g, '/');
+            if (/^https?:\/\//i.test(path) || path.startsWith('//')) return path;
+            path = path.replace(/^\.?\/+/, ''); // strip leading "./" or "/"
+            const resolved = ROOT_PREFIX + path;
+            console.debug(`[cart image] "${debugLabel}" — raw: "${rawPath}" → resolved: "${resolved}"`);
+            return resolved;
         }
 
         // ========== Cart functions ==========
@@ -370,6 +401,8 @@ if ($initials === '') $initials = 'U';
                 const data = await res.json();
                 if (!data.success) return;
 
+                console.debug('[cart] raw response from get-cart.php:', data);
+
                 const container = document.getElementById('cart-items');
                 const totalEl   = document.getElementById('cart-total');
                 const countEl   = document.getElementById('cart-count');
@@ -378,9 +411,9 @@ if ($initials === '') $initials = 'U';
 
                 if (!data.items || data.items.length === 0) {
                     container.innerHTML = `
-                        <div class="flex flex-col items-center justify-center h-full py-20 text-center text-gray-400">
-                            <i class="fa-solid fa-cart-shopping text-6xl mb-6"></i>
-                            <p>Your cart is empty.</p>
+                        <div class="flex flex-col items-center justify-center h-full py-16 text-center text-gray-400">
+                            <i class="fa-solid fa-cart-shopping text-5xl mb-5"></i>
+                            <p class="text-sm">Your cart is empty.</p>
                         </div>`;
                     totalEl.textContent = 'USH 0';
                     return;
@@ -388,43 +421,39 @@ if ($initials === '') $initials = 'U';
 
                 let html = '';
                 data.items.forEach(item => {
-                    let img = item.image_url || '';
-                    if (img && !img.startsWith('http') && !img.startsWith('/') && !img.startsWith('../')) {
-                        img = ROOT_PREFIX + img.replace(/^\//, '');
-                    }
-                    if (!img) {
-                        img = ROOT_PREFIX + 'images/drum_logo.jpg';
-                    }
+                    // Some backends key the image field differently — check the common variants.
+                    const rawImg = item.image_url || item.img_url || item.image || item.thumbnail || '';
+                    const img = resolveImageUrl(rawImg, item.product_name || `variant ${item.variant_id}`);
 
                     const variantId = item.variant_id;
 
                     html += `
-                        <div class="flex gap-4 mb-8">
+                        <div class="flex gap-3 mb-6">
                             <img src="${img}"
-                                 class="w-20 h-20 object-cover rounded-xl"
-                                 onerror="this.onerror=null; this.src='${ROOT_PREFIX}images/drum_logo.jpg'">
+                                 class="w-12 h-12 object-cover rounded-lg flex-shrink-0"
+                                 onerror="this.onerror=null; console.warn('[cart image] failed to load:', this.src, '— falling back to placeholder'); this.src='${ROOT_PREFIX}images/drum_logo.jpg'">
                             <div class="flex-1">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <p class="font-medium">${item.product_name}</p>
-                                        <p class="text-sm text-gray-500">${item.variant_title || ''}</p>
-                                        <p class="text-sm text-gray-500">USh ${Number(item.price).toLocaleString()}</p>
+                                        <p class="font-medium text-sm">${item.product_name}</p>
+                                        <p class="text-xs text-gray-500">${item.variant_title || ''}</p>
+                                        <p class="text-xs text-gray-500">USh ${Number(item.price).toLocaleString()}</p>
                                     </div>
                                     <button onclick="removeFromCart(${variantId})"
-                                            class="text-red-500 hover:text-red-700 text-sm ml-2" title="Remove">
+                                            class="text-red-500 hover:text-red-700 text-xs ml-2" title="Remove">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </div>
 
-                                <div class="flex justify-between mt-3 items-center">
-                                    <div class="flex items-center gap-2">
+                                <div class="flex justify-between mt-2.5 items-center">
+                                    <div class="flex items-center gap-1.5">
                                         <button onclick="updateQuantity(${variantId}, ${item.quantity - 1})"
-                                                class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 text-lg leading-none">−</button>
-                                        <span class="w-8 text-center font-medium">${item.quantity}</span>
+                                                class="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 text-xs leading-none">−</button>
+                                        <span class="w-5 text-center font-medium text-xs">${item.quantity}</span>
                                         <button onclick="updateQuantity(${variantId}, ${item.quantity + 1})"
-                                                class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 text-lg leading-none">+</button>
+                                                class="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 text-xs leading-none">+</button>
                                     </div>
-                                    <span class="font-medium">USh ${Number(item.subtotal).toLocaleString()}</span>
+                                    <span class="font-medium text-sm">USh ${Number(item.subtotal).toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>`;
@@ -453,7 +482,7 @@ if ($initials === '') $initials = 'U';
 
         function showToast(msg) {
             const toast = document.createElement('div');
-            toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl z-[150]';
+            toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-2.5 rounded-full shadow-2xl z-[150] text-sm';
             toast.textContent = msg;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 2500);

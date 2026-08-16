@@ -1,26 +1,20 @@
 <?php
 // Public/contactus.php
 
-// 1. Database connection
 require_once __DIR__ . '/../config/database-connection.php';
-
-// 2. PHPMailer
 require_once __DIR__ . '/../config/mail.php';
 
-// 3. Page settings for header
 $pageTitle = 'Contact Us';
 $activeNav = 'contact';
 
-// 4. Fetch company profile
+// Fetch company profile
 $stmt = $pdo->query("SELECT * FROM company_profile WHERE id = 1 LIMIT 1");
 $company = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-// Logo URL (used by header.php)
 $logoUrl = !empty($company['logo_url'])
     ? '../' . ltrim($company['logo_url'], '/')
     : '../images/drum_logo.jpg';
 
-// Address helpers
 $address_line1 = $company['address_line1'] ?? 'First Floor, Plot 25, Kampala Road';
 $address_line2 = $company['address_line2'] ?? '';
 $city          = $company['city']          ?? 'Kampala';
@@ -40,97 +34,132 @@ try {
     }
 } catch (Exception $e) {}
 
-// 5. Handle form + send email
-$success_message = '';
-$error_message   = '';
+// ---------- AJAX Form Handler ----------
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_contact'])) {
+    header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_form'])) {
     $name    = trim($_POST['name']    ?? '');
     $email_f = trim($_POST['email']   ?? '');
     $subject = trim($_POST['subject'] ?? 'Message from Contact Form');
     $message = trim($_POST['message'] ?? '');
 
     if ($name === '' || $email_f === '' || $message === '') {
-        $error_message = 'Please fill in all required fields.';
-    } elseif (!filter_var($email_f, FILTER_VALIDATE_EMAIL)) {
-        $error_message = 'Please enter a valid email address.';
-    } else {
-        try {
-            // ---------- Email to Enono support ----------
-            $supportEmail = !empty($company['email']) 
-                ? $company['email'] 
-                : 'support@enonomarket.com';
+        echo json_encode(['success' => false, 'message' => 'Please fill in all required fields.']);
+        exit;
+    }
 
-            $adminSubject = 'New Contact Message: ' . ($subject ?: 'No subject');
-            
-            $adminBody = '
-                <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-                    <h2 style="color:#8B4513;">New message from enono MARKET website</h2>
-                    <table style="width:100%;border-collapse:collapse;margin:20px 0;">
-                        <tr>
-                            <td style="padding:8px 0;color:#666;width:120px;">Name</td>
-                            <td style="padding:8px 0;font-weight:bold;">' . htmlspecialchars($name) . '</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 0;color:#666;">Email</td>
-                            <td style="padding:8px 0;">
-                                <a href="mailto:' . htmlspecialchars($email_f) . '">' . htmlspecialchars($email_f) . '</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding:8px 0;color:#666;">Subject</td>
-                            <td style="padding:8px 0;">' . htmlspecialchars($subject) . '</td>
-                        </tr>
-                    </table>
-                    <div style="background:#f9f5eb;padding:16px;border-radius:8px;margin-top:10px;">
-                        <p style="margin:0 0 6px;color:#666;font-size:13px;">Message:</p>
-                        <p style="margin:0;white-space:pre-wrap;">' . nl2br(htmlspecialchars($message)) . '</p>
-                    </div>
-                    <p style="color:#999;font-size:12px;margin-top:25px;">
-                        Sent from the Contact Us page on ' . date('d M Y, H:i') . '
-                    </p>
-                </div>';
+    if (!filter_var($email_f, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(['success' => false, 'message' => 'Please enter a valid email address.']);
+        exit;
+    }
 
-            $result = sendMail($supportEmail, 'Enono Support', $adminSubject, $adminBody, true);
-
-            if (!$result['success']) {
-                throw new Exception($result['message']);
-            }
-
-            // ---------- Confirmation email to the customer ----------
-            $confirmSubject = 'We received your message – enono MARKET';
-            $confirmBody = '
-                <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-                    <h2 style="color:#8B4513;">Thank you, ' . htmlspecialchars($name) . '!</h2>
-                    <p>We have received your message and will get back to you within 24 hours.</p>
-                    <div style="background:#f9f5eb;padding:16px;border-radius:8px;margin:20px 0;">
-                        <p style="margin:0 0 6px;color:#666;font-size:13px;">Your message:</p>
-                        <p style="margin:0;white-space:pre-wrap;">' . nl2br(htmlspecialchars($message)) . '</p>
-                    </div>
-                    <p style="color:#666;">Warm regards,<br>The enono MARKET Team</p>
-                </div>';
-
-            // Don't fail the whole process if confirmation fails
-            sendMail($email_f, $name, $confirmSubject, $confirmBody, true);
-
-            // ---------- Keep a local log as backup ----------
-            $logFile = __DIR__ . '/../contact_log.txt';
-            $log = date('Y-m-d H:i:s') . " | $name <$email_f> | $subject\n$message\n" . str_repeat('-', 40) . "\n";
-            @file_put_contents($logFile, $log, FILE_APPEND | LOCK_EX);
-
-            $success_message = 'Thank you! Your message has been sent. We will reply within 24 hours.';
-
-            // Clear form
-            $_POST = [];
-
-        } catch (Exception $e) {
-            error_log('Contact form error: ' . $e->getMessage());
-            $error_message = 'Sorry, we could not send your message at the moment. Please try again later or email us directly at ' . htmlspecialchars($email);
+    try {
+        // Save to database
+        $userId = null;
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
+        if (!empty($_SESSION['user_id'])) {
+            $userId = (int) $_SESSION['user_id'];
+        }
+
+        $ipAddress = $_SERVER['REMOTE_ADDR'] ?? null;
+        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) 
+            ? substr($_SERVER['HTTP_USER_AGENT'], 0, 500) 
+            : null;
+
+        $insert = $pdo->prepare("
+            INSERT INTO contact_messages 
+                (user_id, name, email, subject, message, status, ip_address, user_agent)
+            VALUES 
+                (:user_id, :name, :email, :subject, :message, 'new', :ip, :ua)
+        ");
+
+        $insert->execute([
+            ':user_id'  => $userId,
+            ':name'     => $name,
+            ':email'    => $email_f,
+            ':subject'  => $subject,
+            ':message'  => $message,
+            ':ip'       => $ipAddress,
+            ':ua'       => $userAgent,
+        ]);
+
+        // Email to support
+        $supportEmail = !empty($company['email']) ? $company['email'] : 'support@enonomarket.com';
+        $adminSubject = 'New Contact Message: ' . ($subject ?: 'No subject');
+        
+        $adminBody = '
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                <h2 style="color:#8B4513;">New message from enono MARKET website</h2>
+                <table style="width:100%;border-collapse:collapse;margin:20px 0;">
+                    <tr>
+                        <td style="padding:8px 0;color:#666;width:120px;">Name</td>
+                        <td style="padding:8px 0;font-weight:bold;">' . htmlspecialchars($name) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:8px 0;color:#666;">Email</td>
+                        <td style="padding:8px 0;">
+                            <a href="mailto:' . htmlspecialchars($email_f) . '">' . htmlspecialchars($email_f) . '</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:8px 0;color:#666;">Subject</td>
+                        <td style="padding:8px 0;">' . htmlspecialchars($subject) . '</td>
+                    </tr>
+                </table>
+                <div style="background:#f9f5eb;padding:16px;border-radius:8px;margin-top:10px;">
+                    <p style="margin:0 0 6px;color:#666;font-size:13px;">Message:</p>
+                    <p style="margin:0;white-space:pre-wrap;">' . nl2br(htmlspecialchars($message)) . '</p>
+                </div>
+                <p style="color:#999;font-size:12px;margin-top:25px;">
+                    Sent from the Contact Us page on ' . date('d M Y, H:i') . '
+                </p>
+            </div>';
+
+        $result = sendMail($supportEmail, 'Enono Support', $adminSubject, $adminBody, true);
+
+        if (!$result['success']) {
+            error_log('Contact form email failed: ' . $result['message']);
+        }
+
+        // Confirmation email to customer
+        $confirmSubject = 'We received your message – enono MARKET';
+        $confirmBody = '
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                <h2 style="color:#8B4513;">Thank you, ' . htmlspecialchars($name) . '!</h2>
+                <p>We have received your message and will get back to you within 24 hours.</p>
+                <div style="background:#f9f5eb;padding:16px;border-radius:8px;margin:20px 0;">
+                    <p style="margin:0 0 6px;color:#666;font-size:13px;">Your message:</p>
+                    <p style="margin:0;white-space:pre-wrap;">' . nl2br(htmlspecialchars($message)) . '</p>
+                </div>
+                <p style="color:#666;">Warm regards,<br>The enono MARKET Team</p>
+            </div>';
+
+        sendMail($email_f, $name, $confirmSubject, $confirmBody, true);
+
+        // Local log
+        $logFile = __DIR__ . '/../contact_log.txt';
+        $log = date('Y-m-d H:i:s') . " | $name <$email_f> | $subject\n$message\n" . str_repeat('-', 40) . "\n";
+        @file_put_contents($logFile, $log, FILE_APPEND | LOCK_EX);
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Thank you! Your message has been sent. We will reply within 24 hours.'
+        ]);
+        exit;
+
+    } catch (Exception $e) {
+        error_log('Contact form error: ' . $e->getMessage());
+        echo json_encode([
+            'success' => false,
+            'message' => 'Sorry, we could not send your message at the moment. Please try again later.'
+        ]);
+        exit;
     }
 }
 
-// 6. Include header
+// Normal page load
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
@@ -204,6 +233,10 @@ require_once __DIR__ . '/../includes/header.php';
     .submit-btn:hover {
         background: #6B3410;
     }
+    .submit-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
 </style>
 
 <!-- ==================== HERO ==================== -->
@@ -233,7 +266,6 @@ require_once __DIR__ . '/../includes/header.php';
             <div class="lg:col-span-2 space-y-5">
 
                 <div class="card overflow-hidden">
-                    <!-- Image -->
                     <div class="relative h-48 sm:h-52">
                         <img src="<?= e($locationImg) ?>"
                              alt="Enono Market – Kampala"
@@ -254,7 +286,6 @@ require_once __DIR__ . '/../includes/header.php';
                         </div>
                     </div>
 
-                    <!-- Details -->
                     <div class="p-6">
                         <div class="info-row">
                             <div class="info-icon">
@@ -326,47 +357,40 @@ require_once __DIR__ . '/../includes/header.php';
                         </p>
                     </div>
 
-                    <?php if ($success_message): ?>
-                        <div class="mb-6 p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex gap-3">
-                            <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
-                            <div>
-                                <p class="text-emerald-800 font-medium text-sm">Message sent</p>
-                                <p class="text-emerald-700/80 text-sm mt-0.5"><?= e($success_message) ?></p>
-                            </div>
+                    <!-- AJAX Alerts (hidden by default) -->
+                    <div id="successAlert" class="mb-6 p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex gap-3 hidden">
+                        <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+                        <div>
+                            <p class="text-emerald-800 font-medium text-sm">Message sent</p>
+                            <p class="text-emerald-700/80 text-sm mt-0.5" id="successText"></p>
                         </div>
-                    <?php endif; ?>
+                    </div>
 
-                    <?php if ($error_message): ?>
-                        <div class="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex gap-3">
-                            <i class="fa-solid fa-circle-exclamation text-red-500 mt-0.5"></i>
-                            <div>
-                                <p class="text-red-800 font-medium text-sm">Please check the form</p>
-                                <p class="text-red-700/80 text-sm mt-0.5"><?= e($error_message) ?></p>
-                            </div>
+                    <div id="errorAlert" class="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex gap-3 hidden">
+                        <i class="fa-solid fa-circle-exclamation text-red-500 mt-0.5"></i>
+                        <div>
+                            <p class="text-red-800 font-medium text-sm">Please check the form</p>
+                            <p class="text-red-700/80 text-sm mt-0.5" id="errorText"></p>
                         </div>
-                    <?php endif; ?>
+                    </div>
 
-                    <form method="POST" class="space-y-5">
-                        <input type="hidden" name="contact_form" value="1">
-
+                    <form id="contactForm" class="space-y-5">
                         <div class="grid sm:grid-cols-2 gap-5">
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
                                     Full name <span class="text-[#8B4513]">*</span>
                                 </label>
-                                <input type="text" name="name" required
+                                <input type="text" name="name" id="name" required
                                        class="form-input"
-                                       placeholder="Your name"
-                                       value="<?= e($_POST['name'] ?? '') ?>">
+                                       placeholder="Your name">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
                                     Email <span class="text-[#8B4513]">*</span>
                                 </label>
-                                <input type="email" name="email" required
+                                <input type="email" name="email" id="email" required
                                        class="form-input"
-                                       placeholder="you@example.com"
-                                       value="<?= e($_POST['email'] ?? '') ?>">
+                                       placeholder="you@example.com">
                             </div>
                         </div>
 
@@ -374,25 +398,25 @@ require_once __DIR__ . '/../includes/header.php';
                             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
                                 Subject
                             </label>
-                            <input type="text" name="subject"
+                            <input type="text" name="subject" id="subject"
                                    class="form-input"
-                                   placeholder="What is this about?"
-                                   value="<?= e($_POST['subject'] ?? '') ?>">
+                                   placeholder="What is this about?">
                         </div>
 
                         <div>
                             <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
                                 Message <span class="text-[#8B4513]">*</span>
                             </label>
-                            <textarea name="message" rows="5" required
+                            <textarea name="message" id="message" rows="5" required
                                       class="form-input resize-none"
-                                      placeholder="Tell us how we can help..."><?= e($_POST['message'] ?? '') ?></textarea>
+                                      placeholder="Tell us how we can help..."></textarea>
                         </div>
 
-                        <button type="submit"
+                        <button type="submit" id="submitBtn"
                                 class="submit-btn w-full text-white py-3.5 rounded-xl font-medium text-sm flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-paper-plane text-xs opacity-90"></i>
-                            Send Message
+                            <i class="fa-solid fa-paper-plane text-xs opacity-90" id="sendIcon"></i>
+                            <i class="fa-solid fa-spinner fa-spin hidden" id="loadingIcon"></i>
+                            <span id="btnText">Send Message</span>
                         </button>
                     </form>
                 </div>
@@ -402,7 +426,66 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 </section>
 
+<script>
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const submitBtn = document.getElementById('submitBtn');
+    const sendIcon = document.getElementById('sendIcon');
+    const loadingIcon = document.getElementById('loadingIcon');
+    const btnText = document.getElementById('btnText');
+    const successAlert = document.getElementById('successAlert');
+    const errorAlert = document.getElementById('errorAlert');
+    const successText = document.getElementById('successText');
+    const errorText = document.getElementById('errorText');
+
+    // Hide previous alerts
+    successAlert.classList.add('hidden');
+    errorAlert.classList.add('hidden');
+
+    // Show loading state
+    submitBtn.disabled = true;
+    sendIcon.classList.add('hidden');
+    loadingIcon.classList.remove('hidden');
+    btnText.textContent = 'Sending...';
+
+    try {
+        const formData = new FormData(form);
+        formData.append('ajax_contact', '1');
+
+        const response = await fetch(window.location.href, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            successText.textContent = data.message;
+            successAlert.classList.remove('hidden');
+            form.reset();
+
+            // Scroll to success message
+            successAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            errorText.textContent = data.message;
+            errorAlert.classList.remove('hidden');
+        }
+
+    } catch (err) {
+        errorText.textContent = 'Network error. Please try again.';
+        errorAlert.classList.remove('hidden');
+    }
+
+    // Reset button
+    submitBtn.disabled = false;
+    sendIcon.classList.remove('hidden');
+    loadingIcon.classList.add('hidden');
+    btnText.textContent = 'Send Message';
+});
+</script>
+
 <?php
-// 7. Include footer
 require_once __DIR__ . '/../includes/footer.php';
 ?>
