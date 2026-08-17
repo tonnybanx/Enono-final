@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 13, 2026 at 04:43 PM
+-- Generation Time: Aug 17, 2026 at 10:03 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -140,6 +140,13 @@ CREATE TABLE `carts` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `carts`
+--
+
+INSERT INTO `carts` (`id`, `user_id`, `session_id`, `created_at`, `updated_at`) VALUES
+(1, 2, NULL, '2026-08-16 15:40:53', '2026-08-17 07:56:58');
+
 -- --------------------------------------------------------
 
 --
@@ -227,6 +234,37 @@ INSERT INTO `company_profile` (`id`, `company_name`, `tagline`, `logo_url`, `fav
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `contact_messages`
+--
+
+CREATE TABLE `contact_messages` (
+  `id` bigint(20) NOT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  `name` varchar(150) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(30) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  `message` text NOT NULL,
+  `status` enum('new','read','replied','closed') NOT NULL DEFAULT 'new',
+  `admin_reply` text DEFAULT NULL,
+  `replied_by` bigint(20) DEFAULT NULL,
+  `replied_at` timestamp NULL DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` varchar(500) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `contact_messages`
+--
+
+INSERT INTO `contact_messages` (`id`, `user_id`, `name`, `email`, `phone`, `subject`, `message`, `status`, `admin_reply`, `replied_by`, `replied_at`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES
+(3, 1, 'AGWENG TONNY BRIAN', 'agwengtonnybrian@gmail.com', NULL, '', 'Do you have all sorts of traditional products', 'replied', 'yeah, we have all sorts of traditional products', 1, '2026-08-16 10:27:42', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-16 10:24:49', '2026-08-16 10:27:42');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `faqs`
 --
 
@@ -246,7 +284,7 @@ CREATE TABLE `faqs` (
 --
 
 INSERT INTO `faqs` (`id`, `category_id`, `question`, `answer`, `sort_order`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 1, 'How can I track my order?', 'Go to Track Order in the top menu or your account dashboard.', 1, 1, '2026-08-11 06:21:39', '2026-08-11 06:21:39'),
+(1, 1, 'How can I track my order?', 'Go to the orders page, here you will see a summary of the things you have ordered, here they can be in pending, packed or delivered ready for pickup at the pickup point', 1, 1, '2026-08-11 06:21:39', '2026-08-16 10:50:31'),
 (2, 1, 'My order is delayed, what should I do?', 'Please allow 2-5 business days. Contact support if longer.', 2, 1, '2026-08-11 06:21:39', '2026-08-11 06:21:39'),
 (3, 1, 'Can I change my order after placing it?', 'Yes, within 2 hours of placing the order.', 3, 1, '2026-08-11 06:21:39', '2026-08-11 06:21:39'),
 (4, 2, 'What is the delivery time?', 'Standard delivery usually takes 5-14 business days.', 1, 1, '2026-08-11 06:21:39', '2026-08-11 06:21:39'),
@@ -323,6 +361,28 @@ INSERT INTO `general_images` (`id`, `title`, `description`, `url`, `alt_text`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `message_replies`
+--
+
+CREATE TABLE `message_replies` (
+  `id` bigint(20) NOT NULL,
+  `contact_message_id` bigint(20) NOT NULL,
+  `sender_type` enum('customer','admin') NOT NULL,
+  `sender_id` bigint(20) DEFAULT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `message_replies`
+--
+
+INSERT INTO `message_replies` (`id`, `contact_message_id`, `sender_type`, `sender_id`, `message`, `created_at`) VALUES
+(6, 3, 'admin', 1, 'yeah, we have all sorts of traditional products', '2026-08-16 10:27:42');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `orders`
 --
 
@@ -346,6 +406,15 @@ CREATE TABLE `orders` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`id`, `order_number`, `user_id`, `customer_name`, `customer_email`, `customer_phone`, `status`, `payment_method`, `payment_status`, `subtotal`, `shipping_fee`, `total`, `currency`, `shipping_address`, `notes`, `created_at`, `updated_at`) VALUES
+(1, 'ENO-20260816-692336', 2, 'Tony Brian AGWENG', '2101600069@sun.ac.ug', '0784995070', 'Shipped', 'mtn', 'Pending', 155000.00, 0.00, 155000.00, 'UGX', 'Tony Brian AGWENG\nKyambogo village mall, street 4\nKampala\nUganda', NULL, '2026-08-16 16:08:38', '2026-08-17 05:56:48'),
+(2, 'ENO-20260817-763394', 2, 'Tony Brian AGWENG', '2101600069@sun.ac.ug', '0758678678', 'Pending', 'mtn', 'Paid', 515000.00, 0.00, 515000.00, 'UGX', 'Tony Brian AGWENG\nMasaka city center\nMasaka\nUganda', ' | TX: SIM-B0B3C0C2537A', '2026-08-17 07:47:03', '2026-08-17 07:47:04'),
+(3, 'ENO-20260817-00C6DA', 2, 'Tony Brian AGWENG', '2101600069@sun.ac.ug', '0758678678', 'Pending', 'mtn', 'Paid', 150000.00, 0.00, 150000.00, 'UGX', 'Tony Brian AGWENG\nMasaka city center\nMasaka\nUganda', ' | TX: SIM-7E0F5D6C5361', '2026-08-17 07:58:08', '2026-08-17 07:58:08');
+
 -- --------------------------------------------------------
 
 --
@@ -364,6 +433,16 @@ CREATE TABLE `order_items` (
   `total_price` decimal(12,2) NOT NULL,
   `status` enum('Pending','Packed','Shipped','Delivered') NOT NULL DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variant_id`, `product_name`, `sku`, `quantity`, `unit_price`, `total_price`, `status`) VALUES
+(1, 1, 2, 20, 'Barkcloth (Embugo)', 'BARK-NAL-DRK', 1, 155000.00, 155000.00, 'Shipped'),
+(2, 2, 2, 19, 'Barkcloth (Embugo)', 'BARK-NAL-AMB', 3, 150000.00, 450000.00, 'Pending'),
+(3, 2, 3, 3, 'Beaded Brass Necklace (Embira)', 'JEW-MUK-NAT', 1, 65000.00, 65000.00, 'Pending'),
+(4, 3, 2, 19, 'Barkcloth (Embugo)', 'BARK-NAL-AMB', 1, 150000.00, 150000.00, 'Pending');
 
 -- --------------------------------------------------------
 
@@ -513,7 +592,7 @@ CREATE TABLE `product_variants` (
 INSERT INTO `product_variants` (`id`, `product_id`, `spirit_id`, `sku`, `name`, `title`, `image_url`, `price`, `compare_at_price`, `cost_price`, `stock_quantity`, `low_stock_threshold`, `weight_grams`, `is_active`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, 'PIPE-MUK-NAT', '', 'Mukasa’s Pipe – Natural Wood', 'images/pipe5.jpg', 130000.00, NULL, NULL, 12, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
 (2, 1, 1, 'PIPE-MUK-DRK', '', 'Mukasa’s Pipe – Dark Ebony', 'images/pipe3.jpg', 135000.00, NULL, NULL, 10, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
-(3, 3, 1, 'JEW-MUK-NAT', '', 'Beaded Necklace – Natural', 'images/jewelery10.jpg', 65000.00, NULL, NULL, 20, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
+(3, 3, 1, 'JEW-MUK-NAT', '', 'Beaded Necklace – Natural', 'images/jewelery10.jpg', 65000.00, NULL, NULL, 19, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-17 07:47:03'),
 (4, 3, 1, 'JEW-MUK-RED', '', 'Beaded Necklace – Deep Red', 'images/jewelery2.jpg', 68000.00, NULL, NULL, 18, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
 (5, 3, 1, 'JEW-MUK-BLK', '', 'Beaded Necklace – Charcoal', 'images/jewelery4.jpg', 70000.00, NULL, NULL, 15, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
 (6, 6, 1, 'DRUM-MUK-NAT', '', 'Traditional Drum – Natural', 'images/drum1.jpg', 180000.00, NULL, NULL, 6, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
@@ -529,8 +608,8 @@ INSERT INTO `product_variants` (`id`, `product_id`, `spirit_id`, `sku`, `name`, 
 (16, 5, 2, 'BASK-MUT-DRK', '', 'Handwoven Basket – Dark', 'images/basket4.jpg', 47000.00, NULL, NULL, 18, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
 (17, 8, 2, 'MASK-MUT-NAT', '', 'Carved Mask – Natural Wood', 'images/mask1.jpg', 95000.00, NULL, NULL, 8, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
 (18, 8, 2, 'MASK-MUT-DRK', '', 'Carved Mask – Dark Ebony', 'images/mask3.jpg', 100000.00, NULL, NULL, 7, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
-(19, 2, NULL, 'BARK-NAL-AMB', '', 'Barkcloth – Amber / Terracotta', 'images/barkcloth1.jpg', 150000.00, NULL, NULL, 15, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
-(20, 2, 3, 'BARK-NAL-DRK', '', 'Barkcloth – Deep Brown', 'images/barkcloth3.jpg', 155000.00, NULL, NULL, 12, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
+(19, 2, NULL, 'BARK-NAL-AMB', '', 'Barkcloth – Amber / Terracotta', 'images/barkcloth1.jpg', 150000.00, NULL, NULL, 11, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-17 07:58:08'),
+(20, 2, 3, 'BARK-NAL-DRK', '', 'Barkcloth – Deep Brown', 'images/barkcloth3.jpg', 155000.00, NULL, NULL, 11, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-16 16:08:39'),
 (21, 2, 3, 'BARK-NAL-NAT', '', 'Barkcloth – Natural', 'images/barkcloth4.jpg', 150000.00, NULL, NULL, 10, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
 (22, 4, 3, 'POT-NAL-AMB', '', 'Clay Pot – Amber / Ochre', 'images/claywork1.jpg', 85000.00, NULL, NULL, 14, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
 (23, 4, 3, 'POT-NAL-DRK', '', 'Clay Pot – Dark Burnished', 'images/pot6.jpg', 90000.00, NULL, NULL, 11, 5, NULL, 1, '2026-08-11 06:21:37', '2026-08-13 14:30:29'),
@@ -664,7 +743,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `role`, `email_verified`, `verification_token`, `token_expires_at`, `is_active`, `created_at`, `updated_at`, `last_login_at`) VALUES
-(1, 'agwengtonnybrian@gmail.com', '$2y$10$Q8aAKYCKxgaKsQp44I.gIuLRYKk6RCRuPQ8VjurEVz6unJ16shNrO', 'TONNY', 'BRIAN', NULL, 'admin', 1, NULL, NULL, 1, '2026-08-11 06:21:39', '2026-08-13 05:54:22', '2026-08-13 05:54:22');
+(1, 'agwengtonnybrian@gmail.com', '$2y$10$Q8aAKYCKxgaKsQp44I.gIuLRYKk6RCRuPQ8VjurEVz6unJ16shNrO', 'TONNY', 'BRIAN', NULL, 'admin', 1, NULL, NULL, 1, '2026-08-11 06:21:39', '2026-08-16 16:09:12', '2026-08-16 16:09:12'),
+(2, '2101600069@sun.ac.ug', '$2y$10$lptsCPBGazsOAhQCRWGik.UuqcH/58641zV388wsCbJsJMpbsjA9.', 'Tony', 'Brian AGWENG', '', 'staff', 1, NULL, NULL, 1, '2026-08-16 15:39:38', '2026-08-17 07:45:58', '2026-08-17 07:45:58');
 
 --
 -- Indexes for dumped tables
@@ -727,6 +807,15 @@ ALTER TABLE `company_profile`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `contact_messages`
+--
+ALTER TABLE `contact_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `status` (`status`),
+  ADD KEY `created_at` (`created_at`);
+
+--
 -- Indexes for table `faqs`
 --
 ALTER TABLE `faqs`
@@ -745,6 +834,13 @@ ALTER TABLE `faq_categories`
 --
 ALTER TABLE `general_images`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `message_replies`
+--
+ALTER TABLE `message_replies`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contact_message_id` (`contact_message_id`);
 
 --
 -- Indexes for table `orders`
@@ -855,19 +951,25 @@ ALTER TABLE `blog_posts`
 -- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `contact_messages`
+--
+ALTER TABLE `contact_messages`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `faqs`
@@ -888,16 +990,22 @@ ALTER TABLE `general_images`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
+-- AUTO_INCREMENT for table `message_replies`
+--
+ALTER TABLE `message_replies`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -933,7 +1041,7 @@ ALTER TABLE `spirits`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -975,6 +1083,12 @@ ALTER TABLE `categories`
 --
 ALTER TABLE `faqs`
   ADD CONSTRAINT `faqs_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `faq_categories` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `message_replies`
+--
+ALTER TABLE `message_replies`
+  ADD CONSTRAINT `message_replies_ibfk_1` FOREIGN KEY (`contact_message_id`) REFERENCES `contact_messages` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `order_items`

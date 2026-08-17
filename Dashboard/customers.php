@@ -106,11 +106,12 @@ function formatDate($datetime) {
 
         <?php include __DIR__ . '/includes/topbar.php'; ?>
 
-        <div class="flex-1 overflow-auto p-6">
-            <div class="max-w-7xl mx-auto">
+        <!-- Main content – flex column so pagination stays at bottom -->
+        <div class="flex-1 overflow-hidden px-6 pt-6 flex flex-col">
+            <div class="max-w-7xl mx-auto w-full flex flex-col flex-1 min-h-0">
 
                 <!-- Header -->
-                <div class="flex justify-between items-center mb-6">
+                <div class="flex justify-between items-center mb-6 flex-shrink-0">
                     <div>
                         <h1 class="text-2xl font-semibold text-gray-900">Customers</h1>
                         <p class="text-gray-500">
@@ -120,7 +121,7 @@ function formatDate($datetime) {
                 </div>
 
                 <!-- Search & Filter -->
-                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                <div class="flex flex-col md:flex-row gap-4 mb-6 flex-shrink-0">
                     <div class="flex-1 relative">
                         <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                         <input type="text" id="searchInput"
@@ -139,11 +140,13 @@ function formatDate($datetime) {
                     </div>
                 </div>
 
-                <!-- Table -->
-                <div class="card overflow-hidden">
-                    <div class="table-wrapper">
+                <!-- Table Card (flex column – pagination stays at bottom) -->
+                <div class="card overflow-hidden flex flex-col flex-1 min-h-0">
+                    
+                    <!-- Scrollable table area -->
+                    <div class="flex-1 overflow-auto min-h-0 table-wrapper">
                         <table class="w-full">
-                            <thead class="bg-gray-50 border-b border-gray-200">
+                            <thead class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
                                 <tr class="text-left text-sm text-gray-600">
                                     <th class="w-10 p-4"><input type="checkbox" id="selectAll" class="w-4 h-4"></th>
                                     <th class="p-4 font-medium">Customer</th>
@@ -234,8 +237,8 @@ function formatDate($datetime) {
                         </table>
                     </div>
 
-                    <!-- Pagination -->
-                    <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t bg-gray-50">
+                    <!-- Pagination – always at the bottom -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t bg-gray-50 flex-shrink-0">
                         <div class="flex items-center gap-3 text-sm text-gray-600">
                             <span>Show</span>
                             <select id="pageSize" class="bg-white border border-gray-300 rounded-xl py-2 px-4 focus:outline-none" onchange="changePageSize()">

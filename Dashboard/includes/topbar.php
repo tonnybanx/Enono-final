@@ -7,15 +7,14 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // 2. Protect the dashboard – only logged-in admin or staff users can access.
-//    Non-qualifying sessions are sent back to the storefront home, never to a
-//    login/signin page.
+//    Anyone else is redirected to the public sign-in page.
 $allowedDashboardRoles = ['admin', 'staff'];
 if (empty($_SESSION['user_id']) || empty($_SESSION['role']) || !in_array($_SESSION['role'], $allowedDashboardRoles, true)) {
-    header('Location: ../../index.php');
+    header('Location: ../../Public/signin.php');
     exit;
 }
 
-// 3. Get logged-in user details from session (set these on login)
+// 3. Get logged-in user details from session
 $adminFirstName = trim($_SESSION['first_name'] ?? '');
 $adminLastName  = trim($_SESSION['last_name'] ?? '');
 $adminName      = trim($adminFirstName . ' ' . $adminLastName);
@@ -23,11 +22,10 @@ $adminName      = $adminName !== '' ? $adminName : ($_SESSION['email'] ?? 'User'
 $adminEmail     = $_SESSION['email'] ?? '';
 $adminRole      = ucfirst($_SESSION['role'] ?? '');
 
-// 4. Build initials for the avatar (no profile image stored in DB)
+// 4. Build initials for the avatar
 if ($adminFirstName !== '' || $adminLastName !== '') {
     $initials = strtoupper(substr($adminFirstName, 0, 1) . substr($adminLastName, 0, 1));
 } else {
-    // Fall back to the first two letters of whatever name/email we have
     $fallback = preg_replace('/[^A-Za-z]/', '', $adminName);
     $initials = strtoupper(substr($fallback, 0, 2));
 }
@@ -38,13 +36,11 @@ if ($initials === '') {
 // 5. Count new / unread messages
 $newMessagesCount = 0;
 try {
-    // $pdo should already be available (included before topbar)
     if (isset($pdo)) {
         $countStmt = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE status = 'new'");
         $newMessagesCount = (int) $countStmt->fetchColumn();
     }
 } catch (Exception $e) {
-    // silently fail – don’t break the topbar
     $newMessagesCount = 0;
 }
 ?>
@@ -57,20 +53,21 @@ try {
         <i class="fa fa-bars"></i>
     </button>
 
-    <!-- Search -->
-    <div class="flex-1 max-w-md">
-        <div class="relative">
-            <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            <input type="text" 
-                   placeholder="Search by name or SKU" 
-                   class="w-full bg-gray-100 border border-transparent focus:border-gray-300 rounded-2xl py-3 pl-12 pr-5 focus:outline-none text-sm">
-        </div>
-    </div>
+    <!-- Spacer (fills the space left by the removed search bar) -->
+    <div class="flex-1"></div>
 
-    <!-- Right side -->
-    <div class="flex items-center gap-6 ml-auto">
+    <!-- Right side icons -->
+    <div class="flex items-center gap-5">
 
-        <!-- Messages / Notifications bell -->
+        <!-- View Storefront -->
+        <a href="../index.php" 
+           class="text-gray-600 hover:text-gray-900 transition"
+           title="View Storefront"
+           target="_blank">
+            <i class="fa fa-store text-xl"></i>
+        </a>
+
+        <!-- Messages / Notifications bell (unchanged) -->
         <a href="messages.php" 
            class="relative text-gray-600 hover:text-gray-900 transition"
            title="Messages">
@@ -84,7 +81,14 @@ try {
             <?php endif; ?>
         </a>
 
-        <!-- Logged-in user -->
+        <!-- Profile -->
+        <a href="profile.php" 
+           class="text-gray-600 hover:text-gray-900 transition"
+           title="My Profile">
+            <i class="fa fa-user text-xl"></i>
+        </a>
+
+        <!-- Logged-in user avatar + dropdown -->
         <div class="relative">
             <button id="accountTrigger" onclick="toggleAccountCard(event)"
                     class="flex items-center focus:outline-none">
@@ -117,10 +121,10 @@ try {
                     </div>
                 </div>
                 <div class="border-t border-gray-100 p-2">
-                    <a href="account.php" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-gray-50 font-medium">
+                    <a href="profile.php" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-gray-50 font-medium">
                         <i class="fa fa-user"></i> My account
                     </a>
-                    <a href="logout.php" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-red-600 hover:bg-red-50 font-medium">
+                    <a href="../../Public/logout.php" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-red-600 hover:bg-red-50 font-medium">
                         <i class="fa fa-sign-out-alt"></i> Log out
                     </a>
                 </div>

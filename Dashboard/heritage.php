@@ -38,7 +38,7 @@ function spiritImage($url) {
         body { background-color: #f8fafc; }
         .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 0; /* no rounded corners */
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
         }
         tr { transition: background-color 0.2s; }
@@ -89,11 +89,12 @@ function spiritImage($url) {
 
         <?php include __DIR__ . '/includes/topbar.php'; ?>
 
-        <div class="flex-1 overflow-auto p-6">
-            <div class="max-w-7xl mx-auto">
+        <!-- Main content – flex column so pagination stays at bottom -->
+        <div class="flex-1 overflow-hidden px-6 pt-6 flex flex-col">
+            <div class="max-w-7xl mx-auto w-full flex flex-col flex-1 min-h-0">
 
                 <!-- Header -->
-                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-6 flex-shrink-0">
                     <div>
                         <h1 class="text-2xl font-semibold text-gray-900">Heritage & Spirits</h1>
                         <p class="text-gray-500">
@@ -108,7 +109,7 @@ function spiritImage($url) {
                 </div>
 
                 <!-- Search -->
-                <div class="mb-6">
+                <div class="mb-6 flex-shrink-0">
                     <div class="relative max-w-md">
                         <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                         <input type="text" id="searchInput"
@@ -118,11 +119,13 @@ function spiritImage($url) {
                     </div>
                 </div>
 
-                <!-- Table -->
-                <div class="card overflow-hidden">
-                    <div class="table-wrapper">
+                <!-- Table Card (flex column – pagination stays at bottom) -->
+                <div class="card overflow-hidden flex flex-col flex-1 min-h-0">
+                    
+                    <!-- Scrollable table area -->
+                    <div class="flex-1 overflow-auto min-h-0 table-wrapper">
                         <table class="w-full">
-                            <thead class="bg-gray-50 border-b border-gray-200">
+                            <thead class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
                                 <tr class="text-left text-sm text-gray-600">
                                     <th class="p-4 font-medium w-16">#</th>
                                     <th class="p-4 font-medium">Spirit</th>
@@ -194,6 +197,34 @@ function spiritImage($url) {
                                 <?php endif; ?>
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Pagination – always at the bottom -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t bg-gray-50 flex-shrink-0">
+                        <div class="flex items-center gap-3 text-sm text-gray-600">
+                            <span>Show</span>
+                            <select id="pageSize" class="bg-white border border-gray-300 rounded-xl py-2 px-4 focus:outline-none" onchange="changePageSize()">
+                                <option value="10">10</option>
+                                <option value="20" selected>20</option>
+                                <option value="50">50</option>
+                            </select>
+                            <span>per page</span>
+                        </div>
+
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <span id="pageInfo">Page 1 of 1</span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button id="prevBtn" onclick="changePage(-1)" 
+                                    class="px-4 py-2 rounded-xl border border-gray-300 bg-white hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed">
+                                <i class="fa fa-chevron-left mr-1"></i> Previous
+                            </button>
+                            <button id="nextBtn" onclick="changePage(1)" 
+                                    class="px-4 py-2 rounded-xl border border-gray-300 bg-white hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed">
+                                Next <i class="fa fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -315,12 +346,58 @@ function spiritImage($url) {
             ];
         }, $spirits), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
 
+        let currentPage = 1;
+        let pageSize = 20;
+        let filteredRows = [];
+
+        function getAllRows() {
+            return Array.from(document.querySelectorAll('.spirit-row'));
+        }
+
         function applyFilters() {
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
-            document.querySelectorAll('.spirit-row').forEach(row => {
+            const allRows = getAllRows();
+
+            filteredRows = allRows.filter(row => {
                 const name = row.dataset.name || '';
-                row.style.display = (!search || name.includes(search)) ? '' : 'none';
+                return !search || name.includes(search);
             });
+
+            allRows.forEach(r => r.style.display = 'none');
+            currentPage = 1;
+            renderPage();
+        }
+
+        function renderPage() {
+            const total = filteredRows.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const start = (currentPage - 1) * pageSize;
+            const end   = start + pageSize;
+
+            filteredRows.forEach((row, idx) => {
+                row.style.display = (idx >= start && idx < end) ? '' : 'none';
+            });
+
+            document.getElementById('pageInfo').textContent = 
+                total === 0 ? 'No results' : `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('totalCount').textContent = total;
+
+            document.getElementById('prevBtn').disabled = currentPage <= 1;
+            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+        }
+
+        function changePage(delta) {
+            currentPage += delta;
+            renderPage();
+        }
+
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById('pageSize').value, 10);
+            currentPage = 1;
+            renderPage();
         }
 
         function viewSpirit(id) {
@@ -433,6 +510,10 @@ function spiritImage($url) {
         }
 
         document.getElementById('toggleSidebar')?.addEventListener('click', toggleSidebar);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyFilters();
+        });
     </script>
 </body>
 </html>

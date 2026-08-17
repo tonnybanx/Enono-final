@@ -3,14 +3,15 @@
 
 require_once __DIR__ . '/../config/database-connection.php';
 
-if (session_status() === PHP_SESSION_NONE) session_start();
-if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: ../Public/login.php');
-    exit;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
+// Access control is handled by includes/topbar.php
+// (only admin and staff can reach this page)
+
 $currentPage = 'profile';
-$userId = (int) $_SESSION['user_id'];
+$userId = (int) ($_SESSION['user_id'] ?? 0);
 $success = $error = '';
 
 // Fetch current user
@@ -19,7 +20,8 @@ $stmt->execute([$userId]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
-    header('Location: ../Public/login.php');
+    // Safety fallback – should not happen if topbar is working
+    header('Location: ../../Public/signin.php');
     exit;
 }
 

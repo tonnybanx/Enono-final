@@ -8,7 +8,12 @@ try {
     $input = json_decode(file_get_contents('php://input'), true);
 
     $variantId = (int)($input['variant_id'] ?? 0);
-    $quantity  = max(1, (int)($input['quantity'] ?? 1));
+
+    // Always start from the requested quantity (default 1). Never inherit another item's qty.
+    $quantity = (int)($input['quantity'] ?? 1);
+    if ($quantity < 1) {
+        $quantity = 1;
+    }
 
     if ($variantId <= 0) {
         echo json_encode(['success' => false, 'message' => 'Invalid product']);
@@ -29,7 +34,7 @@ try {
         exit;
     }
 
-    if ($variant['stock_quantity'] < $quantity) {
+    if ((int)$variant['stock_quantity'] < $quantity) {
         echo json_encode(['success' => false, 'message' => 'Not enough stock']);
         exit;
     }
@@ -46,10 +51,10 @@ try {
         $cart = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($cart) {
-            $cartId = $cart['id'];
+            $cartId = (int)$cart['id'];
         } else {
             $pdo->prepare("INSERT INTO carts (user_id) VALUES (?)")->execute([$_SESSION['user_id']]);
-            $cartId = $pdo->lastInsertId();
+            $cartId = (int)$pdo->lastInsertId();
         }
     } else {
         // Guest – use session_id
@@ -59,10 +64,10 @@ try {
         $cart = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($cart) {
-            $cartId = $cart['id'];
+            $cartId = (int)$cart['id'];
         } else {
             $pdo->prepare("INSERT INTO carts (session_id) VALUES (?)")->execute([$sessionId]);
-            $cartId = $pdo->lastInsertId();
+            $cartId = (int)$pdo->lastInsertId();
         }
     }
 
@@ -72,9 +77,10 @@ try {
     $existing = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($existing) {
-        $newQty = $existing['quantity'] + $quantity;
+        // Same product already in cart → increase by the requested amount only
+        $newQty = (int)$existing['quantity'] + $quantity;
 
-        if ($newQty > $variant['stock_quantity']) {
+        if ($newQty > (int)$variant['stock_quantity']) {
             throw new Exception('Not enough stock for the requested quantity');
         }
 
@@ -84,6 +90,7 @@ try {
             WHERE id = ?
         ")->execute([$newQty, $variant['price'], $existing['id']]);
     } else {
+        // Brand new line → always insert with the requested quantity (normally 1)
         $pdo->prepare("
             INSERT INTO cart_items (cart_id, variant_id, quantity, price)
             VALUES (?, ?, ?, ?)
@@ -107,7 +114,12 @@ try {
     ]);
 
 } catch (Exception $e) {
-    if ($pdo->inTransaction()) $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     error_log('add-to-cart error: ' . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => $e->getMessage() ?: 'Could not add to cart']);
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage() ?: 'Could not add to cart'
+    ]);
 }

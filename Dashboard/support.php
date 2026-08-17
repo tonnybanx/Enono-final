@@ -3,11 +3,12 @@
 
 require_once __DIR__ . '/../config/database-connection.php';
 
-if (session_status() === PHP_SESSION_NONE) session_start();
-if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: ../Public/login.php');
-    exit;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
+
+// Access control is handled by includes/topbar.php
+// (only admin and staff can reach this page)
 
 $currentPage = 'support';
 $success = $error = '';

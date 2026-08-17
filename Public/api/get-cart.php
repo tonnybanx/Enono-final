@@ -39,10 +39,21 @@ try {
             pv.title AS variant_title,
             pv.sku,
             p.name AS product_name,
-            (
-                SELECT url FROM product_images 
-                WHERE variant_id = pv.id AND is_primary = 1 
-                LIMIT 1
+            -- Prefer variant image, then product_images by variant, then by product
+            COALESCE(
+                NULLIF(pv.image_url, ''),
+                (
+                    SELECT url FROM product_images 
+                    WHERE variant_id = pv.id 
+                    ORDER BY is_primary DESC, sort_order ASC 
+                    LIMIT 1
+                ),
+                (
+                    SELECT url FROM product_images 
+                    WHERE product_id = p.id 
+                    ORDER BY is_primary DESC, sort_order ASC 
+                    LIMIT 1
+                )
             ) AS image_url
         FROM cart_items ci
         JOIN product_variants pv ON pv.id = ci.variant_id

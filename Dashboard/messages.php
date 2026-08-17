@@ -8,12 +8,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: ../Public/login.php');
-    exit;
-}
+// Access control is handled by includes/topbar.php
+// (only admin and staff can reach this page)
 
-$adminId = (int) $_SESSION['user_id'];
+$adminId = (int) ($_SESSION['user_id'] ?? 0);
 
 // ---------- AJAX Handlers ----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -237,7 +235,7 @@ $pageTitle = 'Messages';
 
         /* Cleaner bubbles */
         .bubble-customer {
-            background: #f1f5f9;          /* soft slate */
+            background: #f1f5f9;
             color: #1e293b;
             border-radius: 18px 18px 18px 4px;
             max-width: 75%;
@@ -254,7 +252,7 @@ $pageTitle = 'Messages';
         .chat-scroll {
             height: calc(100vh - 280px);
             overflow-y: auto;
-            background: #ffffff;          /* white background */
+            background: #ffffff;
         }
         .chat-scroll::-webkit-scrollbar { width: 6px; }
         .chat-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }

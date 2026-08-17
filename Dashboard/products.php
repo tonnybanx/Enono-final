@@ -74,7 +74,11 @@ function formatMoney($amount, $currency = 'UGX') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         body { background-color: #f8fafc; }
-        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05); }
+        .card {
+            background: white;
+            border-radius: 0; /* no rounded corners */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
         tr { transition: background-color 0.2s; }
         tr:hover { background-color: #f8fafc; }
         .action-btn { opacity: 0; transform: translateX(10px); transition: all 0.25s ease; }
@@ -98,9 +102,12 @@ function formatMoney($amount, $currency = 'UGX') {
 <div class="flex-1 flex flex-col h-full overflow-hidden">
     <?php include __DIR__ . '/includes/topbar.php'; ?>
 
-    <div class="flex-1 overflow-auto p-6">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex justify-between items-center mb-6">
+    <!-- Main content – flex column so pagination stays at bottom -->
+    <div class="flex-1 overflow-hidden px-6 pt-6 flex flex-col">
+        <div class="max-w-7xl mx-auto w-full flex flex-col flex-1 min-h-0">
+
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6 flex-shrink-0">
                 <div>
                     <h1 class="text-2xl font-semibold text-gray-900">Products</h1>
                     <p class="text-gray-500"><span id="totalCount"><?= count($products) ?></span> products</p>
@@ -111,7 +118,7 @@ function formatMoney($amount, $currency = 'UGX') {
             </div>
 
             <!-- Search & Filter -->
-            <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <div class="flex flex-col md:flex-row gap-4 mb-6 flex-shrink-0">
                 <div class="flex-1 relative">
                     <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     <input type="text" id="searchInput" class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:border-blue-500"
@@ -133,7 +140,7 @@ function formatMoney($amount, $currency = 'UGX') {
             </div>
 
             <!-- Selection Bar -->
-            <div id="selectionBar" class="hidden bg-white border border-gray-200 rounded-2xl p-4 flex items-center justify-between mb-4">
+            <div id="selectionBar" class="hidden bg-white border border-gray-200 rounded-2xl p-4 flex items-center justify-between mb-4 flex-shrink-0">
                 <div class="flex items-center gap-3">
                     <span class="font-medium text-gray-700">1 selected</span>
                     <button onclick="clearSelection()" class="text-blue-600 hover:text-blue-700 font-medium">Clear</button>
@@ -143,99 +150,103 @@ function formatMoney($amount, $currency = 'UGX') {
                 </button>
             </div>
 
-            <!-- Table -->
-            <div class="card overflow-hidden">
-                <table class="w-full">
-                    <thead class="bg-gray-50 border-b border-gray-200">
-                        <tr class="text-left text-sm text-gray-600">
-                            <th class="w-10 p-4"><input type="checkbox" id="selectAll" class="w-4 h-4"></th>
-                            <th class="p-4 font-medium">Product</th>
-                            <th class="p-4 font-medium">Category</th>
-                            <th class="p-4 font-medium">Base Price</th>
-                            <th class="p-4 font-medium text-center">Variants</th>
-                            <th class="p-4 font-medium text-center">Images</th>
-                            <th class="p-4 font-medium">Status</th>
-                            <th class="w-40 p-4 font-medium"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-sm divide-y divide-gray-100" id="productsTable">
-                        <?php if (empty($products)): ?>
-                            <tr>
-                                <td colspan="8" class="p-16">
-                                    <div class="flex flex-col items-center justify-center text-center">
-                                        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="No products" class="w-36 h-36 object-contain mb-5 opacity-90">
-                                        <h3 class="text-lg font-medium text-gray-700 mb-1">No products yet</h3>
-                                        <p class="text-gray-400 text-sm max-w-xs">Add your first product to start selling authentic African crafts.</p>
-                                        <a href="add-product.php" class="mt-5 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium">+ Add Product</a>
-                                    </div>
-                                </td>
+            <!-- Table Card (flex column – pagination stays at bottom) -->
+            <div class="card overflow-hidden flex flex-col flex-1 min-h-0">
+                
+                <!-- Scrollable table area – no bottom padding -->
+                <div class="flex-1 overflow-auto min-h-0">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
+                            <tr class="text-left text-sm text-gray-600">
+                                <th class="w-10 p-4"><input type="checkbox" id="selectAll" class="w-4 h-4"></th>
+                                <th class="p-4 font-medium">Product</th>
+                                <th class="p-4 font-medium">Category</th>
+                                <th class="p-4 font-medium">Base Price</th>
+                                <th class="p-4 font-medium text-center">Variants</th>
+                                <th class="p-4 font-medium text-center">Images</th>
+                                <th class="p-4 font-medium">Status</th>
+                                <th class="w-40 p-4 font-medium"></th>
                             </tr>
-                        <?php else: ?>
-                            <?php foreach ($products as $product): ?>
-                                <tr class="group product-row"
-                                    data-id="<?= (int)$product['id'] ?>"
-                                    data-name="<?= htmlspecialchars(strtolower($product['name'])) ?>"
-                                    data-category="<?= htmlspecialchars(strtolower($product['category_name'] ?? '')) ?>"
-                                    data-active="<?= (int)$product['is_active'] ?>"
-                                    data-featured="<?= (int)$product['is_featured'] ?>">
-                                    
-                                    <td class="p-4">
-                                        <input type="checkbox" class="w-4 h-4 product-checkbox" data-id="<?= (int)$product['id'] ?>">
-                                    </td>
-                                    
-                                    <td class="p-4">
-                                        <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="font-medium text-gray-900"><?= htmlspecialchars($product['name']) ?></span>
-                                            <?php if ($product['is_featured']): ?>
-                                                <span class="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
-                                                    <i class="fa fa-star text-[10px]"></i> Featured
-                                                </span>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="text-xs text-gray-500 line-clamp-1 max-w-xs mt-0.5">
-                                            <?= htmlspecialchars($product['short_description'] ?? '') ?>
-                                        </div>
-                                    </td>
-                                    
-                                    <td class="p-4 text-gray-600"><?= htmlspecialchars($product['category_name'] ?? '—') ?></td>
-                                    <td class="p-4 font-medium"><?= formatMoney($product['base_price'], $product['currency']) ?></td>
-                                    <td class="p-4 text-center">
-                                        <span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">
-                                            <?= (int)$product['variants_count'] ?>
-                                        </span>
-                                    </td>
-                                    <td class="p-4 text-center text-gray-600"><?= (int)$product['images_count'] ?></td>
-                                    <td class="p-4">
-                                        <?php if ($product['is_active']): ?>
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                                                <span class="status-dot mr-1.5 bg-green-500"></span> Active
-                                            </span>
-                                        <?php else: ?>
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                                                <span class="status-dot mr-1.5 bg-gray-400"></span> Inactive
-                                            </span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td class="p-4">
-                                        <div class="flex items-center gap-2">
-                                            <a href="view-product.php?id=<?= (int)$product['id'] ?>" 
-                                               class="action-btn bg-white border border-gray-300 hover:border-gray-400 text-gray-700 px-3 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 whitespace-nowrap">
-                                                <i class="fa fa-eye text-gray-500"></i> View
-                                            </a>
-                                            <button onclick="deleteSingle(<?= (int)$product['id'] ?>)"
-                                                    class="action-btn bg-white border border-red-200 hover:border-red-300 text-red-600 px-3 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-gray-100" id="productsTable">
+                            <?php if (empty($products)): ?>
+                                <tr>
+                                    <td colspan="8" class="p-16">
+                                        <div class="flex flex-col items-center justify-center text-center">
+                                            <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="No products" class="w-36 h-36 object-contain mb-5 opacity-90">
+                                            <h3 class="text-lg font-medium text-gray-700 mb-1">No products yet</h3>
+                                            <p class="text-gray-400 text-sm max-w-xs">Add your first product to start selling authentic African crafts.</p>
+                                            <a href="add-product.php" class="mt-5 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium">+ Add Product</a>
                                         </div>
                                     </td>
                                 </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                            <?php else: ?>
+                                <?php foreach ($products as $product): ?>
+                                    <tr class="group product-row"
+                                        data-id="<?= (int)$product['id'] ?>"
+                                        data-name="<?= htmlspecialchars(strtolower($product['name'])) ?>"
+                                        data-category="<?= htmlspecialchars(strtolower($product['category_name'] ?? '')) ?>"
+                                        data-active="<?= (int)$product['is_active'] ?>"
+                                        data-featured="<?= (int)$product['is_featured'] ?>">
+                                        
+                                        <td class="p-4">
+                                            <input type="checkbox" class="w-4 h-4 product-checkbox" data-id="<?= (int)$product['id'] ?>">
+                                        </td>
+                                        
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <span class="font-medium text-gray-900"><?= htmlspecialchars($product['name']) ?></span>
+                                                <?php if ($product['is_featured']): ?>
+                                                    <span class="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
+                                                        <i class="fa fa-star text-[10px]"></i> Featured
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="text-xs text-gray-500 line-clamp-1 max-w-xs mt-0.5">
+                                                <?= htmlspecialchars($product['short_description'] ?? '') ?>
+                                            </div>
+                                        </td>
+                                        
+                                        <td class="p-4 text-gray-600"><?= htmlspecialchars($product['category_name'] ?? '—') ?></td>
+                                        <td class="p-4 font-medium"><?= formatMoney($product['base_price'], $product['currency']) ?></td>
+                                        <td class="p-4 text-center">
+                                            <span class="inline-flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">
+                                                <?= (int)$product['variants_count'] ?>
+                                            </span>
+                                        </td>
+                                        <td class="p-4 text-center text-gray-600"><?= (int)$product['images_count'] ?></td>
+                                        <td class="p-4">
+                                            <?php if ($product['is_active']): ?>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                                                    <span class="status-dot mr-1.5 bg-green-500"></span> Active
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                                    <span class="status-dot mr-1.5 bg-gray-400"></span> Inactive
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-2">
+                                                <a href="view-product.php?id=<?= (int)$product['id'] ?>" 
+                                                   class="action-btn bg-white border border-gray-300 hover:border-gray-400 text-gray-700 px-3 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 whitespace-nowrap">
+                                                    <i class="fa fa-eye text-gray-500"></i> View
+                                                </a>
+                                                <button onclick="deleteSingle(<?= (int)$product['id'] ?>)"
+                                                        class="action-btn bg-white border border-red-200 hover:border-red-300 text-red-600 px-3 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
 
-                <!-- Pagination -->
-                <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t bg-gray-50">
+                <!-- Pagination – always at the bottom, no extra padding below -->
+                <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t bg-gray-50 flex-shrink-0">
                     <div class="flex items-center gap-3 text-sm text-gray-600">
                         <span>Show</span>
                         <select id="pageSize" class="bg-white border border-gray-300 rounded-xl py-2 px-4 focus:outline-none" onchange="changePageSize()">

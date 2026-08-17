@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config/database-connection.php';
+require_once '../config/payment.php';   // Payment methods + processPayment()
 
 // ---------- Load cart items ----------
 $cartItems = [];
@@ -20,11 +21,18 @@ try {
                 pv.price, 
                 pv.sku,
                 pv.stock_quantity,
+                pv.image_url AS variant_image,
                 p.id AS product_id,
                 p.name AS product_name,
-                (SELECT url FROM product_images 
-                 WHERE variant_id = pv.id AND is_primary = 1 
-                 LIMIT 1) AS image_url
+                COALESCE(
+                    (SELECT url FROM product_images 
+                     WHERE variant_id = pv.id AND is_primary = 1 
+                     LIMIT 1),
+                    (SELECT url FROM product_images 
+                     WHERE product_id = p.id AND is_primary = 1 
+                     LIMIT 1),
+                    pv.image_url
+                ) AS image_url
             FROM carts c
             JOIN cart_items ci ON ci.cart_id = c.id
             JOIN product_variants pv ON pv.id = ci.variant_id
@@ -47,11 +55,18 @@ try {
                 pv.price, 
                 pv.sku,
                 pv.stock_quantity,
+                pv.image_url AS variant_image,
                 p.id AS product_id,
                 p.name AS product_name,
-                (SELECT url FROM product_images 
-                 WHERE variant_id = pv.id AND is_primary = 1 
-                 LIMIT 1) AS image_url
+                COALESCE(
+                    (SELECT url FROM product_images 
+                     WHERE variant_id = pv.id AND is_primary = 1 
+                     LIMIT 1),
+                    (SELECT url FROM product_images 
+                     WHERE product_id = p.id AND is_primary = 1 
+                     LIMIT 1),
+                    pv.image_url
+                ) AS image_url
             FROM carts c
             JOIN cart_items ci ON ci.cart_id = c.id
             JOIN product_variants pv ON pv.id = ci.variant_id
@@ -98,8 +113,26 @@ if (!empty($_SESSION['user_id'])) {
     } catch (Exception $e) {}
 }
 
+// ---------- Helper: normalise image path for the Public/ folder ----------
+function checkoutImageUrl(?string $url): string
+{
+    if (empty($url)) {
+        return '../images/drum_logo.jpg';
+    }
+    // Absolute / external URL
+    if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://') || str_starts_with($url, '//')) {
+        return $url;
+    }
+    // Relative path stored in DB (e.g. images/pipe5.jpg)
+    return '../' . ltrim($url, '/');
+}
+
 // ---------- Handle form submission ----------
-$error = '';
+$error   = '';
+$success = false;
+$orderNumberSuccess = '';
+$orderTotalSuccess  = 0;
+$paymentMethodLabel = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
 
@@ -114,8 +147,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
     // Basic validation
     if (empty($cartItems)) {
         $error = 'Your cart is empty.';
-    } elseif (!$email || !$full_name || !$address || !$city || !$payment) {
-        $error = 'Please fill in all required fields and select a payment method.';
+    } elseif (!$email || !$full_name || !$address || !$city) {
+        $error = 'Please fill in all required fields.';
+    } elseif (!$payment || !isset($PAYMENT_METHODS[$payment]) || empty($PAYMENT_METHODS[$payment]['enabled'])) {
+        $error = 'Please select a valid payment method before completing your order.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Please enter a valid email address.';
     } else {
@@ -205,18 +240,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                 }
             }
 
+            // ---------- Process payment (simulated or real) ----------
+            $paymentResult = processPayment([
+                'order_number'   => $orderNumber,
+                'order_id'       => $orderId,
+                'payment_method' => $payment,
+                'total'          => $total,
+                'customer_phone' => $phone,
+                'customer_email' => $email,
+                'customer_name'  => $full_name,
+            ]);
+
+            if (!$paymentResult['success']) {
+                throw new Exception($paymentResult['message'] ?: 'Payment failed. Please try again.');
+            }
+
+            // Update payment status to Paid when simulation / real gateway succeeds
+            $pdo->prepare("
+                UPDATE orders 
+                SET payment_status = 'Paid',
+                    notes = CONCAT(COALESCE(notes, ''), ' | TX: ', ?)
+                WHERE id = ?
+            ")->execute([
+                $paymentResult['transaction_id'] ?? 'N/A',
+                $orderId
+            ]);
+
             // ---------- Clear the cart ----------
             if ($cartId) {
                 $pdo->prepare("DELETE FROM cart_items WHERE cart_id = ?")->execute([$cartId]);
-                // Optional: also delete the empty cart row
-                // $pdo->prepare("DELETE FROM carts WHERE id = ?")->execute([$cartId]);
             }
 
             $pdo->commit();
 
-            // Success → redirect
-            header('Location: order-success.php?order=' . urlencode($orderNumber));
-            exit;
+            // Success → show overlay (no redirect)
+            $success = true;
+            $orderNumberSuccess = $orderNumber;
+            $orderTotalSuccess  = $total;
+            $paymentMethodLabel = $PAYMENT_METHODS[$payment]['label'] ?? $payment;
+
+            // Empty cart display after success
+            $cartItems = [];
+            $subtotal  = 0;
+            $total     = 0;
 
         } catch (Exception $e) {
             if ($pdo->inTransaction()) {
@@ -257,6 +323,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
         .payment-btn.selected {
             border-color: #8B4513 !important;
             background-color: #f8f5f0 !important;
+            box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.25);
+        }
+
+        #complete-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        /* Success overlay */
+        #success-overlay {
+            animation: fadeIn 0.25s ease-out;
+        }
+        #success-overlay .modal-card {
+            animation: scaleIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.92) translateY(12px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
         }
     </style>
 </head>
@@ -283,7 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                     </div>
                 <?php endif; ?>
 
-                <?php if (empty($cartItems)): ?>
+                <?php if (empty($cartItems) && !$success): ?>
                     <div class="text-center py-20">
                         <i class="fa-solid fa-cart-shopping text-5xl text-gray-300 mb-4"></i>
                         <p class="text-gray-500 mb-6">Your cart is empty</p>
@@ -291,11 +379,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                             Continue Shopping
                         </a>
                     </div>
-                <?php else: ?>
+                <?php elseif (!$success): ?>
 
                 <form method="POST" id="checkout-form">
                     <input type="hidden" name="complete_order" value="1">
-                    <input type="hidden" name="payment_method" id="payment_method" value="">
+                    <input type="hidden" name="payment_method" id="payment_method" value="<?= htmlspecialchars($_POST['payment_method'] ?? '') ?>">
 
                     <div class="space-y-12">
                         <!-- Contact -->
@@ -347,29 +435,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                         <!-- Payment -->
                         <div>
                             <h2 class="heading-font text-xl font-semibold mb-2">Payment</h2>
-                            <p class="text-gray-600 mb-4 text-sm">Choose payment method</p>
+                            <p class="text-gray-600 mb-4 text-sm">
+                                Choose a payment method <span class="text-red-500">*</span>
+                                <span id="payment-hint" class="text-red-600 hidden"> — please select one</span>
+                            </p>
                             
                             <div class="grid grid-cols-3 gap-4">
-                                <button type="button" onclick="selectPayment(this, 'mtn')" 
-                                        class="payment-btn border-2 border-transparent hover:border-[#8B4513] bg-white p-5 rounded-2xl flex flex-col items-center gap-2 transition-all">
-                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzmowaypHadzjiejbyAMF-bK8F1ABsHG5vN-QPjFiD5Q&s" 
-                                         class="h-10 object-contain" alt="MTN">
-                                    <span class="text-xs font-medium">MTN MoMo</span>
-                                </button>
-
-                                <button type="button" onclick="selectPayment(this, 'airtel')" 
-                                        class="payment-btn border-2 border-transparent hover:border-[#8B4513] bg-white p-5 rounded-2xl flex flex-col items-center gap-2 transition-all">
-                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuYhGSJ4PKawoeO0WWHzoKp3fi5VBxiyZDIjvO43t_Dw&s=10" 
-                                         class="h-10 object-contain" alt="Airtel">
-                                    <span class="text-xs font-medium">Airtel Money</span>
-                                </button>
-
-                                <button type="button" onclick="selectPayment(this, 'bank')" 
-                                        class="payment-btn border-2 border-transparent hover:border-[#8B4513] bg-white p-5 rounded-2xl flex flex-col items-center gap-2 transition-all">
-                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFi-6ddHxd0--NAK0O1mnkboFueeozBHzDpexhP2VS1A&s=10" 
-                                         class="h-10 object-contain" alt="Bank">
-                                    <span class="text-xs font-medium">Bank Transfer</span>
-                                </button>
+                                <?php foreach ($PAYMENT_METHODS as $key => $method): ?>
+                                    <?php if (empty($method['enabled'])) continue; ?>
+                                    <button type="button"
+                                            onclick="selectPayment(this, '<?= htmlspecialchars($key) ?>')"
+                                            data-method="<?= htmlspecialchars($key) ?>"
+                                            class="payment-btn border-2 border-transparent hover:border-[#8B4513] bg-white p-5 rounded-2xl flex flex-col items-center gap-2 transition-all
+                                                   <?= (($_POST['payment_method'] ?? '') === $key) ? 'selected' : '' ?>">
+                                        <img src="<?= htmlspecialchars($method['icon']) ?>"
+                                             class="h-10 object-contain" alt="<?= htmlspecialchars($method['label']) ?>">
+                                        <span class="text-xs font-medium"><?= htmlspecialchars($method['label']) ?></span>
+                                    </button>
+                                <?php endforeach; ?>
                             </div>
                         </div>
 
@@ -390,10 +473,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                             </div>
                         </div>
 
-                        <button type="submit" 
-                                class="w-full bg-[#8B4513] hover:bg-[#6B3410] text-white py-3.5 rounded-xl font-semibold text-base transition">
+                        <button type="submit" id="complete-btn"
+                                class="w-full bg-[#8B4513] hover:bg-[#6B3410] text-white py-3.5 rounded-xl font-semibold text-base transition"
+                                <?= empty($_POST['payment_method'] ?? '') ? 'disabled' : '' ?>>
                             Complete Order
                         </button>
+                        <p class="text-center text-xs text-gray-500 mt-2">
+                            You must select a payment method to continue
+                        </p>
                     </div>
                 </form>
                 <?php endif; ?>
@@ -407,20 +494,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                     <h2 class="heading-font text-xl font-semibold mb-8">Order Summary</h2>
                     
                     <?php if (empty($cartItems)): ?>
-                        <p class="text-gray-500">Your cart is empty</p>
+                        <p class="text-gray-500"><?= $success ? 'Order placed successfully' : 'Your cart is empty' ?></p>
                     <?php else: ?>
                         <div class="space-y-6 mb-10">
                             <?php foreach ($cartItems as $item): 
-                                $img = $item['image_url'] ?? '';
-                                if ($img && !str_starts_with($img, 'http')) {
-                                    $img = '../' . ltrim($img, '/');
-                                }
-                                if (!$img) $img = '../images/drum_logo.jpg';
+                                $img = checkoutImageUrl($item['image_url'] ?? null);
                             ?>
                                 <div class="flex gap-4">
                                     <img src="<?= htmlspecialchars($img) ?>" 
                                          class="w-[50px] h-[50px] object-cover rounded-lg flex-shrink-0"
-                                         onerror="this.src='../images/drum_logo.jpg'" alt="">
+                                         onerror="this.onerror=null; this.src='../images/drum_logo.jpg';"
+                                         alt="<?= htmlspecialchars($item['product_name']) ?>">
                                     <div class="flex-1 min-w-0">
                                         <div class="flex justify-between gap-2">
                                             <p class="font-medium leading-tight text-sm">
@@ -460,11 +544,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
 
                     <p class="text-center text-xs text-gray-500 mt-10">
                         Secure checkout powered by Enono
+                        <?php if (defined('PAYMENT_MODE') && PAYMENT_MODE === 'simulated'): ?>
+                            <br><span class="text-amber-600">(Payment simulation mode)</span>
+                        <?php endif; ?>
                     </p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- ========== SUCCESS OVERLAY ========== -->
+    <?php if ($success): ?>
+    <div id="success-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div class="modal-card bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+            <!-- Header strip -->
+            <div class="bg-[#8B4513] px-6 py-5 text-center">
+                <div class="mx-auto w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-3">
+                    <i class="fa-solid fa-check text-3xl text-white"></i>
+                </div>
+                <h2 class="heading-font text-2xl font-bold text-white">Order Confirmed!</h2>
+                <p class="text-white/80 text-sm mt-1">Thank you for shopping with Enono</p>
+            </div>
+
+            <div class="px-6 py-6 space-y-4">
+                <div class="bg-[#faf9f6] rounded-xl p-4 text-center">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Order Number</p>
+                    <p class="font-semibold text-lg text-[#8B4513] tracking-wide">
+                        <?= htmlspecialchars($orderNumberSuccess) ?>
+                    </p>
+                </div>
+
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Total paid</span>
+                    <span class="font-semibold">UGX <?= number_format($orderTotalSuccess) ?></span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Payment method</span>
+                    <span class="font-medium"><?= htmlspecialchars($paymentMethodLabel) ?></span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">Status</span>
+                    <span class="text-green-600 font-medium">Paid · Pending dispatch</span>
+                </div>
+
+                <p class="text-xs text-gray-500 text-center pt-2">
+                    A confirmation has been recorded. You can track this order from your account or contact support with the order number above.
+                </p>
+            </div>
+
+            <div class="px-6 pb-6 flex flex-col gap-3">
+                <a href="shopping.php"
+                   class="w-full text-center bg-[#8B4513] hover:bg-[#6B3410] text-white py-3 rounded-xl font-semibold transition">
+                    Continue Shopping
+                </a>
+                <a href="orders.php"
+                   class="w-full text-center border border-gray-300 hover:border-[#8B4513] text-gray-700 py-3 rounded-xl font-medium transition">
+                    View My Orders
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <script>
         function selectPayment(btn, method) {
@@ -473,13 +613,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
             });
             btn.classList.add('selected');
             document.getElementById('payment_method').value = method;
+
+            // Enable the submit button and hide hint
+            const completeBtn = document.getElementById('complete-btn');
+            if (completeBtn) completeBtn.disabled = false;
+            const hint = document.getElementById('payment-hint');
+            if (hint) hint.classList.add('hidden');
         }
+
+        // On load: if a method was previously selected (e.g. after validation error), keep button enabled
+        document.addEventListener('DOMContentLoaded', function () {
+            const selected = document.querySelector('.payment-btn.selected');
+            const completeBtn = document.getElementById('complete-btn');
+            if (selected && completeBtn) {
+                completeBtn.disabled = false;
+            }
+        });
 
         // Prevent submit without payment method
         document.getElementById('checkout-form')?.addEventListener('submit', function(e) {
-            if (!document.getElementById('payment_method').value) {
+            const method = document.getElementById('payment_method').value;
+            if (!method) {
                 e.preventDefault();
-                alert('Please select a payment method');
+                const hint = document.getElementById('payment-hint');
+                if (hint) hint.classList.remove('hidden');
+                alert('Please select a payment method before completing your order.');
+                return false;
             }
         });
     </script>

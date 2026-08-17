@@ -27,7 +27,6 @@ try {
     $stmt = $pdo->query($sql);
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    // Table might not exist yet
     $orders = [];
 }
 
@@ -53,7 +52,7 @@ function formatDate($datetime) {
         body { background-color: #f8fafc; }
         .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 0; /* no rounded corners */
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
         }
         tr { transition: background-color 0.2s; }
@@ -83,7 +82,7 @@ function formatDate($datetime) {
             padding-right: 2.75rem !important;
         }
 
-        /* ===== Sidebar mobile collapse ===== */
+        /* Sidebar mobile */
         .sidebar {
             transform: translateX(-100%);
             transition: transform 0.3s ease;
@@ -106,9 +105,12 @@ function formatDate($datetime) {
 
         <?php include __DIR__ . '/includes/topbar.php'; ?>
 
-        <div class="flex-1 overflow-auto p-6">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex justify-between items-center mb-6">
+        <!-- Main content area – flex column so pagination stays at bottom -->
+        <div class="flex-1 overflow-hidden p-6 flex flex-col">
+            <div class="max-w-7xl mx-auto w-full flex flex-col flex-1 min-h-0">
+
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-6 flex-shrink-0">
                     <div>
                         <h1 class="text-2xl font-semibold text-gray-900">Orders</h1>
                         <p class="text-gray-500"><span id="totalCount"><?= count($orders) ?></span> orders</p>
@@ -116,7 +118,7 @@ function formatDate($datetime) {
                 </div>
 
                 <!-- Search & Filter -->
-                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                <div class="flex flex-col md:flex-row gap-4 mb-6 flex-shrink-0">
                     <div class="flex-1 relative">
                         <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                         <input type="text" id="searchInput"
@@ -139,7 +141,7 @@ function formatDate($datetime) {
                 </div>
 
                 <!-- Selection Bar -->
-                <div id="selectionBar" class="hidden bg-white border border-gray-200 rounded-2xl p-4 flex items-center justify-between mb-4">
+                <div id="selectionBar" class="hidden bg-white border border-gray-200 rounded-2xl p-4 flex items-center justify-between mb-4 flex-shrink-0">
                     <div class="flex items-center gap-3">
                         <span class="font-medium text-gray-700">1 selected</span>
                         <button onclick="clearSelection()" class="text-blue-600 hover:text-blue-700 font-medium">Clear</button>
@@ -151,123 +153,127 @@ function formatDate($datetime) {
                     </button>
                 </div>
 
-                <!-- Orders Table -->
-                <div class="card overflow-hidden">
-                    <table class="w-full">
-                        <thead class="bg-gray-50 border-b border-gray-200">
-                            <tr class="text-left text-sm text-gray-600">
-                                <th class="w-10 p-4"><input type="checkbox" id="selectAll" class="w-4 h-4"></th>
-                                <th class="p-4 font-medium">Order</th>
-                                <th class="p-4 font-medium">Customer</th>
-                                <th class="p-4 font-medium">Date</th>
-                                <th class="p-4 font-medium">Items</th>
-                                <th class="p-4 font-medium">Total</th>
-                                <th class="p-4 font-medium">Payment</th>
-                                <th class="p-4 font-medium">Status</th>
-                                <th class="w-32 p-4 font-medium"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm divide-y divide-gray-100" id="ordersTable">
-                            <?php if (empty($orders)): ?>
-                                <tr>
-                                    <td colspan="9" class="p-16">
-                                        <div class="flex flex-col items-center justify-center text-center">
-                                            <img 
-                                                src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" 
-                                                alt="No orders" 
-                                                class="w-36 h-36 object-contain mb-5 opacity-90"
-                                            >
-                                            <h3 class="text-lg font-medium text-gray-700 mb-1">No orders yet</h3>
-                                            <p class="text-gray-400 text-sm max-w-xs">
-                                                When customers place orders, they will appear here.
-                                            </p>
-                                        </div>
-                                    </td>
+                <!-- Table Card (flex column – pagination stays at bottom) -->
+                <div class="card overflow-hidden flex flex-col flex-1 min-h-0">
+                    
+                    <!-- Scrollable table area -->
+                    <div class="flex-1 overflow-auto min-h-0">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
+                                <tr class="text-left text-sm text-gray-600">
+                                    <th class="w-10 p-4"><input type="checkbox" id="selectAll" class="w-4 h-4"></th>
+                                    <th class="p-4 font-medium">Order</th>
+                                    <th class="p-4 font-medium">Customer</th>
+                                    <th class="p-4 font-medium">Date</th>
+                                    <th class="p-4 font-medium">Items</th>
+                                    <th class="p-4 font-medium">Total</th>
+                                    <th class="p-4 font-medium">Payment</th>
+                                    <th class="p-4 font-medium">Status</th>
+                                    <th class="w-32 p-4 font-medium"></th>
                                 </tr>
-                            <?php else: ?>
-                                <?php foreach ($orders as $order): ?>
-                                    <tr class="group order-row"
-                                        data-id="<?= htmlspecialchars($order['order_number']) ?>"
-                                        data-customer="<?= htmlspecialchars(strtolower($order['customer_name'])) ?>"
-                                        data-email="<?= htmlspecialchars(strtolower($order['customer_email'] ?? '')) ?>"
-                                        data-status="<?= htmlspecialchars($order['status']) ?>">
-                                        
-                                        <td class="p-4">
-                                            <input type="checkbox" class="w-4 h-4 order-checkbox" 
-                                                   data-id="<?= (int)$order['id'] ?>">
-                                        </td>
-                                        
-                                        <td class="p-4 font-medium">
-                                            <a href="process-order.php?id=<?= (int)$order['id'] ?>" 
-                                               class="text-blue-600 hover:underline">
-                                                #<?= htmlspecialchars($order['order_number']) ?>
-                                            </a>
-                                        </td>
-                                        
-                                        <td class="p-4">
-                                            <div class="font-medium"><?= htmlspecialchars($order['customer_name']) ?></div>
-                                            <div class="text-xs text-gray-500">
-                                                <?= htmlspecialchars($order['customer_email'] ?? '—') ?>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-gray-100" id="ordersTable">
+                                <?php if (empty($orders)): ?>
+                                    <tr>
+                                        <td colspan="9" class="p-16">
+                                            <div class="flex flex-col items-center justify-center text-center">
+                                                <img 
+                                                    src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" 
+                                                    alt="No orders" 
+                                                    class="w-36 h-36 object-contain mb-5 opacity-90"
+                                                >
+                                                <h3 class="text-lg font-medium text-gray-700 mb-1">No orders yet</h3>
+                                                <p class="text-gray-400 text-sm max-w-xs">
+                                                    When customers place orders, they will appear here.
+                                                </p>
                                             </div>
                                         </td>
-                                        
-                                        <td class="p-4 text-gray-600">
-                                            <?= formatDate($order['created_at']) ?>
-                                        </td>
-                                        
-                                        <td class="p-4 text-center font-medium">
-                                            <?= (int)$order['items_count'] ?>
-                                        </td>
-                                        
-                                        <td class="p-4 font-medium">
-                                            <?= formatMoney($order['total'], $order['currency']) ?>
-                                        </td>
-                                        
-                                        <td class="p-4 text-gray-600">
-                                            <?= htmlspecialchars($order['payment_method'] ?? '—') ?>
-                                        </td>
-                                        
-                                        <td class="p-4">
-                                            <?php
-                                            $status = $order['status'];
-                                            $badge = match($status) {
-                                                'Delivered'  => 'bg-green-100 text-green-700',
-                                                'Shipped'   => 'bg-purple-100 text-purple-700',
-                                                'Packed'    => 'bg-blue-100 text-blue-700',
-                                                'Pending'   => 'bg-yellow-100 text-yellow-700',
-                                                'Cancelled' => 'bg-red-100 text-red-700',
-                                                default     => 'bg-gray-100 text-gray-700'
-                                            };
-                                            $dot = match($status) {
-                                                'Delivered'  => 'bg-green-500',
-                                                'Shipped'   => 'bg-purple-500',
-                                                'Packed'    => 'bg-blue-500',
-                                                'Pending'   => 'bg-yellow-500',
-                                                'Cancelled' => 'bg-red-500',
-                                                default     => 'bg-gray-500'
-                                            };
-                                            ?>
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <?= $badge ?>">
-                                                <span class="status-dot mr-1.5 <?= $dot ?>"></span>
-                                                <?= htmlspecialchars($status) ?>
-                                            </span>
-                                        </td>
-                                        
-                                        <td class="p-4">
-                                            <a href="process-order.php?id=<?= (int)$order['id'] ?>" 
-                                               class="action-btn bg-white border border-gray-300 hover:border-gray-400 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 whitespace-nowrap">
-                                                <i class="fa fa-sliders-h text-gray-500"></i>
-                                                Process
-                                            </a>
-                                        </td>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                                <?php else: ?>
+                                    <?php foreach ($orders as $order): ?>
+                                        <tr class="group order-row"
+                                            data-id="<?= htmlspecialchars($order['order_number']) ?>"
+                                            data-customer="<?= htmlspecialchars(strtolower($order['customer_name'])) ?>"
+                                            data-email="<?= htmlspecialchars(strtolower($order['customer_email'] ?? '')) ?>"
+                                            data-status="<?= htmlspecialchars($order['status']) ?>">
+                                            
+                                            <td class="p-4">
+                                                <input type="checkbox" class="w-4 h-4 order-checkbox" 
+                                                       data-id="<?= (int)$order['id'] ?>">
+                                            </td>
+                                            
+                                            <td class="p-4 font-medium">
+                                                <a href="process-order.php?id=<?= (int)$order['id'] ?>" 
+                                                   class="text-blue-600 hover:underline">
+                                                    #<?= htmlspecialchars($order['order_number']) ?>
+                                                </a>
+                                            </td>
+                                            
+                                            <td class="p-4">
+                                                <div class="font-medium"><?= htmlspecialchars($order['customer_name']) ?></div>
+                                                <div class="text-xs text-gray-500">
+                                                    <?= htmlspecialchars($order['customer_email'] ?? '—') ?>
+                                                </div>
+                                            </td>
+                                            
+                                            <td class="p-4 text-gray-600">
+                                                <?= formatDate($order['created_at']) ?>
+                                            </td>
+                                            
+                                            <td class="p-4 text-center font-medium">
+                                                <?= (int)$order['items_count'] ?>
+                                            </td>
+                                            
+                                            <td class="p-4 font-medium">
+                                                <?= formatMoney($order['total'], $order['currency']) ?>
+                                            </td>
+                                            
+                                            <td class="p-4 text-gray-600">
+                                                <?= htmlspecialchars($order['payment_method'] ?? '—') ?>
+                                            </td>
+                                            
+                                            <td class="p-4">
+                                                <?php
+                                                $status = $order['status'];
+                                                $badge = match($status) {
+                                                    'Delivered'  => 'bg-green-100 text-green-700',
+                                                    'Shipped'   => 'bg-purple-100 text-purple-700',
+                                                    'Packed'    => 'bg-blue-100 text-blue-700',
+                                                    'Pending'   => 'bg-yellow-100 text-yellow-700',
+                                                    'Cancelled' => 'bg-red-100 text-red-700',
+                                                    default     => 'bg-gray-100 text-gray-700'
+                                                };
+                                                $dot = match($status) {
+                                                    'Delivered'  => 'bg-green-500',
+                                                    'Shipped'   => 'bg-purple-500',
+                                                    'Packed'    => 'bg-blue-500',
+                                                    'Pending'   => 'bg-yellow-500',
+                                                    'Cancelled' => 'bg-red-500',
+                                                    default     => 'bg-gray-500'
+                                                };
+                                                ?>
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <?= $badge ?>">
+                                                    <span class="status-dot mr-1.5 <?= $dot ?>"></span>
+                                                    <?= htmlspecialchars($status) ?>
+                                                </span>
+                                            </td>
+                                            
+                                            <td class="p-4">
+                                                <a href="process-order.php?id=<?= (int)$order['id'] ?>" 
+                                                   class="action-btn bg-white border border-gray-300 hover:border-gray-400 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 whitespace-nowrap">
+                                                    <i class="fa fa-sliders-h text-gray-500"></i>
+                                                    Process
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
 
-                    <!-- Pagination bar -->
-                    <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t bg-gray-50">
+                    <!-- Pagination – always at the bottom -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-t bg-gray-50 flex-shrink-0">
                         <div class="flex items-center gap-3 text-sm text-gray-600">
                             <span>Show</span>
                             <select id="pageSize" class="bg-white border border-gray-300 rounded-xl py-2 px-4 focus:outline-none" onchange="changePageSize()">
@@ -422,7 +428,6 @@ function formatDate($datetime) {
             }
         }
 
-        // Connect the hamburger button
         document.getElementById('toggleSidebar')?.addEventListener('click', toggleSidebar);
 
         document.getElementById('selectAll')?.addEventListener('change', function() {

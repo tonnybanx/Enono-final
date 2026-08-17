@@ -33,13 +33,22 @@ try {
         exit;
     }
 
+    // Remove the item
     $pdo->prepare("DELETE FROM cart_items WHERE cart_id = ? AND variant_id = ?")
         ->execute([$cartId, $variantId]);
 
     // Touch cart
     $pdo->prepare("UPDATE carts SET updated_at = NOW() WHERE id = ?")->execute([$cartId]);
 
-    echo json_encode(['success' => true]);
+    // Return updated cart count
+    $countStmt = $pdo->prepare("SELECT COALESCE(SUM(quantity), 0) FROM cart_items WHERE cart_id = ?");
+    $countStmt->execute([$cartId]);
+    $cartCount = (int)$countStmt->fetchColumn();
+
+    echo json_encode([
+        'success'    => true,
+        'cart_count' => $cartCount
+    ]);
 
 } catch (Exception $e) {
     error_log('remove-from-cart error: ' . $e->getMessage());

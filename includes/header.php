@@ -304,29 +304,26 @@ if ($initials === '') $initials = 'U';
         }
 
         // ========== Image URL helper ==========
-        // Normalizes a stored image path (e.g. "images/pipe5.jpg") into a working
-        // src regardless of how deep the current page sits, and falls back to the
-        // logo placeholder only when there's truly no usable path.
-        function resolveImageUrl(rawPath, debugLabel) {
+        function resolveImageUrl(rawPath) {
             if (!rawPath) {
-                console.warn(`[cart image] "${debugLabel}" — no image path in the cart data at all, falling back to placeholder.`);
                 return ROOT_PREFIX + 'images/drum_logo.jpg';
             }
             let path = String(rawPath).trim().replace(/\\/g, '/');
             if (/^https?:\/\//i.test(path) || path.startsWith('//')) return path;
-            path = path.replace(/^\.?\/+/, ''); // strip leading "./" or "/"
-            const resolved = ROOT_PREFIX + path;
-            console.debug(`[cart image] "${debugLabel}" — raw: "${rawPath}" → resolved: "${resolved}"`);
-            return resolved;
+            path = path.replace(/^\.?\/+/, '');
+            return ROOT_PREFIX + path;
         }
 
         // ========== Cart functions ==========
+        // Always add exactly the requested quantity (default 1) — never inherit another item's qty
         async function addToCart(variantId, quantity = 1) {
+            const qty = Math.max(1, parseInt(quantity, 10) || 1);
+
             try {
                 const res = await fetch(API_BASE + 'add-to-cart.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ variant_id: variantId, quantity }),
+                    body: JSON.stringify({ variant_id: variantId, quantity: qty }),
                     credentials: 'same-origin'
                 });
                 const data = await res.json();
@@ -345,8 +342,8 @@ if ($initials === '') $initials = 'U';
         }
 
         async function updateQuantity(variantId, quantity) {
+            // Never go below 1 – user must delete the item instead
             if (quantity < 1) {
-                removeFromCart(variantId);
                 return;
             }
 
@@ -401,8 +398,6 @@ if ($initials === '') $initials = 'U';
                 const data = await res.json();
                 if (!data.success) return;
 
-                console.debug('[cart] raw response from get-cart.php:', data);
-
                 const container = document.getElementById('cart-items');
                 const totalEl   = document.getElementById('cart-total');
                 const countEl   = document.getElementById('cart-count');
@@ -421,17 +416,22 @@ if ($initials === '') $initials = 'U';
 
                 let html = '';
                 data.items.forEach(item => {
-                    // Some backends key the image field differently — check the common variants.
                     const rawImg = item.image_url || item.img_url || item.image || item.thumbnail || '';
-                    const img = resolveImageUrl(rawImg, item.product_name || `variant ${item.variant_id}`);
-
+                    const img = resolveImageUrl(rawImg);
                     const variantId = item.variant_id;
+                    const qty = parseInt(item.quantity, 10) || 1;
+
+                    // Minus button disabled when quantity is 1
+                    const minusBtn = qty <= 1
+                        ? `<button disabled class="w-5 h-5 rounded-full border border-gray-200 flex items-center justify-center text-xs leading-none text-gray-300 cursor-not-allowed">−</button>`
+                        : `<button onclick="updateQuantity(${variantId}, ${qty - 1})"
+                                   class="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 text-xs leading-none">−</button>`;
 
                     html += `
                         <div class="flex gap-3 mb-6">
                             <img src="${img}"
                                  class="w-12 h-12 object-cover rounded-lg flex-shrink-0"
-                                 onerror="this.onerror=null; console.warn('[cart image] failed to load:', this.src, '— falling back to placeholder'); this.src='${ROOT_PREFIX}images/drum_logo.jpg'">
+                                 onerror="this.onerror=null; this.src='${ROOT_PREFIX}images/drum_logo.jpg'">
                             <div class="flex-1">
                                 <div class="flex justify-between items-start">
                                     <div>
@@ -447,10 +447,9 @@ if ($initials === '') $initials = 'U';
 
                                 <div class="flex justify-between mt-2.5 items-center">
                                     <div class="flex items-center gap-1.5">
-                                        <button onclick="updateQuantity(${variantId}, ${item.quantity - 1})"
-                                                class="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 text-xs leading-none">−</button>
-                                        <span class="w-5 text-center font-medium text-xs">${item.quantity}</span>
-                                        <button onclick="updateQuantity(${variantId}, ${item.quantity + 1})"
+                                        ${minusBtn}
+                                        <span class="w-5 text-center font-medium text-xs">${qty}</span>
+                                        <button onclick="updateQuantity(${variantId}, ${qty + 1})"
                                                 class="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 text-xs leading-none">+</button>
                                     </div>
                                     <span class="font-medium text-sm">USh ${Number(item.subtotal).toLocaleString()}</span>

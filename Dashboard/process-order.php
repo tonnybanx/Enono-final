@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ---------- Fetch items + product info ----------
+// ---------- Fetch items + product info (correct image) ----------
 $stmt = $pdo->prepare("
     SELECT 
         oi.*,
@@ -72,22 +72,28 @@ $stmt = $pdo->prepare("
         p.long_description,
         p.is_active AS product_active,
         c.name AS category_name,
-        (
-            SELECT pi.url 
-            FROM product_images pi 
-            WHERE pi.product_id = oi.product_id 
-            ORDER BY pi.is_primary DESC, pi.sort_order ASC 
-            LIMIT 1
+        COALESCE(
+            NULLIF(pv.image_url, ''),
+            (
+                SELECT pi.url 
+                FROM product_images pi 
+                WHERE pi.variant_id = oi.variant_id 
+                ORDER BY pi.is_primary DESC, pi.sort_order ASC 
+                LIMIT 1
+            ),
+            (
+                SELECT pi.url 
+                FROM product_images pi 
+                WHERE pi.product_id = oi.product_id 
+                ORDER BY pi.is_primary DESC, pi.sort_order ASC 
+                LIMIT 1
+            )
         ) AS image_url,
-        (
-            SELECT pv.stock_quantity 
-            FROM product_variants pv 
-            WHERE pv.id = oi.variant_id 
-            LIMIT 1
-        ) AS stock
+        pv.stock_quantity AS stock
     FROM order_items oi
     LEFT JOIN products p ON p.id = oi.product_id
     LEFT JOIN categories c ON c.id = p.category_id
+    LEFT JOIN product_variants pv ON pv.id = oi.variant_id
     WHERE oi.order_id = ?
     ORDER BY oi.id ASC
 ");
@@ -262,13 +268,13 @@ foreach ($items as $item) {
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
 
                     <!-- LEFT -->
-                    <div class="lg:col-span-2 space-y-6">
+                    <div class="lg:col-span-2 flex flex-col space-y-6">
 
                         <!-- Items -->
-                        <div class="card overflow-hidden">
+                        <div class="card overflow-hidden flex-1">
                             <div class="px-5 py-4 border-b border-gray-100">
                                 <h2 class="font-semibold text-gray-900">
                                     Order Items
@@ -303,7 +309,6 @@ foreach ($items as $item) {
                                                             </div>
                                                         </div>
                                                         <div class="flex items-center gap-2 shrink-0">
-                                                            <!-- Per-item status form -->
                                                             <form method="POST" class="inline">
                                                                 <input type="hidden" name="action" value="update_item_status">
                                                                 <input type="hidden" name="item_id" value="<?= (int)$item['id'] ?>">
@@ -361,8 +366,8 @@ foreach ($items as $item) {
                         </div>
                     </div>
 
-                    <!-- RIGHT -->
-                    <div class="space-y-5">
+                    <!-- RIGHT – fills remaining height -->
+                    <div class="flex flex-col gap-5 h-full">
                         <div class="card p-5">
                             <div class="flex items-center gap-2 mb-4">
                                 <i class="fa fa-user text-gray-400"></i>
@@ -416,12 +421,13 @@ foreach ($items as $item) {
                             </div>
                         </div>
 
-                        <div class="card p-5">
+                        <!-- Summary grows to fill remaining space -->
+                        <div class="card p-5 flex-1 flex flex-col">
                             <div class="flex items-center gap-2 mb-4">
                                 <i class="fa fa-receipt text-gray-400"></i>
                                 <h3 class="font-semibold text-gray-900">Summary</h3>
                             </div>
-                            <div class="space-y-2.5 text-sm">
+                            <div class="space-y-2.5 text-sm flex-1">
                                 <div class="flex justify-between">
                                     <span class="text-gray-500">Subtotal</span>
                                     <span><?= formatMoney($order['subtotal'], $order['currency']) ?></span>
@@ -432,7 +438,7 @@ foreach ($items as $item) {
                                         <?= (float)$order['shipping_fee'] <= 0 ? 'Free' : formatMoney($order['shipping_fee'], $order['currency']) ?>
                                     </span>
                                 </div>
-                                <div class="flex justify-between pt-3 border-t font-semibold text-base">
+                                <div class="flex justify-between pt-3 border-t font-semibold text-base mt-auto">
                                     <span>Total</span>
                                     <span><?= formatMoney($order['total'], $order['currency']) ?></span>
                                 </div>
