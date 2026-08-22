@@ -5,8 +5,23 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$currentPage = $currentPage ?? '';
+
 $sidebarRole = $_SESSION['role'] ?? '';
+
+// Not logged in → sign in
+if (empty($_SESSION['user_id'])) {
+    header('Location: ../Public/signin.php');
+    exit;
+}
+
+// Customer or any non admin/staff → public index
+if (!in_array($sidebarRole, ['admin', 'staff'], true)) {
+    header('Location: ../index.php');
+    exit;
+}
+
+
+$currentPage = $currentPage ?? '';
 $isAdminUser = $sidebarRole === 'admin';
 ?>
 
@@ -139,7 +154,7 @@ function openSidebar() {
     
     sidebar.classList.remove('-translate-x-full');
     overlay.classList.remove('hidden');
-    document.body.style.overflow = 'hidden'; // prevent background scroll
+    document.body.style.overflow = 'hidden';
 }
 
 function closeSidebar() {
@@ -151,7 +166,6 @@ function closeSidebar() {
     document.body.style.overflow = '';
 }
 
-// Make sure the toggle button in topbar works
 document.addEventListener('DOMContentLoaded', function() {
     const toggleBtn = document.getElementById('toggleSidebar');
     if (toggleBtn) {
