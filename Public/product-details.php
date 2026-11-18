@@ -229,7 +229,7 @@ require_once __DIR__ . '/../includes/header.php';
         scrollbar-width: thin;
     }
     .thumbs-vertical::-webkit-scrollbar { width: 4px; }
-    .thumbs-vertical::-webkit-scrollbar-thumb { background: #c4b5a5; border-radius: 4px; }
+    .thumbs-vertical::-webkit-scrollbar-thumb { background: #2A2A2A; border-radius: 4px; }
 
     .thumb {
         width: 72px;
@@ -238,14 +238,14 @@ require_once __DIR__ . '/../includes/header.php';
         overflow: hidden;
         border: 2px solid transparent;
         cursor: pointer;
-        background: #f5efe6;
+        background: #1C1C1C;
         flex-shrink: 0;
         transition: all 0.15s ease;
     }
-    .thumb:hover { transform: translateY(-2px); }
+    .thumb:hover { transform: translateY(-2px); border-color: #D4A017; }
     .thumb.selected {
-        border-color: #8B4513;
-        box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.25);
+        border-color: #E8B923;
+        box-shadow: 0 0 0 2px rgba(232, 185, 35, 0.25);
     }
     .thumb img {
         width: 100%;
@@ -255,8 +255,8 @@ require_once __DIR__ . '/../includes/header.php';
     }
 
     .main-image-box {
-        background: #f5efe6;
-        border: 1px solid #e6ddd2;
+        background: #1C1C1C;
+        border: 1px solid #2A2A2A;
         border-radius: 1rem;
         overflow: hidden;
         aspect-ratio: 1/1;
@@ -279,7 +279,7 @@ require_once __DIR__ . '/../includes/header.php';
         scrollbar-width: thin;
     }
     .thumbs-horizontal::-webkit-scrollbar { height: 4px; }
-    .thumbs-horizontal::-webkit-scrollbar-thumb { background: #c4b5a5; border-radius: 4px; }
+    .thumbs-horizontal::-webkit-scrollbar-thumb { background: #2A2A2A; border-radius: 4px; }
 
     @media (min-width: 768px) {
         .thumbs-vertical { display: flex; }
@@ -288,51 +288,57 @@ require_once __DIR__ . '/../includes/header.php';
 
     .form-select {
         width: 100%;
-        background: #faf8f4;
-        border: 1px solid #e5ddd2;
+        background: #141414;
+        border: 1px solid #2A2A2A;
         border-radius: 0.75rem;
         padding: 0.75rem 2.25rem 0.75rem 1rem;
         font-size: 0.95rem;
+        color: #ffffff;
         appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238B4513'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23E8B923'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 0.75rem center;
         background-size: 1.1em;
     }
     .form-select:focus {
         outline: none;
-        background: #fff;
-        border-color: #8B4513;
+        border-color: #E8B923;
+        box-shadow: 0 0 0 3px rgba(232, 185, 35, 0.12);
+    }
+    .form-select option {
+        background: #141414;
+        color: #ffffff;
     }
 
     .qty-btn {
         width: 40px; height: 40px;
         display: flex; align-items: center; justify-content: center;
-        border: 1px solid #e5ddd2; background: #fff;
+        border: 1px solid #2A2A2A; background: #141414; color: #ffffff;
     }
-    .qty-btn:hover { background: #f5efe6; }
-    .add-btn { background: #8B4513; transition: background 0.2s; }
-    .add-btn:hover { background: #6B3410; }
+    .qty-btn:hover { background: #1C1C1C; border-color: #D4A017; }
+    .add-btn { background: #E8B923; color: #0B0B0B; transition: background 0.2s; }
+    .add-btn:hover { background: #F0C94A; }
     .add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .heritage-panel {
-        background: #2C1A0F;
+        background: #0B0B0B;
         position: relative;
         overflow: hidden;
+        border-top: 1px solid #2A2A2A;
     }
     .heritage-panel::before {
         content: '';
         position: absolute;
         inset: 0;
         background: url('../images/africanacity1.jpg') center/cover;
-        opacity: 0.25;
+        opacity: 0.12;
     }
 </style>
 
-<section class="bg-[#F9F5EB] pt-6 pb-14 md:pb-16">
+<section class="bg-[#0B0B0B] pt-6 pb-14 md:pb-16">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
 
-        <a href="javascript:history.back()" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#8B4513] mb-6">
+        <a href="javascript:history.back()" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#D4A017] mb-6 transition-colors">
             <i class="fa-solid fa-arrow-left text-[10px]"></i> Back
         </a>
 
@@ -344,8 +350,8 @@ require_once __DIR__ . '/../includes/header.php';
                     <div class="thumbs-vertical" id="thumbs-vertical"></div>
                     <div class="main-image-box">
                         <img id="main-image"
-                             src="<?= e($defaultImage) ?>"
-                             alt="<?= e($product['name']) ?>"
+                             src="<?= htmlspecialchars($defaultImage) ?>"
+                             alt="<?= htmlspecialchars($product['name']) ?>"
                              onerror="this.src='../images/drum_logo.jpg'">
                     </div>
                 </div>
@@ -355,27 +361,27 @@ require_once __DIR__ . '/../includes/header.php';
             <!-- RIGHT: Product info -->
             <div class="flex flex-col">
                 <?php if (!empty($product['category_name'])): ?>
-                    <p class="text-[11px] tracking-[0.15em] uppercase text-[#8B4513]/80 mb-2">
-                        <?= e($product['category_name']) ?>
+                    <p class="text-[11px] tracking-[0.15em] uppercase text-[#D4A017] mb-2">
+                        <?= htmlspecialchars($product['category_name']) ?>
                     </p>
                 <?php endif; ?>
 
-                <h1 id="product-title" class="heading-font text-2xl sm:text-3xl font-semibold text-gray-900 leading-snug">
-                    <?= e($product['name']) ?>
+                <h1 id="product-title" class="heading-font text-2xl sm:text-3xl font-semibold text-white leading-snug">
+                    <?= htmlspecialchars($product['name']) ?>
                 </h1>
 
-                <p id="product-price" class="text-2xl font-semibold text-[#8B4513] mt-3">
-                    <?= e($currency) ?> <?= number_format((float)$product['base_price']) ?>
+                <p id="product-price" class="text-2xl font-semibold text-[#D4A017] mt-3">
+                    <?= htmlspecialchars($currency) ?> <?= number_format((float)$product['base_price']) ?>
                 </p>
 
-                <p class="text-gray-600 text-[15px] leading-relaxed mt-4">
-                    <?= e($product['short_description'] ?: $product['long_description'] ?: '') ?>
+                <p class="text-gray-400 text-[15px] leading-relaxed mt-4">
+                    <?= htmlspecialchars($product['short_description'] ?: $product['long_description'] ?: '') ?>
                 </p>
 
                 <!-- SPIRIT -->
                 <?php if ($hasSpirits): ?>
                 <div class="mt-6">
-                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+                    <label class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
                         Choose Spirit
                     </label>
                     <select id="spirit-select" class="form-select" onchange="onSpiritChange()">
@@ -386,7 +392,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <!-- COLOR / MATERIAL -->
                 <div class="mt-5" id="color-dropdown-wrapper" style="display:none;">
-                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+                    <label class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
                         Choose Color / Material
                     </label>
                     <select id="color-select" class="form-select" onchange="onColorDropdownChange()">
@@ -396,7 +402,7 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <!-- SIZE -->
                 <div class="mt-5" id="size-wrapper" style="display:none;">
-                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+                    <label class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
                         Choose Size
                     </label>
                     <select id="size-select" class="form-select" onchange="onSizeChange()">
@@ -406,17 +412,17 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <!-- Quantity -->
                 <div class="flex items-center gap-4 mt-6">
-                    <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</span>
+                    <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Qty</span>
                     <div class="flex items-center">
                         <button type="button" class="qty-btn rounded-l-lg" onclick="changeQty(-1)">−</button>
-                        <span id="quantity" class="w-12 text-center text-sm font-medium border-y border-[#e5ddd2] py-2">1</span>
+                        <span id="quantity" class="w-12 text-center text-sm font-medium border-y border-[#2A2A2A] py-2 text-white bg-[#141414]">1</span>
                         <button type="button" class="qty-btn rounded-r-lg" onclick="changeQty(1)">+</button>
                     </div>
-                    <span id="stock-note" class="text-xs text-gray-400"></span>
+                    <span id="stock-note" class="text-xs text-gray-500"></span>
                 </div>
 
                 <button id="add-btn" type="button" onclick="addToCart()"
-                        class="add-btn mt-8 w-full text-white py-3.5 rounded-xl font-medium text-sm flex items-center justify-center gap-2" disabled>
+                        class="add-btn mt-8 w-full py-3.5 rounded-xl font-medium text-sm flex items-center justify-center gap-2" disabled>
                     <i class="fa-solid fa-cart-plus text-sm"></i>
                     Add to Cart
                 </button>
@@ -428,28 +434,28 @@ require_once __DIR__ . '/../includes/header.php';
 <!-- Living Legacy -->
 <section class="heritage-panel text-white">
     <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-14 md:py-16">
-        <p class="text-amber-200/70 text-[11px] tracking-[0.18em] uppercase mb-3">A Living Legacy</p>
+        <p class="text-[#D4A017] text-[11px] tracking-[0.18em] uppercase mb-3">A Living Legacy</p>
         <h2 class="heading-font text-2xl sm:text-3xl font-semibold max-w-xl mb-10">
-            <?= e($product['long_description'] ?: 'More than an object — a vessel of spirit and memory.') ?>
+            <?= htmlspecialchars($product['long_description'] ?: 'More than an object — a vessel of spirit and memory.') ?>
         </h2>
 
         <div class="grid md:grid-cols-2 gap-5 md:gap-6">
-            <div class="bg-white/10 border border-white/20 rounded-xl p-6 md:p-7">
-                <h3 class="font-semibold text-lg mb-3">
-                    <?= e($heritageContent['title'] ?? 'Heritage & History') ?>
+            <div class="bg-[#141414] border border-[#2A2A2A] rounded-xl p-6 md:p-7">
+                <h3 class="font-semibold text-lg mb-3 text-white">
+                    <?= htmlspecialchars($heritageContent['title'] ?? 'Heritage & History') ?>
                 </h3>
-                <p class="text-white/85 text-sm leading-relaxed">
+                <p class="text-gray-400 text-sm leading-relaxed">
                     <?php if ($heritageContent): ?>
-                        <?= nl2br(e($heritageContent['body'])) ?>
+                        <?= nl2br(htmlspecialchars($heritageContent['body'])) ?>
                     <?php else: ?>
                         Every piece is carefully crafted using techniques passed down through generations of Ugandan artisans, carrying the stories and spirit of the land.
                     <?php endif; ?>
                 </p>
             </div>
 
-            <div class="bg-white/10 border border-white/20 rounded-xl p-6 md:p-7" id="spirit-panel">
-                <h3 class="font-semibold text-lg mb-3">Spirits & Meaning</h3>
-                <p id="spirit-text" class="text-white/85 text-sm leading-relaxed">
+            <div class="bg-[#141414] border border-[#2A2A2A] rounded-xl p-6 md:p-7" id="spirit-panel">
+                <h3 class="font-semibold text-lg mb-3 text-white">Spirits & Meaning</h3>
+                <p id="spirit-text" class="text-gray-400 text-sm leading-relaxed">
                     Select a spirit above to learn about its meaning and significance.
                 </p>
             </div>
@@ -662,7 +668,7 @@ function trySelectVariant(spiritId) {
 
 function selectVariant(v) {
     currentVariant = v;
-    document.getElementById('product-title').textContent = v.title || '<?= e($product['name']) ?>';
+    document.getElementById('product-title').textContent = v.title || '<?= htmlspecialchars($product['name'], ENT_QUOTES) ?>';
     document.getElementById('product-price').textContent = currency + ' ' + Number(v.price).toLocaleString();
 
     const mainImg = document.getElementById('main-image');

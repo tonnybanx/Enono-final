@@ -116,86 +116,121 @@ $activeNav = 'aboutus';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-    <!-- Our Story -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-2 gap-0 about-grid">
-                <!-- Text -->
-                <div class="px-6 md:px-16 py-12 md:py-20">
-                    <h2 class="text-5xl font-semibold heading-font mb-8">Our Story</h2>
-                    <?php foreach ($storyParagraphs as $paragraph): ?>
-                        <p class="text-lg text-gray-600 leading-relaxed mt-6 first:mt-0"><?= e($paragraph) ?></p>
-                    <?php endforeach; ?>
-                </div>
-
-                <!-- Image -->
-                <div class="md:pr-0 overflow-hidden">
-                    <img src="<?= e($storyImageUrl) ?>"
-                         alt="<?= e($storyImage['alt_text'] ?? 'Our Story') ?>"
-                         class="story-image w-full h-auto object-cover">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Our Mission -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-2 gap-0 about-grid">
-                <!-- Image -->
-                <div class="md:pr-0 order-2 md:order-1 overflow-hidden">
-                    <img src="<?= e($missionImageUrl) ?>"
-                         alt="<?= e($missionImage['alt_text'] ?? 'Our Mission') ?>"
-                         class="story-image w-full h-auto object-cover">
-                </div>
-
-                <!-- Text -->
-                <div class="px-6 md:px-16 py-12 md:py-20 order-1 md:order-2">
-                    <h2 class="text-5xl font-semibold heading-font mb-8">Our Mission</h2>
-                    <p class="text-lg text-gray-600 leading-relaxed">
-                        <?= e($company['mission'] ?? '') ?>
+<!-- Our Story -->
+<section class="py-20 bg-[#0B0B0B]">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-0 about-grid">
+            <!-- Text -->
+            <div class="px-6 md:px-16 py-12 md:py-20">
+                <p class="uppercase tracking-[0.2em] text-sm font-medium text-[#E8B923] mb-3">Heritage</p>
+                <h2 class="text-4xl md:text-5xl font-semibold heading-font text-white mb-8">
+                    Our <span class="text-[#E8B923]">Story</span>
+                </h2>
+                <?php foreach ($storyParagraphs as $paragraph): ?>
+                    <p class="text-lg text-gray-400 leading-relaxed mt-6 first:mt-0">
+                        <?= e($paragraph) ?>
                     </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Values -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-4xl font-semibold heading-font text-center mb-12">What We Stand For</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <?php foreach ($valueCards as $card): ?>
-                    <div class="text-center p-8">
-                        <div class="w-16 h-16 mx-auto bg-amber-100 rounded-2xl flex items-center justify-center mb-6">
-                            <i class="fa-solid <?= e($card['icon']) ?> text-4xl text-amber-600"></i>
-                        </div>
-                        <h3 class="font-semibold text-xl mb-3"><?= e($card['title']) ?></h3>
-                        <p class="text-gray-600"><?= e($card['description']) ?></p>
-                    </div>
                 <?php endforeach; ?>
             </div>
-        </div>
-    </section>
 
-    <!-- Location -->
-    <section class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-semibold heading-font mb-4">Our Home</h2>
-                <p class="text-gray-600"><?= e(($company['city'] ?? '') . ', ' . ($company['country'] ?? '')) ?></p>
-            </div>
-            <div class="bg-white rounded-3xl overflow-hidden shadow-xl">
-                <div class="overflow-hidden">
-                    <img src="<?= e($locationImageUrl) ?>"
-                         alt="<?= e($locationImage['alt_text'] ?? 'Kampala') ?>"
-                         class="story-image w-full h-auto object-cover">
-                </div>
-                <div class="p-8 text-center">
-                    <p class="text-gray-600"><?= e($address) ?></p>
-                </div>
+            <!-- Image -->
+            <div class="md:pr-0 overflow-hidden">
+                <img src="<?= e($storyImageUrl) ?>"
+                     alt="<?= e($storyImage['alt_text'] ?? 'Our Story') ?>"
+                     class="story-image w-full h-full object-cover min-h-[320px]">
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+<!-- Subtle separator -->
+<div class="max-w-7xl mx-auto px-6">
+    <div class="border-t border-[#2A2A2A]"></div>
+</div>
+
+<!-- Our Mission -->
+<section class="py-20 bg-[#0B0B0B]">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-0 about-grid">
+            <!-- Image -->
+            <div class="md:pr-0 order-2 md:order-1 overflow-hidden">
+                <img src="<?= e($missionImageUrl) ?>"
+                     alt="<?= e($missionImage['alt_text'] ?? 'Our Mission') ?>"
+                     class="story-image w-full h-full object-cover min-h-[320px]">
+            </div>
+
+            <!-- Text -->
+            <div class="px-6 md:px-16 py-12 md:py-20 order-1 md:order-2">
+                <p class="uppercase tracking-[0.2em] text-sm font-medium text-[#E8B923] mb-3">Purpose</p>
+                <h2 class="text-4xl md:text-5xl font-semibold heading-font text-white mb-8">
+                    Our <span class="text-[#E8B923]">Mission</span>
+                </h2>
+                <p class="text-lg text-gray-400 leading-relaxed">
+                    <?= e($company['mission'] ?? '') ?>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Subtle separator -->
+<div class="max-w-7xl mx-auto px-6">
+    <div class="border-t border-[#2A2A2A]"></div>
+</div>
+
+<!-- Values -->
+<section class="py-20 bg-[#0B0B0B]">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-14">
+            <p class="uppercase tracking-[0.2em] text-sm font-medium text-[#E8B923] mb-3">Principles</p>
+            <h2 class="text-4xl md:text-5xl font-semibold heading-font text-white">
+                What We <span class="text-[#E8B923]">Stand For</span>
+            </h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+            <?php foreach ($valueCards as $card): ?>
+                <div class="text-center p-8 bg-[#141414] border border-[#2A2A2A] rounded-2xl hover:border-[#E8B923]/50 transition-colors">
+                    <div class="w-16 h-16 mx-auto bg-[#1C1C1C] border border-[#E8B923]/30 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fa-solid <?= e($card['icon']) ?> text-3xl text-[#E8B923]"></i>
+                    </div>
+                    <h3 class="font-semibold text-xl text-white mb-3"><?= e($card['title']) ?></h3>
+                    <p class="text-gray-400 leading-relaxed"><?= e($card['description']) ?></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- Subtle separator -->
+<div class="max-w-7xl mx-auto px-6">
+    <div class="border-t border-[#2A2A2A]"></div>
+</div>
+
+<!-- Location -->
+<section class="py-20 bg-[#0B0B0B]">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12">
+            <p class="uppercase tracking-[0.2em] text-sm font-medium text-[#E8B923] mb-3">Visit Us</p>
+            <h2 class="text-4xl md:text-5xl font-semibold heading-font text-white mb-4">
+                Our <span class="text-[#E8B923]">Home</span>
+            </h2>
+            <p class="text-gray-400">
+                <?= e(($company['city'] ?? '') . ', ' . ($company['country'] ?? '')) ?>
+            </p>
+        </div>
+
+        <div class="bg-[#141414] rounded-3xl overflow-hidden border border-[#2A2A2A]">
+            <div class="overflow-hidden">
+                <img src="<?= e($locationImageUrl) ?>"
+                     alt="<?= e($locationImage['alt_text'] ?? 'Kampala') ?>"
+                     class="story-image w-full h-auto object-cover max-h-[480px]">
+            </div>
+            <div class="p-8 text-center">
+                <p class="text-gray-400"><?= e($address) ?></p>
+            </div>
+        </div>
+    </div>
+</section>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

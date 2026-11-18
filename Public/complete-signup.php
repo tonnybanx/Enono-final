@@ -3,7 +3,7 @@ session_start();
 
 set_exception_handler(function ($e) {
     error_log($e->getMessage());
-    die('<div style="font-family:sans-serif;max-width:500px;margin:80px auto;padding:30px;border:1px solid #f5c2c7;background:#f8d7da;color:#842029;border-radius:12px;">
+    die('<div style="font-family:sans-serif;max-width:500px;margin:80px auto;padding:30px;border:1px solid #7f1d1d;background:#450a0a;color:#fecaca;border-radius:12px;">
             <h2>Something went wrong</h2>
             <p>We encountered an unexpected error. Please try again later.</p>
          </div>');
@@ -86,46 +86,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
         .heading-font { font-family: 'Playfair Display', sans-serif; }
+
+        .form-input {
+            background-color: #141414;
+            border: 1px solid #2A2A2A;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .form-input::placeholder {
+            color: #6b7280;
+        }
+        .form-input:focus {
+            border-color: #E8B923;
+            box-shadow: 0 0 0 3px rgba(232, 185, 35, 0.15);
+            outline: none;
+        }
     </style>
 </head>
-<body class="bg-white min-h-screen flex items-center justify-center py-12">
+<body class="bg-[#0B0B0B] min-h-screen flex items-center justify-center py-12">
     <div class="max-w-md w-full px-6">
 
+        <!-- Logo -->
         <div class="flex justify-center mb-8">
             <div class="flex items-center gap-3">
-                <img src="../images/drum_logo.jpg" alt="" class="h-14 w-12">
+                <img src="../images/drum_logo.jpg" alt="" class="h-14 w-12 rounded">
                 <div>
-                    <div class="heading-font text-5xl font-bold tracking-tighter text-black">Enono</div>
-                    <div class="pl-2 text-sm tracking-widest text-amber-600 -mt-1">MARKET</div>
+                    <div class="heading-font text-5xl font-bold tracking-tighter text-white">Enono</div>
+                    <div class="pl-2 text-sm tracking-widest text-[#D4A017] -mt-1">MARKET</div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow border border-gray-100 p-8">
-            <h1 class="text-2xl font-semibold mb-2">Complete your account</h1>
-            <p class="text-sm text-gray-500 mb-6">
-                Verified email: <span class="font-medium text-gray-800"><?= htmlspecialchars($email) ?></span>
+        <!-- Card -->
+        <div class="bg-[#141414] rounded-2xl border border-[#2A2A2A] p-8">
+            <h1 class="text-2xl font-semibold mb-2 text-white">Complete your account</h1>
+            <p class="text-sm text-gray-400 mb-6">
+                Verified email: <span class="font-medium text-[#D4A017]"><?= htmlspecialchars($email) ?></span>
             </p>
 
             <?php if ($error): ?>
-                <div class="mb-5 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                <div class="mb-5 p-4 bg-red-900/30 border border-red-700/50 text-red-300 rounded-lg text-sm">
                     <?= htmlspecialchars($error) ?>
                 </div>
             <?php endif; ?>
 
             <form method="POST" action="">
                 <div class="mb-5">
-                    <label class="block text-sm font-medium mb-1">Your name</label>
+                    <label class="block text-sm font-medium mb-1.5 text-gray-300">Your name</label>
                     <input type="text" name="full_name" required
                            value="<?= htmlspecialchars($_POST['full_name'] ?? '') ?>"
                            placeholder="First and last name"
-                           class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-400">
+                           class="form-input w-full rounded-lg px-4 py-3">
                 </div>
 
                 <div class="mb-5">
-                    <label class="block text-sm font-medium mb-1">Password (at least 6 characters)</label>
+                    <label class="block text-sm font-medium mb-1.5 text-gray-300">Password (at least 6 characters)</label>
                     <input type="password" name="password" required minlength="6"
-                           class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-400">
+                           class="form-input w-full rounded-lg px-4 py-3">
                     <div class="flex items-center gap-2 mt-2 text-xs text-gray-500">
                         <i class="fa-solid fa-circle-info"></i>
                         <span>Passwords must be at least 6 characters.</span>
@@ -133,21 +150,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="mb-8">
-                    <label class="block text-sm font-medium mb-1">Re-enter password</label>
+                    <label class="block text-sm font-medium mb-1.5 text-gray-300">Re-enter password</label>
                     <input type="password" name="confirm_password" required
-                           class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-400">
+                           class="form-input w-full rounded-lg px-4 py-3">
                 </div>
 
                 <button type="submit"
-                        class="w-full bg-[#8B4513] hover:bg-amber-600 text-white font-semibold py-3.5 rounded-xl text-lg transition-colors">
+                        class="w-full bg-[#E8B923] hover:bg-[#F0C94A] text-[#0B0B0B] font-semibold py-3.5 rounded-xl text-lg transition-colors">
                     Create Account
                 </button>
             </form>
 
             <div class="mt-8 text-[13px] text-gray-500 text-center">
                 By creating an account, you agree to enono MARKET's<br>
-                <a href="#" class="text-amber-600 hover:underline">Conditions of Use</a> and
-                <a href="#" class="text-amber-600 hover:underline">Privacy Notice</a>
+                <a href="#" class="text-[#D4A017] hover:text-[#E8B923] hover:underline">Conditions of Use</a> and
+                <a href="#" class="text-[#D4A017] hover:text-[#E8B923] hover:underline">Privacy Notice</a>
             </div>
         </div>
 

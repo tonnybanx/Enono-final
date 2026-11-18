@@ -32,12 +32,12 @@ if (!function_exists('e')) {
 }
 
 $companyName = $company['company_name'] ?? 'Enono';
-$tagline     = $company['tagline'] ?? 'Market';
+$tagline     = $company['tagline'] ?? 'Obuwanga Nennono Kuntiko';
 $shortDesc   = $company['short_description'] ?? "Connecting you to Africa's richest cultural heritage.";
 ?>
 
 <!-- ==================== FOOTER ==================== -->
-<footer class="bg-[#2C1A0F] text-white pt-16 pb-10">
+<footer class="bg-black text-white pt-16 pb-10 border-t border-[#E8A92B]/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-4 gap-10">
 
@@ -48,34 +48,34 @@ $shortDesc   = $company['short_description'] ?? "Connecting you to Africa's rich
                          alt="<?= e($companyName) ?>"
                          class="h-12 rounded">
                     <div>
-                        <div class="heading-font text-3xl"><?= e($companyName) ?></div>
-                        <span class="text-md text-[#fbbf24]"><?= e($tagline) ?></span>
+                        <div class="heading-font text-3xl text-[#F2B84B]"><?= e($companyName) ?></div>
+                        <span class="heading-font text-md italic text-white"><?= e($tagline) ?></span>
                     </div>
                 </div>
-                <p class="text-white/70 text-sm mt-3"><?= e($shortDesc) ?></p>
+                <p class="text-gray-400 text-sm mt-3"><?= e($shortDesc) ?></p>
             </div>
 
             <!-- Shop -->
             <div>
-                <h4 class="font-semibold mb-4">Shop</h4>
-                <ul class="space-y-2 text-sm text-white/70">
+                <h4 class="font-semibold mb-4 text-[#E8A92B]">Shop</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
                     <li>
-                        <a href="<?= e($publicPrefix) ?>shopping.php" class="hover:text-white">
+                        <a href="<?= e($publicPrefix) ?>shopping.php" class="hover:text-[#E8A92B] transition-colors">
                             Kanzu Collection
                         </a>
                     </li>
                     <li>
-                        <a href="<?= e($publicPrefix) ?>shopping.php" class="hover:text-white">
+                        <a href="<?= e($publicPrefix) ?>shopping.php" class="hover:text-[#E8A92B] transition-colors">
                             Lubugo Sheets
                         </a>
                     </li>
                     <li>
-                        <a href="<?= e($publicPrefix) ?>shopping.php" class="hover:text-white">
+                        <a href="<?= e($publicPrefix) ?>shopping.php" class="hover:text-[#E8A92B] transition-colors">
                             Traditional Pipes
                         </a>
                     </li>
                     <li>
-                        <a href="<?= e($publicPrefix) ?>shopping.php" class="hover:text-white">
+                        <a href="<?= e($publicPrefix) ?>shopping.php" class="hover:text-[#E8A92B] transition-colors">
                             Cultural Jewelry
                         </a>
                     </li>
@@ -84,25 +84,25 @@ $shortDesc   = $company['short_description'] ?? "Connecting you to Africa's rich
 
             <!-- Company -->
             <div>
-                <h4 class="font-semibold mb-4">Company</h4>
-                <ul class="space-y-2 text-sm text-white/70">
+                <h4 class="font-semibold mb-4 text-[#E8A92B]">Company</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
                     <li>
-                        <a href="<?= e($publicPrefix) ?>aboutus.php" class="hover:text-white">
+                        <a href="<?= e($publicPrefix) ?>aboutus.php" class="hover:text-[#E8A92B] transition-colors">
                             About us
                         </a>
                     </li>
                     <li>
-                        <a href="<?= e($publicPrefix) ?>blog.php" class="hover:text-white">
+                        <a href="<?= e($publicPrefix) ?>blog.php" class="hover:text-[#E8A92B] transition-colors">
                             Blog
                         </a>
                     </li>
                     <li>
-                        <a href="<?= e($publicPrefix) ?>heritage.php" class="hover:text-white">
+                        <a href="<?= e($publicPrefix) ?>heritage.php" class="hover:text-[#E8A92B] transition-colors">
                             Heritage
                         </a>
                     </li>
                     <li>
-                        <a href="<?= e($publicPrefix) ?>contactus.php" class="hover:text-white">
+                        <a href="<?= e($publicPrefix) ?>contactus.php" class="hover:text-[#E8A92B] transition-colors">
                             Contact Us
                         </a>
                     </li>
@@ -111,26 +111,26 @@ $shortDesc   = $company['short_description'] ?? "Connecting you to Africa's rich
 
             <!-- Social -->
             <div>
-                <h4 class="font-semibold mb-4">Follow Us</h4>
-                <div class="flex gap-5 text-2xl">
+                <h4 class="font-semibold mb-4 text-[#E8A92B]">Follow Us</h4>
+                <div class="flex gap-5 text-2xl text-gray-200">
                     <a href="<?= e($company['instagram_url'] ?? '#') ?>"
                        <?= !empty($company['instagram_url']) ? 'target="_blank" rel="noopener"' : '' ?>>
-                        <i class="fa-brands fa-instagram hover:text-amber-400 transition-colors"></i>
+                        <i class="fa-brands fa-instagram hover:text-[#E8A92B] transition-colors"></i>
                     </a>
                     <a href="<?= e($company['facebook_url'] ?? '#') ?>"
                        <?= !empty($company['facebook_url']) ? 'target="_blank" rel="noopener"' : '' ?>>
-                        <i class="fa-brands fa-facebook hover:text-amber-400 transition-colors"></i>
+                        <i class="fa-brands fa-facebook hover:text-[#E8A92B] transition-colors"></i>
                     </a>
                     <a href="<?= e($company['tiktok_url'] ?? '#') ?>"
                        <?= !empty($company['tiktok_url']) ? 'target="_blank" rel="noopener"' : '' ?>>
-                        <i class="fa-brands fa-tiktok hover:text-amber-400 transition-colors"></i>
+                        <i class="fa-brands fa-tiktok hover:text-[#E8A92B] transition-colors"></i>
                     </a>
                 </div>
             </div>
 
         </div>
 
-        <div class="text-center text-white/50 text-sm mt-16 border-t border-white/10 pt-8">
+        <div class="text-center text-gray-500 text-sm mt-16 border-t border-[#E8A92B]/20 pt-8">
             © <?= date('Y') ?> <?= e($companyName) ?> <?= e($tagline) ?> • All Rights Reserved
         </div>
     </div>

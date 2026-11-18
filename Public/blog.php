@@ -65,38 +65,66 @@ $posts = getBlogPosts($pdo);
 
 $pageTitle = 'Blog';
 $activeNav = 'blog';
-$bodyBgClass = 'bg-white';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-    <div class="max-w-7xl mx-auto px-4 py-12">
+<div class="mx-auto bg-[#0B0B0B] min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 md:py-16">
+
+        <!-- Header -->
         <div class="text-center mb-16">
-            <h1 class="text-5xl font-bold heading-font text-[#2C1A0F]">Stories of Craftsmanship</h1>
-            <p class="text-xl text-gray-600 mt-4 max-w-2xl mx-auto">
+            <p class="uppercase tracking-[0.2em] text-sm text-[#D4A017] mb-3">THE STORIES</p>
+            <h1 class="text-4xl md:text-5xl font-semibold heading-font text-white">
+                Stories of <span class="text-[#D4A017]">Craftsmanship</span>
+            </h1>
+            <p class="text-lg text-gray-400 mt-5 max-w-2xl mx-auto leading-relaxed">
                 Discover the stories behind our products, the hands that create them, and the rich African heritage they carry.
             </p>
         </div>
 
+        <!-- Posts -->
         <div class="space-y-20">
             <?php foreach ($posts as $i => $post): ?>
                 <?php $reversed = ($i % 2 === 1); ?>
-                <div class="grid md:grid-cols-12 gap-10 items-center blog-card">
+                <div class="grid md:grid-cols-12 gap-10 items-center">
                     <div class="md:col-span-<?= $reversed ? '7 md:order-2' : '5' ?>">
-                        <img src="<?= e(resolveImagePath($post['image_url'])) ?>" class="blog-image rounded-2xl shadow-xl max-h-[600px] w-full" alt="<?= e($post['title']) ?>">
-                    </div>
-                    <div class="md:col-span-<?= $reversed ? '5 md:order-1' : '7' ?>">
-                        <div class="flex items-center gap-3 text-sm text-amber-600 mb-4">
-                            <span class="px-4 py-1 bg-amber-100 rounded-full"><?= e($post['category']) ?></span>
-                            <span class="text-gray-400">•</span>
-                            <span><?= (int) $post['read_time_minutes'] ?> min read</span>
+                        <div class="overflow-hidden rounded-2xl border border-[#2A2A2A] bg-[#141414]">
+                            <img src="<?= e(resolveImagePath($post['image_url'])) ?>"
+                                 class="w-full max-h-[600px] object-cover transition-transform duration-500 hover:scale-105"
+                                 alt="<?= e($post['title']) ?>">
                         </div>
-                        <h3 class="text-4xl font-semibold leading-tight mb-4"><?= e($post['title']) ?></h3>
-                        <p class="text-gray-600 text-lg leading-relaxed"><?= e($post['excerpt']) ?></p>
+                    </div>
+
+                    <div class="md:col-span-<?= $reversed ? '5 md:order-1' : '7' ?>">
+                        <div class="flex items-center gap-3 text-sm text-[#D4A017] mb-4">
+                            <span class="px-4 py-1.5 bg-[#E8B923]/10 border border-[#E8B923]/30 text-[#E8B923] rounded-full text-xs font-medium">
+                                <?= e($post['category']) ?>
+                            </span>
+                            <span class="text-gray-500">•</span>
+                            <span class="text-gray-400"><?= (int) $post['read_time_minutes'] ?> min read</span>
+                        </div>
+
+                        <h3 class="text-3xl md:text-4xl font-semibold leading-tight mb-4 text-white">
+                            <?= e($post['title']) ?>
+                        </h3>
+
+                        <p class="text-gray-400 text-lg leading-relaxed">
+                            <?= e($post['excerpt']) ?>
+                        </p>
+
                         <div class="mt-8 flex items-center gap-4">
-                            <img src="<?= e(resolveImagePath($post['author_image_url'])) ?>" class="w-12 h-12 rounded-full object-cover">
+                            <img src="<?= e(resolveImagePath($post['author_image_url'])) ?>"
+                                 class="w-12 h-12 rounded-full object-cover border-2 border-[#2A2A2A]"
+                                 alt="<?= e($post['author_name']) ?>">
                             <div>
-                                <p class="font-medium"><?= e($post['author_name']) ?> • <?= e($post['author_country']) ?></p>
-                                <p class="text-xs text-gray-500"><?= e(formatPostDate($post['published_at'])) ?></p>
+                                <p class="font-medium text-white">
+                                    <?= e($post['author_name']) ?>
+                                    <span class="text-gray-500">•</span>
+                                    <span class="text-gray-400"><?= e($post['author_country']) ?></span>
+                                </p>
+                                <p class="text-xs text-gray-500 mt-0.5">
+                                    <?= e(formatPostDate($post['published_at'])) ?>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -104,12 +132,15 @@ require __DIR__ . '/../includes/header.php';
             <?php endforeach; ?>
         </div>
 
+        <!-- CTA -->
         <div class="text-center mt-20">
             <button onclick="alert('More stories about our products and artisans coming soon ✨')"
-                    class="bg-[#2C1A0F] text-white px-12 py-5 rounded-3xl text-lg font-medium hover:bg-black transition">
+                    class="bg-[#E8B923] hover:bg-[#F0C94A] text-[#0B0B0B] px-12 py-4 rounded-2xl text-lg font-medium transition-colors">
                 Read More Stories
             </button>
         </div>
+
     </div>
+</div>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

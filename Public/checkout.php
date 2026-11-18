@@ -310,20 +310,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
 
         .form-input {
             transition: all 0.3s ease;
+            background-color: #141414;
+            border-color: #2A2A2A;
+            color: #ffffff;
+        }
+        .form-input::placeholder {
+            color: #6b7280;
         }
         .form-input:focus {
-            border-color: #8B4513;
-            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+            border-color: #E8B923;
+            box-shadow: 0 0 0 3px rgba(232, 185, 35, 0.15);
+            outline: none;
         }
 
         .left-panel {
             max-width: 520px;
         }
 
+        .payment-btn {
+            background-color: #141414;
+            border: 2px solid #2A2A2A;
+            color: #e5e7eb;
+        }
+        .payment-btn:hover {
+            border-color: #D4A017;
+        }
         .payment-btn.selected {
-            border-color: #8B4513 !important;
-            background-color: #f8f5f0 !important;
-            box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.25);
+            border-color: #E8B923 !important;
+            background-color: #1C1C1C !important;
+            box-shadow: 0 0 0 2px rgba(232, 185, 35, 0.25);
         }
 
         #complete-btn:disabled {
@@ -348,10 +363,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
         }
     </style>
 </head>
-<body class="body-font text-gray-800 min-h-screen">
+<body class="body-font text-gray-200 min-h-screen bg-[#0B0B0B]">
 
     <!-- Top Banner -->
-    <div class="bg-[#8B4513] text-white text-center py-3 text-sm">
+    <div class="bg-[#141414] border-b border-[#2A2A2A] text-[#D4A017] text-center py-3 text-sm">
         Understand African Heritage and craft • 10% discount on your first order
     </div>
 
@@ -361,21 +376,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
         <div class="flex-1 overflow-auto p-6 md:p-12 lg:p-16 xl:p-24">
             <div class="left-panel mx-auto">
                 <a href="shopping.php" 
-                   class="inline-flex items-center gap-2 text-gray-600 hover:text-[#8B4513] mb-10 text-base font-medium">
+                   class="inline-flex items-center gap-2 text-gray-400 hover:text-[#D4A017] mb-10 text-base font-medium transition-colors">
                     ← Return to store
                 </a>
 
                 <?php if ($error): ?>
-                    <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm">
+                    <div class="mb-6 p-4 bg-red-900/30 border border-red-700/50 text-red-300 rounded-xl text-sm">
                         <?= htmlspecialchars($error) ?>
                     </div>
                 <?php endif; ?>
 
                 <?php if (empty($cartItems) && !$success): ?>
                     <div class="text-center py-20">
-                        <i class="fa-solid fa-cart-shopping text-5xl text-gray-300 mb-4"></i>
-                        <p class="text-gray-500 mb-6">Your cart is empty</p>
-                        <a href="shopping.php" class="inline-block bg-[#8B4513] text-white px-6 py-3 rounded-xl">
+                        <i class="fa-solid fa-cart-shopping text-5xl text-gray-600 mb-4"></i>
+                        <p class="text-gray-400 mb-6">Your cart is empty</p>
+                        <a href="shopping.php" class="inline-block bg-[#E8B923] hover:bg-[#F0C94A] text-[#0B0B0B] px-6 py-3 rounded-xl font-medium transition-colors">
                             Continue Shopping
                         </a>
                     </div>
@@ -388,56 +403,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                     <div class="space-y-12">
                         <!-- Contact -->
                         <div>
-                            <h2 class="heading-font text-xl font-semibold mb-4">Contact</h2>
+                            <h2 class="heading-font text-xl font-semibold mb-4 text-white">Contact</h2>
                             <div class="space-y-4">
                                 <input type="email" name="email" required
                                        value="<?= htmlspecialchars($_POST['email'] ?? $userEmail) ?>"
                                        placeholder="Email address" 
-                                       class="form-input w-full border border-gray-300 rounded-lg px-4 py-2.5 outline-none text-base">
+                                       class="form-input w-full border rounded-lg px-4 py-2.5 text-base">
                                 <input type="tel" name="phone"
                                        value="<?= htmlspecialchars($_POST['phone'] ?? $userPhone) ?>"
                                        placeholder="Contact number" 
-                                       class="form-input w-full border border-gray-300 rounded-lg px-4 py-2.5 outline-none text-base">
+                                       class="form-input w-full border rounded-lg px-4 py-2.5 text-base">
                             </div>
                         </div>
 
                         <!-- Delivery -->
                         <div>
-                            <h2 class="heading-font text-xl font-semibold mb-4">Delivery</h2>
+                            <h2 class="heading-font text-xl font-semibold mb-4 text-white">Delivery</h2>
                             <div class="space-y-4">
                                 <input type="text" name="full_name" required
                                        value="<?= htmlspecialchars($_POST['full_name'] ?? $userName) ?>"
                                        placeholder="Full name" 
-                                       class="form-input w-full border border-gray-300 rounded-lg px-4 py-2.5 outline-none">
+                                       class="form-input w-full border rounded-lg px-4 py-2.5">
                                 
-                                <select name="country" class="form-input w-full border border-gray-300 rounded-lg px-4 py-2.5 outline-none bg-white">
+                                <select name="country" class="form-input w-full border rounded-lg px-4 py-2.5">
                                     <option value="UG">Uganda</option>
                                 </select>
                                 
                                 <input type="text" name="address" required
                                        value="<?= htmlspecialchars($_POST['address'] ?? '') ?>"
                                        placeholder="Address" 
-                                       class="form-input w-full border border-gray-300 rounded-lg px-4 py-2.5 outline-none">
+                                       class="form-input w-full border rounded-lg px-4 py-2.5">
                                 
                                 <div class="grid grid-cols-2 gap-4">
                                     <input type="text" name="city" required
                                            value="<?= htmlspecialchars($_POST['city'] ?? '') ?>"
                                            placeholder="City" 
-                                           class="form-input border border-gray-300 rounded-lg px-4 py-2.5 outline-none">
+                                           class="form-input border rounded-lg px-4 py-2.5">
                                     <input type="text" name="postal_code"
                                            value="<?= htmlspecialchars($_POST['postal_code'] ?? '') ?>"
                                            placeholder="Postal code (optional)" 
-                                           class="form-input border border-gray-300 rounded-lg px-4 py-2.5 outline-none">
+                                           class="form-input border rounded-lg px-4 py-2.5">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Payment -->
                         <div>
-                            <h2 class="heading-font text-xl font-semibold mb-2">Payment</h2>
-                            <p class="text-gray-600 mb-4 text-sm">
-                                Choose a payment method <span class="text-red-500">*</span>
-                                <span id="payment-hint" class="text-red-600 hidden"> — please select one</span>
+                            <h2 class="heading-font text-xl font-semibold mb-2 text-white">Payment</h2>
+                            <p class="text-gray-400 mb-4 text-sm">
+                                Choose a payment method <span class="text-red-400">*</span>
+                                <span id="payment-hint" class="text-red-400 hidden"> — please select one</span>
                             </p>
                             
                             <div class="grid grid-cols-3 gap-4">
@@ -446,7 +461,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                                     <button type="button"
                                             onclick="selectPayment(this, '<?= htmlspecialchars($key) ?>')"
                                             data-method="<?= htmlspecialchars($key) ?>"
-                                            class="payment-btn border-2 border-transparent hover:border-[#8B4513] bg-white p-5 rounded-2xl flex flex-col items-center gap-2 transition-all
+                                            class="payment-btn p-5 rounded-2xl flex flex-col items-center gap-2 transition-all
                                                    <?= (($_POST['payment_method'] ?? '') === $key) ? 'selected' : '' ?>">
                                         <img src="<?= htmlspecialchars($method['icon']) ?>"
                                              class="h-10 object-contain" alt="<?= htmlspecialchars($method['label']) ?>">
@@ -458,23 +473,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
 
                         <!-- Mobile order summary -->
                         <div class="md:hidden">
-                            <div class="bg-[#faf9f6] rounded-2xl p-6 mb-6">
-                                <h3 class="font-semibold mb-4">Order Summary</h3>
+                            <div class="bg-[#141414] border border-[#2A2A2A] rounded-2xl p-6 mb-6">
+                                <h3 class="font-semibold mb-4 text-white">Order Summary</h3>
                                 <?php foreach ($cartItems as $item): ?>
-                                    <div class="flex justify-between text-sm mb-2">
+                                    <div class="flex justify-between text-sm mb-2 text-gray-300">
                                         <span><?= htmlspecialchars($item['product_name']) ?> × <?= $item['quantity'] ?></span>
                                         <span>UGX <?= number_format($item['line_total']) ?></span>
                                     </div>
                                 <?php endforeach; ?>
-                                <div class="border-t pt-3 mt-3 flex justify-between font-semibold">
+                                <div class="border-t border-[#2A2A2A] pt-3 mt-3 flex justify-between font-semibold text-white">
                                     <span>Total</span>
-                                    <span class="text-[#8B4513]">UGX <?= number_format($total) ?></span>
+                                    <span class="text-[#D4A017]">UGX <?= number_format($total) ?></span>
                                 </div>
                             </div>
                         </div>
 
                         <button type="submit" id="complete-btn"
-                                class="w-full bg-[#8B4513] hover:bg-[#6B3410] text-white py-3.5 rounded-xl font-semibold text-base transition"
+                                class="w-full bg-[#E8B923] hover:bg-[#F0C94A] text-[#0B0B0B] py-3.5 rounded-xl font-semibold text-base transition-colors"
                                 <?= empty($_POST['payment_method'] ?? '') ? 'disabled' : '' ?>>
                             Complete Order
                         </button>
@@ -488,13 +503,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
         </div>
 
         <!-- Right - Order Summary (Desktop) -->
-        <div class="hidden md:flex w-full md:w-2/5 lg:w-2/5 bg-[#faf9f6] border-l border-gray-200 items-start">
+        <div class="hidden md:flex w-full md:w-2/5 lg:w-2/5 bg-[#141414] border-l border-[#2A2A2A] items-start">
             <div class="sticky top-0 w-full h-screen p-8 lg:p-12 overflow-auto">
                 <div class="max-w-md mx-auto">
-                    <h2 class="heading-font text-xl font-semibold mb-8">Order Summary</h2>
+                    <h2 class="heading-font text-xl font-semibold mb-8 text-white">Order Summary</h2>
                     
                     <?php if (empty($cartItems)): ?>
-                        <p class="text-gray-500"><?= $success ? 'Order placed successfully' : 'Your cart is empty' ?></p>
+                        <p class="text-gray-400"><?= $success ? 'Order placed successfully' : 'Your cart is empty' ?></p>
                     <?php else: ?>
                         <div class="space-y-6 mb-10">
                             <?php foreach ($cartItems as $item): 
@@ -502,18 +517,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                             ?>
                                 <div class="flex gap-4">
                                     <img src="<?= htmlspecialchars($img) ?>" 
-                                         class="w-[50px] h-[50px] object-cover rounded-lg flex-shrink-0"
+                                         class="w-[50px] h-[50px] object-cover rounded-lg flex-shrink-0 border border-[#2A2A2A]"
                                          onerror="this.onerror=null; this.src='../images/drum_logo.jpg';"
                                          alt="<?= htmlspecialchars($item['product_name']) ?>">
                                     <div class="flex-1 min-w-0">
                                         <div class="flex justify-between gap-2">
-                                            <p class="font-medium leading-tight text-sm">
+                                            <p class="font-medium leading-tight text-sm text-white">
                                                 <?= htmlspecialchars($item['product_name']) ?>
                                                 <?php if ($item['quantity'] > 1): ?>
-                                                    <span class="text-gray-400">× <?= $item['quantity'] ?></span>
+                                                    <span class="text-gray-500">× <?= $item['quantity'] ?></span>
                                                 <?php endif; ?>
                                             </p>
-                                            <p class="font-medium whitespace-nowrap text-[#9b4925]">
+                                            <p class="font-medium whitespace-nowrap text-[#D4A017]">
                                                 UGX <?= number_format($item['line_total']) ?>
                                             </p>
                                         </div>
@@ -526,18 +541,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                         </div>
 
                         <!-- Totals -->
-                        <div class="border-t pt-6 space-y-4">
+                        <div class="border-t border-[#2A2A2A] pt-6 space-y-4">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Subtotal</span>
-                                <span class="font-medium">UGX <?= number_format($subtotal) ?></span>
+                                <span class="text-gray-400">Subtotal</span>
+                                <span class="font-medium text-white">UGX <?= number_format($subtotal) ?></span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Shipping</span>
-                                <span class="text-green-600">Free</span>
+                                <span class="text-gray-400">Shipping</span>
+                                <span class="text-green-500">Free</span>
                             </div>
-                            <div class="flex justify-between text-xl font-semibold pt-4 border-t">
-                                <span>Total</span>
-                                <span class="text-[#9b4925]">UGX <?= number_format($total) ?></span>
+                            <div class="flex justify-between text-xl font-semibold pt-4 border-t border-[#2A2A2A]">
+                                <span class="text-white">Total</span>
+                                <span class="text-[#D4A017]">UGX <?= number_format($total) ?></span>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -545,7 +560,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
                     <p class="text-center text-xs text-gray-500 mt-10">
                         Secure checkout powered by Enono
                         <?php if (defined('PAYMENT_MODE') && PAYMENT_MODE === 'simulated'): ?>
-                            <br><span class="text-amber-600">(Payment simulation mode)</span>
+                            <br><span class="text-[#D4A017]">(Payment simulation mode)</span>
                         <?php endif; ?>
                     </p>
                 </div>
@@ -555,36 +570,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
 
     <!-- ========== SUCCESS OVERLAY ========== -->
     <?php if ($success): ?>
-    <div id="success-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-        <div class="modal-card bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+    <div id="success-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div class="modal-card bg-[#141414] border border-[#2A2A2A] rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
             <!-- Header strip -->
-            <div class="bg-[#8B4513] px-6 py-5 text-center">
-                <div class="mx-auto w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-3">
-                    <i class="fa-solid fa-check text-3xl text-white"></i>
+            <div class="bg-[#E8B923] px-6 py-5 text-center">
+                <div class="mx-auto w-16 h-16 rounded-full bg-[#0B0B0B]/20 flex items-center justify-center mb-3">
+                    <i class="fa-solid fa-check text-3xl text-[#0B0B0B]"></i>
                 </div>
-                <h2 class="heading-font text-2xl font-bold text-white">Order Confirmed!</h2>
-                <p class="text-white/80 text-sm mt-1">Thank you for shopping with Enono</p>
+                <h2 class="heading-font text-2xl font-bold text-[#0B0B0B]">Order Confirmed!</h2>
+                <p class="text-[#0B0B0B]/80 text-sm mt-1">Thank you for shopping with Enono</p>
             </div>
 
             <div class="px-6 py-6 space-y-4">
-                <div class="bg-[#faf9f6] rounded-xl p-4 text-center">
+                <div class="bg-[#1C1C1C] border border-[#2A2A2A] rounded-xl p-4 text-center">
                     <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Order Number</p>
-                    <p class="font-semibold text-lg text-[#8B4513] tracking-wide">
+                    <p class="font-semibold text-lg text-[#E8B923] tracking-wide">
                         <?= htmlspecialchars($orderNumberSuccess) ?>
                     </p>
                 </div>
 
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Total paid</span>
-                    <span class="font-semibold">UGX <?= number_format($orderTotalSuccess) ?></span>
+                    <span class="text-gray-400">Total paid</span>
+                    <span class="font-semibold text-white">UGX <?= number_format($orderTotalSuccess) ?></span>
                 </div>
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Payment method</span>
-                    <span class="font-medium"><?= htmlspecialchars($paymentMethodLabel) ?></span>
+                    <span class="text-gray-400">Payment method</span>
+                    <span class="font-medium text-white"><?= htmlspecialchars($paymentMethodLabel) ?></span>
                 </div>
                 <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Status</span>
-                    <span class="text-green-600 font-medium">Paid · Pending dispatch</span>
+                    <span class="text-gray-400">Status</span>
+                    <span class="text-green-500 font-medium">Paid · Pending dispatch</span>
                 </div>
 
                 <p class="text-xs text-gray-500 text-center pt-2">
@@ -594,11 +609,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_order'])) {
 
             <div class="px-6 pb-6 flex flex-col gap-3">
                 <a href="shopping.php"
-                   class="w-full text-center bg-[#8B4513] hover:bg-[#6B3410] text-white py-3 rounded-xl font-semibold transition">
+                   class="w-full text-center bg-[#E8B923] hover:bg-[#F0C94A] text-[#0B0B0B] py-3 rounded-xl font-semibold transition-colors">
                     Continue Shopping
                 </a>
                 <a href="orders.php"
-                   class="w-full text-center border border-gray-300 hover:border-[#8B4513] text-gray-700 py-3 rounded-xl font-medium transition">
+                   class="w-full text-center border border-[#2A2A2A] hover:border-[#D4A017] text-gray-300 hover:text-[#D4A017] py-3 rounded-xl font-medium transition-colors">
                     View My Orders
                 </a>
             </div>

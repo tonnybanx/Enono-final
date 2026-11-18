@@ -32,7 +32,7 @@ $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .heading-font { font-family: 'Playfair Display', sans-serif; }
         
         .faq-item {
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid #2A2A2A;
         }
         .faq-item:last-child {
             border-bottom: none;
@@ -41,7 +41,7 @@ $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .faq-answer {
             display: none;
             padding: 20px 0 30px 0;
-            color: #374151;
+            color: #9ca3af;
             line-height: 1.7;
         }
         .faq-item.open .faq-answer {
@@ -50,44 +50,52 @@ $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         .faq-item.open .fa-chevron-down {
             transform: rotate(180deg);
+            color: #E8B923;
         }
 
         .category-item {
             transition: all 0.2s ease;
+            color: #d1d5db;
+        }
+        .category-item:hover {
+            background-color: #1C1C1C;
+            color: #E8B923;
         }
         .category-item.active {
-            background-color: #fef3c7;
-            color: #d97706;
+            background-color: #E8B923;
+            color: #0B0B0B;
             font-weight: 600;
-            border-left: 4px solid #fbbf24;
+            border-left: 4px solid #D4A017;
         }
     </style>
 </head>
-<body class="bg-white">
+<body class="bg-[#0B0B0B] text-gray-200 min-h-screen">
 
 <div class="max-w-7xl mx-auto px-4 py-12">
+    <!-- Header -->
     <div class="text-center mb-12">
-        <h1 class="text-4xl font-semibold heading-font">Help Center</h1>
-        <p class="text-gray-600 mt-3">Find answers or contact our support team</p>
+        <p class="uppercase tracking-[0.2em] text-sm text-[#D4A017] mb-3">SUPPORT</p>
+        <h1 class="text-4xl md:text-5xl font-semibold heading-font text-white">Help Center</h1>
+        <p class="text-gray-400 mt-3">Find answers or contact our support team</p>
     </div>
 
     <!-- Full Width Image -->
-    <div class="mb-16 -mx-4 md:-mx-6 lg:-mx-8 overflow-hidden">
+    <div class="mb-16 -mx-4 md:-mx-6 lg:-mx-8 overflow-hidden rounded-2xl border border-[#2A2A2A]">
         <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=2000&h=620&fit=crop" 
              alt="Happy customer support team - enono MARKET" 
-             class="w-full h-[420px] md:h-[520px] object-cover">
+             class="w-full h-[420px] md:h-[520px] object-cover opacity-90">
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
         
         <!-- Recommended Topics (from database) -->
         <div class="lg:col-span-4 relative pr-8">
-            <h3 class="font-semibold text-lg mb-6 flex items-center gap-3">
-                <i class="fa-solid fa-circle-question text-amber-500"></i> 
+            <h3 class="font-semibold text-lg mb-6 flex items-center gap-3 text-white">
+                <i class="fa-solid fa-circle-question text-[#D4A017]"></i> 
                 Recommended Topics
             </h3>
             
-            <div class="bg-white rounded-3xl p-6 shadow-sm">
+            <div class="bg-[#141414] rounded-3xl p-6 border border-[#2A2A2A]">
                 <div onclick="filterCategory(this)" data-category="all" 
                      class="category-item active flex justify-between items-center py-4 px-4 rounded-2xl cursor-pointer mb-1">
                     <span>All Topics</span>
@@ -102,22 +110,22 @@ $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php endforeach; ?>
             </div>
 
-            <div class="hidden lg:block absolute top-0 bottom-0 right-0 w-px bg-gray-200"></div>
+            <div class="hidden lg:block absolute top-0 bottom-0 right-0 w-px bg-[#2A2A2A]"></div>
         </div>
 
         <!-- FAQ Content -->
-        <div class="lg:col-span-8 bg-white p-8" id="faq-container"></div>
+        <div class="lg:col-span-8 bg-[#141414] border border-[#2A2A2A] rounded-2xl p-8" id="faq-container"></div>
     </div>
 
     <!-- Contact -->
     <div class="mt-20 text-center">
-        <p class="text-gray-600 mb-6 text-lg">Still can't solve the problem?</p>
+        <p class="text-gray-400 mb-6 text-lg">Still can't solve the problem?</p>
         <a href="contactus.php">
             <button 
-                class="inline-flex items-center gap-3 bg-white hover:bg-amber-50 border border-gray-300 px-10 py-5 rounded-full text-lg font-medium">
-            <i class="fa-solid fa-comment-dots text-amber-500"></i>
-            Contact Us
-        </button>
+                class="inline-flex items-center gap-3 bg-[#E8B923] hover:bg-[#F0C94A] text-[#0B0B0B] border border-[#E8B923] px-10 py-5 rounded-full text-lg font-medium transition-colors">
+                <i class="fa-solid fa-comment-dots"></i>
+                Contact Us
+            </button>
         </a>
     </div>
 </div>
@@ -130,7 +138,7 @@ $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     function renderFaqs(filteredFaqs) {
         const container = document.getElementById('faq-container');
-        container.innerHTML = '<h2 class="text-2xl font-semibold mb-8">Frequently Asked Questions</h2>';
+        container.innerHTML = '<h2 class="text-2xl font-semibold mb-8 text-white">Frequently Asked Questions</h2>';
 
         if (filteredFaqs.length === 0) {
             container.innerHTML += '<p class="text-gray-500 py-6">No questions found in this category.</p>';
@@ -142,10 +150,10 @@ $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             div.className = 'faq-item py-6 cursor-pointer';
             div.innerHTML = `
                 <div class="flex justify-between items-start">
-                    <p class="font-medium text-lg pr-8">${faq.question}</p>
-                    <i class="fa-solid fa-chevron-down text-gray-400 mt-1 transition-transform duration-200"></i>
+                    <p class="font-medium text-lg pr-8 text-white">${faq.question}</p>
+                    <i class="fa-solid fa-chevron-down text-gray-500 mt-1 transition-transform duration-200"></i>
                 </div>
-                <div class="faq-answer text-gray-600 leading-relaxed">${faq.answer}</div>
+                <div class="faq-answer leading-relaxed">${faq.answer}</div>
             `;
             container.appendChild(div);
 
@@ -178,8 +186,6 @@ $faqs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     window.onload = () => renderFaqs(faqs);
-
-   
 </script>
 </body>
 </html>

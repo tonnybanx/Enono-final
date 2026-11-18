@@ -41,15 +41,16 @@ require_once __DIR__ . '/../includes/header.php';
 
 <style>
     .heritage-hero {
-        background: #2C1A0F;
+        background: #0B0B0B;
         position: relative;
+        border-bottom: 1px solid #2A2A2A;
     }
     .heritage-hero::before {
         content: '';
         position: absolute;
         inset: 0;
         background: url('https://media.istockphoto.com/id/695152194/photo/african-drums.jpg') center/cover;
-        opacity: 0.12;
+        opacity: 0.10;
     }
 
     .spirit-row {
@@ -58,12 +59,13 @@ require_once __DIR__ . '/../includes/header.php';
         justify-content: space-between;
         gap: 1rem;
         padding: 1.1rem 0;
-        border-bottom: 1px solid #e6ddd2;
+        border-bottom: 1px solid #2A2A2A;
         text-decoration: none;
         color: inherit;
+        transition: background 0.15s;
     }
     .spirit-row:hover .spirit-name {
-        color: #8B4513;
+        color: #E8B923;
     }
     .spirit-name {
         transition: color 0.15s;
@@ -71,7 +73,7 @@ require_once __DIR__ . '/../includes/header.php';
     .item-count {
         font-variant-numeric: tabular-nums;
         font-size: 0.8rem;
-        color: #a89880;
+        color: #6b7280;
         min-width: 1.75rem;
         text-align: right;
         flex-shrink: 0;
@@ -81,24 +83,24 @@ require_once __DIR__ . '/../includes/header.php';
 <!-- ==================== HERO ==================== -->
 <section class="heritage-hero text-white relative">
     <div class="relative z-10 max-w-5xl mx-auto px-6 py-16 md:py-20">
-        <p class="text-amber-200/70 text-[11px] tracking-[0.2em] uppercase mb-4">
+        <p class="text-[#D4A017] text-[11px] tracking-[0.2em] uppercase mb-4">
             Enono · Heritage
         </p>
         <h1 class="heading-font text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight max-w-2xl">
-            Spiritual Heritage of Buganda
+            Spiritual Heritage of <span class="text-[#D4A017]">Buganda</span>
         </h1>
     </div>
 </section>
 
 <!-- ==================== INTRO ==================== -->
-<section class="bg-[#F9F5EB]">
+<section class="bg-[#0B0B0B]">
     <div class="max-w-5xl mx-auto px-6 py-12 md:py-16">
         <div class="max-w-3xl">
-            <p class="text-[11px] tracking-[0.18em] uppercase text-[#8B4513]/80 mb-4">
+            <p class="text-[11px] tracking-[0.18em] uppercase text-[#D4A017] mb-4">
                 The Balubaale
             </p>
 
-            <div class="space-y-4 text-gray-600 leading-[1.75] text-[15px]">
+            <div class="space-y-4 text-gray-400 leading-[1.75] text-[15px]">
                 <p>
                     In the spiritual landscape of Buganda, the Balubaale are not distant myths.  
                     They are living forces — ancestral and natural spirits called upon for protection, 
@@ -119,10 +121,10 @@ require_once __DIR__ . '/../includes/header.php';
 </section>
 
 <!-- ==================== SPIRITS LIST (2 columns) ==================== -->
-<section class="bg-[#F9F5EB] pb-16 md:pb-20">
+<section class="bg-[#0B0B0B] pb-16 md:pb-20">
     <div class="max-w-5xl mx-auto px-6">
 
-        <h2 class="heading-font text-xl font-semibold text-gray-900 mb-2">
+        <h2 class="heading-font text-xl font-semibold text-white mb-2">
             The Spirits
         </h2>
         <p class="text-sm text-gray-500 mb-8">
@@ -130,7 +132,7 @@ require_once __DIR__ . '/../includes/header.php';
         </p>
 
         <?php if (empty($spirits)): ?>
-            <p class="text-sm text-gray-500 py-8 border-t border-[#e6ddd2]">
+            <p class="text-sm text-gray-500 py-8 border-t border-[#2A2A2A]">
                 No spirits have been added yet.
             </p>
         <?php else: ?>
@@ -138,12 +140,12 @@ require_once __DIR__ . '/../includes/header.php';
                 <?php foreach ($spirits as $spirit): ?>
                     <a href="spirit.php?id=<?= (int)$spirit['id'] ?>" class="spirit-row">
                         <div class="min-w-0">
-                            <span class="spirit-name heading-font text-[1.1rem] text-gray-900 block">
-                                <?= e($spirit['name']) ?>
+                            <span class="spirit-name heading-font text-[1.1rem] text-white block">
+                                <?= htmlspecialchars($spirit['name']) ?>
                             </span>
                             <?php if (!empty($spirit['short_description'])): ?>
                                 <span class="text-sm text-gray-500 mt-0.5 block">
-                                    <?= e($spirit['short_description']) ?>
+                                    <?= htmlspecialchars($spirit['short_description']) ?>
                                 </span>
                             <?php endif; ?>
                         </div>
@@ -159,13 +161,13 @@ require_once __DIR__ . '/../includes/header.php';
 </section>
 
 <!-- ==================== FOOTNOTE ==================== -->
-<section class="border-t border-[#e6ddd2] bg-white">
+<section class="border-t border-[#2A2A2A] bg-[#141414]">
     <div class="max-w-5xl mx-auto px-6 py-10 md:py-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-        <p class="text-sm text-gray-500 leading-relaxed max-w-md">
+        <p class="text-sm text-gray-400 leading-relaxed max-w-md">
             These spirits and their associated objects remain part of a living tradition.
         </p>
         <a href="shopping.php"
-           class="inline-flex items-center justify-center bg-[#8B4513] hover:bg-[#6B3410] text-white px-6 py-2.5 rounded-lg text-sm font-medium transition whitespace-nowrap">
+           class="inline-flex items-center justify-center bg-[#E8B923] hover:bg-[#F0C94A] text-[#0B0B0B] px-6 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
             Explore the Collection
         </a>
     </div>

@@ -129,80 +129,60 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <style>
-    .product-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; cursor: pointer; }
-    .product-card:hover { transform: translateY(-6px); }
-    .product-card img { transition: transform 0.6s ease; }
-    .product-card:hover img { transform: scale(1.05); }
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
-    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    .product-card {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        cursor: pointer;
+    }
+    .product-card:hover {
+        transform: translateY(-6px);
+    }
+    .product-card img {
+        transition: transform 0.6s ease;
+    }
+    .product-card:hover img {
+        transform: scale(1.05);
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
     .category-btn.active {
-        background-color: #8B4513 !important;
-        color: white !important;
-        border-color: #8B4513 !important;
+        background-color: #E8B923 !important;
+        color: #0B0B0B !important;
+        border-color: #E8B923 !important;
     }
 </style>
 
-<div class="mx-auto">
-    <div class="w-full bg-[#faf5ef]">
-        <div class="mb-10 pt-10 max-w-7xl mx-auto px-6 pb-4">
-            <p class="uppercase tracking-widest text-amber-800 text-sm font-medium">THE COLLECTION</p>
-            <h1 class="heading-font text-2xl md:text-4xl font-semibold">Shop Buganda Crafts</h1>
+<div class="mx-auto bg-[#0B0B0B] min-h-screen">
+    <!-- Header Section -->
+    <div class="w-full bg-[#0B0B0B] border-b border-[#2A2A2A]">
+        <div class="mb-8 pt-12 max-w-7xl mx-auto px-6 pb-2">
+            <p class="uppercase tracking-[0.2em] text-sm text-[#D4A017] mb-3">THE COLLECTION</p>
+            <h1 class="heading-font text-3xl md:text-5xl font-semibold text-white">
+                Shop <span class="text-[#D4A017]">Buganda Crafts</span>
+            </h1>
         </div>
 
-        <!-- Search (submit only on button / Enter) -->
-        <form method="GET" action="shopping.php" class="max-w-7xl mx-auto px-6 pb-4">
-            <!-- Keep category when searching -->
-            <?php if ($currentCategory !== '' && strtolower($currentCategory) !== 'all'): ?>
-                <input type="hidden" name="category" value="<?= htmlspecialchars($currentCategory) ?>">
-            <?php endif; ?>
-
-            <div class="mb-6 max-w-2xl">
-                <div class="flex gap-2">
-                    <div class="relative flex-1">
-                        <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input type="text"
-                               name="search"
-                               value="<?= htmlspecialchars($searchTerm) ?>"
-                               placeholder="Search crafts..."
-                               class="w-full border border-gray-200 rounded-3xl py-4 pl-14 pr-6 focus:outline-none focus:border-[#8B4513] text-base">
-                    </div>
-                    <button type="submit"
-                            class="px-6 py-3 rounded-3xl bg-[#8B4513] hover:bg-[#6B3410] text-white text-sm font-medium whitespace-nowrap">
-                        Search
-                    </button>
-                    <?php if ($searchTerm !== ''): ?>
-                        <a href="shopping.php<?= $currentCategory !== '' && strtolower($currentCategory) !== 'all'
-                                ? '?category=' . urlencode($currentCategory)
-                                : '' ?>"
-                           class="px-5 py-3 rounded-3xl border border-gray-200 bg-white hover:bg-gray-50 text-sm font-medium whitespace-nowrap text-gray-700">
-                            Clear
-                        </a>
-                    <?php endif; ?>
-                </div>
-
-                <?php if ($searchTerm !== ''): ?>
-                    <p class="mt-3 text-sm text-gray-600">
-                        Results for
-                        <span class="font-medium text-gray-900">“<?= htmlspecialchars($searchTerm) ?>”</span>
-                        ·
-                        <a href="shopping.php" class="text-[#8B4513] hover:underline">Back to all products</a>
-                    </p>
-                <?php endif; ?>
-            </div>
-        </form>
-
         <!-- Categories -->
-        <div class="max-w-7xl mx-auto px-6 pb-4">
-            <div class="flex flex-wrap gap-3 justify-start mb-8 scrollbar-hide overflow-x-auto pb-2">
+        <div class="max-w-7xl mx-auto px-6 pb-8">
+            <div class="flex flex-wrap gap-3 justify-start mb-2 scrollbar-hide overflow-x-auto pb-2">
                 <a href="<?= htmlspecialchars(buildQuery(['category' => 'all', 'page' => 1, 'search' => $searchTerm])) ?>"
-                   class="category-btn px-8 py-3 rounded-3xl text-sm font-medium border
-                   <?= strtolower($currentCategory) === 'all' ? 'active bg-[#8B4513] text-white border-[#8B4513]' : 'bg-white border-gray-200 hover:bg-gray-50' ?>">
+                   class="category-btn px-7 py-3 rounded-2xl text-sm font-medium border transition-colors
+                   <?= strtolower($currentCategory) === 'all'
+                        ? 'active bg-[#E8B923] text-[#0B0B0B] border-[#E8B923]'
+                        : 'bg-[#141414] border-[#2A2A2A] text-gray-300 hover:border-[#D4A017] hover:text-[#D4A017]' ?>">
                     All
                 </a>
                 <?php foreach ($categories as $cat): ?>
                     <a href="<?= htmlspecialchars(buildQuery(['category' => $cat['name'], 'page' => 1, 'search' => $searchTerm])) ?>"
-                       class="category-btn px-8 py-3 rounded-3xl text-sm font-medium border
-                       <?= $currentCategory === $cat['name'] ? 'active bg-[#8B4513] text-white border-[#8B4513]' : 'bg-white border-gray-200 hover:bg-gray-50' ?>">
+                       class="category-btn px-7 py-3 rounded-2xl text-sm font-medium border transition-colors
+                       <?= $currentCategory === $cat['name']
+                            ? 'active bg-[#E8B923] text-[#0B0B0B] border-[#E8B923]'
+                            : 'bg-[#141414] border-[#2A2A2A] text-gray-300 hover:border-[#D4A017] hover:text-[#D4A017]' ?>">
                         <?= htmlspecialchars($cat['name']) ?>
                     </a>
                 <?php endforeach; ?>
@@ -211,24 +191,22 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 
     <!-- Products -->
-    <div class="w-full px-6 pb-10 max-w-7xl mx-auto">
+    <div class="w-full px-6 pb-16 pt-10 max-w-7xl mx-auto">
 
         <?php if ($totalProducts > 0): ?>
-            <p class="text-sm text-gray-500 mb-6">
+            <p class="text-sm text-gray-400 mb-8">
                 Showing <?= $offset + 1 ?>–<?= min($offset + $perPage, $totalProducts) ?>
                 of <?= number_format($totalProducts) ?> products
             </p>
         <?php endif; ?>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-7">
             <?php if (empty($products)): ?>
-                <div class="col-span-full text-center py-20 text-gray-400">
-                    <p class="text-2xl mb-3">No products found.</p>
-                    <?php if ($searchTerm !== ''): ?>
-                        <a href="shopping.php" class="text-[#8B4513] hover:underline text-sm">
-                            Back to all products
-                        </a>
-                    <?php endif; ?>
+                <div class="col-span-full text-center py-24 text-gray-500">
+                    <p class="text-2xl mb-4 text-gray-400">No products found.</p>
+                    <a href="shopping.php" class="text-[#D4A017] hover:text-[#E8B923] hover:underline text-sm">
+                        Back to all products
+                    </a>
                 </div>
             <?php else: ?>
                 <?php foreach ($products as $p): ?>
@@ -242,28 +220,36 @@ require_once __DIR__ . '/../includes/header.php';
                         }
                         $variantId = (int)($p['default_variant_id'] ?? 0);
                     ?>
-                    <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100"
+                    <div class="product-card bg-[#141414] rounded-xl overflow-hidden border border-[#D4A017]/30 hover:border-[#D4A017] transition-all duration-300"
                          onclick="window.location.href='product-details.php?id=<?= (int)$p['id'] ?>&variant=<?= $variantId ?>'">
-                        <div class="overflow-hidden">
+                        
+                        <div class="overflow-hidden bg-[#1C1C1C]">
                             <img src="<?= htmlspecialchars($img) ?>"
                                  alt="<?= htmlspecialchars($p['name']) ?>"
                                  class="w-full h-56 md:h-64 object-cover"
                                  onerror="this.onerror=null; this.src='../images/drum_logo.jpg'">
                         </div>
+
                         <div class="p-5">
-                            <h3 class="font-semibold text-base leading-tight"><?= htmlspecialchars($p['name']) ?></h3>
-                            <p class="text-sm text-gray-600 mt-2 line-clamp-2"><?= htmlspecialchars($p['short_description'] ?? '') ?></p>
-                            <p class="mt-4 font-medium text-[#9b4925]"><?= formatPrice($p['base_price']) ?></p>
+                            <h3 class="font-semibold text-base text-white leading-snug line-clamp-1">
+                                <?= htmlspecialchars($p['name']) ?>
+                            </h3>
+                            <p class="text-sm text-gray-400 mt-1.5 line-clamp-2 leading-relaxed">
+                                <?= htmlspecialchars($p['short_description'] ?? '') ?>
+                            </p>
+                            <p class="mt-3 font-medium text-[#D4A017] text-lg">
+                                <?= formatPrice($p['base_price']) ?>
+                            </p>
 
                             <?php if ($variantId > 0): ?>
                                 <button type="button"
                                         onclick="event.stopPropagation(); addToCart(<?= $variantId ?>)"
-                                        class="mt-6 w-full bg-[#8B4513] hover:bg-amber-900 text-white py-3 rounded-2xl text-sm font-medium flex items-center justify-center gap-2 transition-colors">
+                                        class="mt-4 w-full bg-[#E8B923] hover:bg-[#F0C94A] text-[#0B0B0B] py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2 transition-colors">
                                     <i class="fa-solid fa-cart-plus"></i> Add to Cart
                                 </button>
                             <?php else: ?>
                                 <button type="button" disabled
-                                        class="mt-6 w-full bg-gray-300 text-gray-500 py-3 rounded-2xl text-sm font-medium cursor-not-allowed">
+                                        class="mt-4 w-full bg-[#2A2A2A] text-gray-500 py-3 rounded-xl text-sm font-medium cursor-not-allowed">
                                     Out of Stock
                                 </button>
                             <?php endif; ?>
@@ -278,7 +264,7 @@ require_once __DIR__ . '/../includes/header.php';
             <div class="mt-14 flex flex-wrap items-center justify-center gap-2">
                 <?php if ($page > 1): ?>
                     <a href="<?= htmlspecialchars(buildQuery(['page' => $page - 1])) ?>"
-                       class="px-5 py-2.5 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 text-sm font-medium">
+                       class="px-5 py-2.5 rounded-xl border border-[#2A2A2A] bg-[#141414] text-gray-300 hover:border-[#D4A017] hover:text-[#D4A017] text-sm font-medium transition-colors">
                         ← Previous
                     </a>
                 <?php endif; ?>
@@ -289,30 +275,30 @@ require_once __DIR__ . '/../includes/header.php';
                 $end    = min($totalPages, $page + $window);
 
                 if ($start > 1) {
-                    echo '<a href="' . htmlspecialchars(buildQuery(['page' => 1])) . '" class="px-4 py-2.5 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 text-sm">1</a>';
-                    if ($start > 2) echo '<span class="px-2 text-gray-400">…</span>';
+                    echo '<a href="' . htmlspecialchars(buildQuery(['page' => 1])) . '" class="px-4 py-2.5 rounded-xl border border-[#2A2A2A] bg-[#141414] text-gray-300 hover:border-[#D4A017] hover:text-[#D4A017] text-sm transition-colors">1</a>';
+                    if ($start > 2) echo '<span class="px-2 text-gray-500">…</span>';
                 }
 
                 for ($i = $start; $i <= $end; $i++):
                 ?>
                     <a href="<?= htmlspecialchars(buildQuery(['page' => $i])) ?>"
-                       class="px-4 py-2.5 rounded-2xl border text-sm font-medium
+                       class="px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors
                        <?= $i === $page
-                           ? 'bg-[#8B4513] text-white border-[#8B4513]'
-                           : 'bg-white border-gray-200 hover:bg-gray-50' ?>">
+                           ? 'bg-[#E8B923] text-[#0B0B0B] border-[#E8B923]'
+                           : 'bg-[#141414] border-[#2A2A2A] text-gray-300 hover:border-[#D4A017] hover:text-[#D4A017]' ?>">
                         <?= $i ?>
                     </a>
                 <?php endfor;
 
                 if ($end < $totalPages) {
-                    if ($end < $totalPages - 1) echo '<span class="px-2 text-gray-400">…</span>';
-                    echo '<a href="' . htmlspecialchars(buildQuery(['page' => $totalPages])) . '" class="px-4 py-2.5 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 text-sm">' . $totalPages . '</a>';
+                    if ($end < $totalPages - 1) echo '<span class="px-2 text-gray-500">…</span>';
+                    echo '<a href="' . htmlspecialchars(buildQuery(['page' => $totalPages])) . '" class="px-4 py-2.5 rounded-xl border border-[#2A2A2A] bg-[#141414] text-gray-300 hover:border-[#D4A017] hover:text-[#D4A017] text-sm transition-colors">' . $totalPages . '</a>';
                 }
                 ?>
 
                 <?php if ($page < $totalPages): ?>
                     <a href="<?= htmlspecialchars(buildQuery(['page' => $page + 1])) ?>"
-                       class="px-5 py-2.5 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 text-sm font-medium">
+                       class="px-5 py-2.5 rounded-xl border border-[#2A2A2A] bg-[#141414] text-gray-300 hover:border-[#D4A017] hover:text-[#D4A017] text-sm font-medium transition-colors">
                         Next →
                     </a>
                 <?php endif; ?>

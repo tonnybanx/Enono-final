@@ -103,10 +103,10 @@ require_once __DIR__ . '/../includes/header.php';
     .spirit-panel {
         display: grid;
         grid-template-columns: 1fr;
-        border: 1px solid #e6ddd2;
+        border: 1px solid rgba(232, 169, 43, 0.30);
         border-radius: 1rem;
         overflow: hidden;
-        background: #fff;
+        background: #0D0D0D;
     }
     @media (min-width: 768px) {
         .spirit-panel {
@@ -116,7 +116,7 @@ require_once __DIR__ . '/../includes/header.php';
 
     /* Fixed aspect ratio so every spirit image is the same height */
     .spirit-img-wrap {
-        background: #f3ebe0;
+        background: #141008;
         aspect-ratio: 1 / 1;          /* square – consistent on all screens */
         width: 100%;
         overflow: hidden;
@@ -154,29 +154,29 @@ require_once __DIR__ . '/../includes/header.php';
         overscroll-behavior: contain;
         padding-right: 0.35rem;
         scrollbar-width: thin;
-        scrollbar-color: #d4c4b0 transparent;
+        scrollbar-color: rgba(232, 169, 43, 0.5) transparent;
     }
     .spirit-text::-webkit-scrollbar { width: 4px; }
     .spirit-text::-webkit-scrollbar-track { background: transparent; }
-    .spirit-text::-webkit-scrollbar-thumb { background: #d4c4b0; border-radius: 4px; }
+    .spirit-text::-webkit-scrollbar-thumb { background: rgba(232, 169, 43, 0.5); border-radius: 4px; }
 
     /* ── Item cards: identical thumbnail size ── */
     .item-card {
-        border: 1px solid #e6ddd2;
+        border: 1px solid rgba(232, 169, 43, 0.25);
         border-radius: 0.875rem;
-        background: #fff;
+        background: #0D0D0D;
         overflow: hidden;
         transition: border-color 0.15s;
         text-decoration: none;
         color: inherit;
         display: block;
     }
-    .item-card:hover { border-color: #cbb89f; }
+    .item-card:hover { border-color: #E8A92B; }
     .item-card.hidden { display: none; }
 
     .item-thumb {
         aspect-ratio: 1 / 1;         /* every product image is square */
-        background: #f3ebe0;
+        background: #141008;
         overflow: hidden;
     }
     .item-thumb img {
@@ -191,35 +191,36 @@ require_once __DIR__ . '/../includes/header.php';
         font-size: 0.8rem;
         padding: 0.4rem 0.9rem;
         border-radius: 999px;
-        border: 1px solid #e6ddd2;
-        background: #fff;
-        color: #6b5e4e;
+        border: 1px solid rgba(232, 169, 43, 0.5);
+        background: #000;
+        color: #f3f4f6;
         transition: background 0.15s, border-color 0.15s, color 0.15s;
         white-space: nowrap;
     }
     .filter-btn:hover {
-        border-color: #cbb89f;
-        color: #8B4513;
+        border-color: #E8A92B;
+        color: #E8A92B;
     }
     .filter-btn.active {
-        background: #8B4513;
-        border-color: #8B4513;
-        color: #fff;
+        background: #E8A92B;
+        border-color: #E8A92B;
+        color: #000;
+        font-weight: 600;
     }
 
     .nav-link {
         font-size: 0.875rem;
-        color: #8B4513;
+        color: #E8A92B;
         font-weight: 500;
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
     }
-    .nav-link:hover { text-decoration: underline; }
+    .nav-link:hover { text-decoration: underline; color: #F2B84B; }
 </style>
 
-<!-- ==================== BEIGE: BACK + SPIRIT PANEL ==================== -->
-<section class="bg-[#F9F5EB] pt-6 pb-12 md:pb-14">
+<!-- ==================== BACK + SPIRIT PANEL ==================== -->
+<section class="bg-[#050505] pt-6 pb-12 md:pb-14">
     <div class="max-w-5xl mx-auto px-6">
 
         <a href="heritage.php" class="nav-link inline-flex mb-6">
@@ -236,16 +237,16 @@ require_once __DIR__ . '/../includes/header.php';
 
             <div class="spirit-body">
                 <?php if (!empty($spirit['short_description'])): ?>
-                    <p class="text-[11px] tracking-[0.15em] uppercase text-[#8B4513]/80 mb-3 shrink-0">
+                    <p class="text-[11px] tracking-[0.15em] uppercase text-[#E8A92B] mb-3 shrink-0">
                         <?= e($spirit['short_description']) ?>
                     </p>
                 <?php endif; ?>
 
-                <h1 class="heading-font text-2xl sm:text-3xl font-semibold text-gray-900 mb-4 shrink-0">
+                <h1 class="heading-font text-2xl sm:text-3xl font-semibold text-[#F2B84B] mb-4 shrink-0">
                     <?= e($spirit['name']) ?>
                 </h1>
 
-                <div class="spirit-text text-gray-600 leading-[1.8] text-[15px] space-y-4">
+                <div class="spirit-text text-gray-300 leading-[1.8] text-[15px] space-y-4">
                     <?= nl2br(e($spirit['full_description'] ?? $spirit['short_description'] ?? '')) ?>
                 </div>
             </div>
@@ -254,16 +255,16 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 </section>
 
-<!-- ==================== WHITE: SACRED ITEMS + FILTERS ==================== -->
-<section class="bg-white border-t border-[#e6ddd2]">
+<!-- ==================== SACRED ITEMS + FILTERS ==================== -->
+<section class="bg-black border-t border-[#E8A92B]/20">
     <div class="max-w-5xl mx-auto px-6 py-12 md:py-14">
 
         <?php if (!empty($items)): ?>
             <div class="mb-7">
-                <h2 class="heading-font text-xl font-semibold text-gray-900 mb-1">
+                <h2 class="heading-font text-xl font-semibold text-[#F2B84B] mb-1 pl-3 border-l-4 border-[#E8A92B]">
                     Sacred items
                 </h2>
-                <p class="text-sm text-gray-500">
+                <p class="text-sm text-gray-400">
                     Objects associated with <?= e($spirit['name']) ?>
                 </p>
             </div>
@@ -305,11 +306,11 @@ require_once __DIR__ . '/../includes/header.php';
                                  onerror="imgFallback(this, '<?= e($logoUrl) ?>')">
                         </div>
                         <div class="p-3.5">
-                            <p class="text-sm font-medium text-gray-800 leading-snug line-clamp-2">
+                            <p class="text-sm font-medium text-gray-100 leading-snug line-clamp-2">
                                 <?= e($item['product_name'] ?: $item['variant_title']) ?>
                             </p>
                             <?php if (!empty($item['price'])): ?>
-                                <p class="text-xs text-[#8B4513] mt-1.5 font-medium">
+                                <p class="text-xs text-[#E8A92B] mt-1.5 font-semibold">
                                     USh <?= number_format((float)$item['price']) ?>
                                 </p>
                             <?php endif; ?>
@@ -318,12 +319,12 @@ require_once __DIR__ . '/../includes/header.php';
                 <?php endforeach; ?>
             </div>
 
-            <p id="no-items-msg" class="hidden text-sm text-gray-500 mt-6">
+            <p id="no-items-msg" class="hidden text-sm text-gray-400 mt-6">
                 No items in this category.
             </p>
 
         <?php else: ?>
-            <p class="text-sm text-gray-500">
+            <p class="text-sm text-gray-400">
                 No sacred items linked to this spirit yet.
             </p>
         <?php endif; ?>
@@ -332,7 +333,7 @@ require_once __DIR__ . '/../includes/header.php';
 </section>
 
 <!-- ==================== PREV / NEXT ==================== -->
-<section class="bg-white border-t border-[#e6ddd2]">
+<section class="bg-[#050505] border-t border-[#E8A92B]/20">
     <div class="max-w-5xl mx-auto px-6 py-8 md:py-10 flex flex-wrap items-center justify-between gap-4">
         <div>
             <?php if ($prevSpirit): ?>
@@ -365,7 +366,7 @@ require_once __DIR__ . '/../includes/header.php';
         } else if (stage === '1') {
             imgEl.dataset.fallbackStage = '2';
             imgEl.onerror = null; // stop here, no more retries
-            imgEl.src = 'https://placehold.co/400x400/f3ebe0/8B4513?text=No+Image';
+            imgEl.src = 'https://placehold.co/400x400/141008/E8A92B?text=No+Image';
         }
     }
 

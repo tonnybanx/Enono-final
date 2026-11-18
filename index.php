@@ -78,26 +78,26 @@ require_once __DIR__ . '/includes/header.php';
 <!-- ==================== HERO ==================== -->
 <section class="bg-cover bg-center min-h-screen flex items-center relative"
          style="background-image: url('https://media.istockphoto.com/id/695152194/photo/african-drums.jpg?s=612x612&w=0&k=20&c=ixMwsApSM1kd1FMVephgxhmU5Xkm6b4Q2P09qOp2ZQQ=')">
-    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 bg-black/70"></div>
     <div class="max-w-7xl mx-auto px-6 md:px-10 text-white relative z-10 py-24 w-full">
         <div class="max-w-7xl">
-            <p class="uppercase tracking-[0.25em] text-sm md:text-base mb-6 text-white/90">
+            <p class="uppercase tracking-[0.25em] text-sm md:text-base mb-6 text-[#D4A017]">
                 Handmade in Uganda
             </p>
-            <h1 class="heading-font text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight">
+            <h1 class="heading-font text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight text-white">
                 Heritage you can hold in your hands.
             </h1>
-            <p class="mt-8 text-lg md:text-xl lg:text-2xl max-w-4xl leading-relaxed text-white/95">
+            <p class="mt-8 text-lg md:text-xl lg:text-2xl max-w-4xl leading-relaxed text-gray-200">
                 Every piece tells a story — shaped by the potters, carvers and weavers
                 keeping Uganda’s living traditions alive.
             </p>
             <div class="mt-12 flex flex-wrap gap-5">
                 <a href="Public/shopping.php"
-                   class="inline-block bg-[#9b4925] text-white px-10 py-4 rounded-2xl font-medium text-lg hover:bg-[#7a3a1d] transition-colors">
+                   class="inline-block bg-[#E8B923] text-[#0B0B0B] px-10 py-4 rounded-2xl font-medium text-lg hover:bg-[#F0C94A] transition-colors">
                     Shop the collection
                 </a>
                 <a href="Public/aboutus.php"
-                   class="inline-block border-2 border-white px-10 py-4 rounded-2xl font-medium text-lg hover:bg-white hover:text-[#9b4925] transition-colors">
+                   class="inline-block border-2 border-[#D4A017] text-[#D4A017] px-10 py-4 rounded-2xl font-medium text-lg hover:bg-[#D4A017] hover:text-[#0B0B0B] transition-colors">
                     About Us
                 </a>
             </div>
@@ -106,16 +106,21 @@ require_once __DIR__ . '/includes/header.php';
 </section>
 
 <!-- ==================== EXPLORE THE CRAFT ==================== -->
-<section class="py-20 bg-[#f9f5ef]">
+<section class="py-20 bg-[#0B0B0B]">
     <div class="max-w-7xl mx-auto px-6">
         <div class="text-start mb-12">
-            <h2 class="heading-font text-4xl md:text-5xl font-semibold">Explore the craft</h2>
-            <p class="text-gray-600 mt-2">All categories of traditional craftsmanship and heritage</p>
+            <p class="uppercase tracking-[0.2em] text-sm text-[#D4A017] mb-3">Discover</p>
+            <h2 class="heading-font text-4xl md:text-5xl font-semibold text-white">
+                Explore the <span class="text-[#D4A017]">Craft</span>
+            </h2>
+            <p class="text-gray-400 mt-3 max-w-2xl">
+                All categories of traditional craftsmanship and heritage
+            </p>
         </div>
 
         <div class="flex items-center gap-3">
             <button id="craft-prev"
-                    class="md:hidden flex-shrink-0 w-10 h-10 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-[#9b4925]">
+                    class="md:hidden flex-shrink-0 w-10 h-10 rounded-full bg-[#1C1C1C] border border-[#D4A017]/40 flex items-center justify-center text-[#D4A017] hover:bg-[#D4A017] hover:text-black transition-colors">
                 <i class="fa-solid fa-chevron-left text-sm"></i>
             </button>
 
@@ -123,10 +128,12 @@ require_once __DIR__ . '/includes/header.php';
                  class="flex-1 flex md:grid md:grid-cols-4 gap-4 md:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
                 <?php foreach ($categories as $cat): ?>
                     <a href="Public/shopping.php?category=<?= urlencode($cat['name']) ?>">
-                        <div class="category-card bg-white border border-[#e6ddd2] p-4 rounded-2xl cursor-pointer text-start hover:border-[#8B4513] shadow-sm hover:shadow-md transition-all min-w-[140px] sm:min-w-[190px] snap-start">
-                            <p class="font-semibold text-lg"><?= e($cat['name']) ?></p>
+                        <div class="category-card bg-[#141414] border border-[#2A2A2A] hover:border-[#D4A017] p-5 rounded-2xl cursor-pointer text-start shadow-sm hover:shadow-lg hover:shadow-[#D4A017]/10 transition-all min-w-[150px] sm:min-w-[200px] snap-start group">
+                            <p class="font-semibold text-lg text-white group-hover:text-[#D4A017] transition-colors">
+                                <?= e($cat['name']) ?>
+                            </p>
                             <?php if (!empty($cat['description'])): ?>
-                                <p class="text-sm text-gray-600 mt-1 hidden sm:block">
+                                <p class="text-sm text-gray-400 mt-2 hidden sm:block leading-relaxed">
                                     <?= e($cat['description']) ?>
                                 </p>
                             <?php endif; ?>
@@ -136,20 +143,30 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <button id="craft-next"
-                    class="md:hidden flex-shrink-0 w-10 h-10 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-[#9b4925]">
+                    class="md:hidden flex-shrink-0 w-10 h-10 rounded-full bg-[#1C1C1C] border border-[#D4A017]/40 flex items-center justify-center text-[#D4A017] hover:bg-[#D4A017] hover:text-black transition-colors">
                 <i class="fa-solid fa-chevron-right text-sm"></i>
             </button>
         </div>
     </div>
 </section>
 
-<!-- ==================== FEATURED PRODUCTS ==================== -->
-<section id="shop" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-6 text-start">
-        <h2 class="heading-font text-4xl md:text-5xl font-semibold mb-4">Featured Products</h2>
-        <p class="text-gray-600 mb-12">All handmade by Ugandan artisans.</p>
+<!-- Subtle separator between Explore the Craft and Featured Products -->
+<div class="max-w-7xl mx-auto px-6">
+    <div class="border-t border-[#2A2A2A]"></div>
+</div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- ==================== FEATURED PRODUCTS ==================== -->
+<section id="shop" class="py-20 bg-[#0B0B0B]">
+    <div class="max-w-7xl mx-auto px-6 text-start">
+        <div class="mb-12">
+            <p class="uppercase tracking-[0.2em] text-sm text-[#D4A017] mb-3">Curated</p>
+            <h2 class="heading-font text-4xl md:text-5xl font-semibold text-white">
+                Featured <span class="text-[#D4A017]">Products</span>
+            </h2>
+            <p class="text-gray-400 mt-3">All handmade by Ugandan artisans.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7">
             <?php foreach ($products as $product):
                 $variantId = (int)($product['default_variant_id'] ?? 0);
 
@@ -167,58 +184,45 @@ require_once __DIR__ . '/includes/header.php';
                     $img = $fallbackImage;
                 }
             ?>
-                <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer"
+                <div class="product-card bg-[#141414] rounded-xl overflow-hidden border border-[#D4A017]/30 hover:border-[#D4A017] cursor-pointer transition-all duration-300"
                      onclick="window.location.href='Public/product-details.php?id=<?= (int)$product['id'] ?>&variant=<?= $variantId ?>'">
-                    <div class="overflow-hidden bg-[#f5efe6]">
+                    
+                    <!-- Image -->
+                    <div class="overflow-hidden bg-[#1C1C1C]">
                         <img src="<?= e($img) ?>"
-                             class="w-full h-80 object-cover"
+                             class="w-full h-64 object-cover"
                              alt="<?= e($product['name']) ?>"
                              onerror="this.onerror=null; this.src='<?= e($fallbackImage) ?>';">
                     </div>
-                    <div class="p-6">
-                        <h3 class="font-semibold text-lg"><?= e($product['name']) ?></h3>
-                        <p class="text-sm text-gray-600 mt-1 line-clamp-2">
+
+                    <!-- Content -->
+                    <div class="p-5">
+                        <h3 class="font-semibold text-base text-white leading-snug line-clamp-1">
+                            <?= e($product['name']) ?>
+                        </h3>
+                        <p class="text-sm text-gray-400 mt-1.5 line-clamp-2 leading-relaxed">
                             <?= e($product['short_description'] ?? '') ?>
                         </p>
-                        <p class="mt-4 font-medium text-[#9b4925]">
+                        
+                        <p class="mt-3 font-medium text-[#D4A017] text-lg">
                             USh <?= number_format((float)$product['price']) ?>
                         </p>
 
                         <?php if ($variantId > 0): ?>
                             <button type="button"
                                     onclick="event.stopPropagation(); addToCart(<?= $variantId ?>)"
-                                    class="mt-6 w-full bg-[#8B4513] hover:bg-amber-900 text-white py-3.5 rounded-2xl text-sm font-medium flex items-center justify-center gap-2 transition-colors">
+                                    class="mt-4 w-full bg-[#E8B923] hover:bg-[#F0C94A] text-[#0B0B0B] py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2 transition-colors">
                                 <i class="fa-solid fa-cart-plus"></i> Add to Cart
                             </button>
                         <?php else: ?>
                             <button type="button" disabled
-                                    class="mt-6 w-full bg-gray-300 text-gray-500 py-3.5 rounded-2xl text-sm font-medium cursor-not-allowed">
+                                    class="mt-4 w-full bg-[#2A2A2A] text-gray-500 py-3 rounded-xl text-sm font-medium cursor-not-allowed">
                                 Out of Stock
                             </button>
                         <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
-<!-- ==================== ARTISAN SECTION ==================== -->
-<section class="py-20 bg-[#f8f5f0]">
-    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-        <img src="images/basketweaver.jpg"
-             class="rounded-md w-full h-[500px] object-cover"
-             alt="Artisan"
-             onerror="this.onerror=null; this.src='<?= e($fallbackImage) ?>';">
-        <div>
-            <p class="uppercase text-amber-800 text-sm font-medium">MADE BY HAND</p>
-            <h2 class="heading-font text-4xl md:text-5xl font-semibold mt-3 leading-tight">
-                From the artisan's hands to your home
-            </h2>
-            <p class="mt-6 text-gray-600 leading-relaxed">
-                When you order, Enono connects you directly with the craftsman who made it —
-                supporting the families and clans who keep these traditions alive.
-            </p>
         </div>
     </div>
 </section>

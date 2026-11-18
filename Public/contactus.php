@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_contact'])) {
         
         $adminBody = '
             <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-                <h2 style="color:#8B4513;">New message from enono MARKET website</h2>
+                <h2 style="color:#D4A017;">New message from enono MARKET website</h2>
                 <table style="width:100%;border-collapse:collapse;margin:20px 0;">
                     <tr>
                         <td style="padding:8px 0;color:#666;width:120px;">Name</td>
@@ -108,9 +108,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_contact'])) {
                         <td style="padding:8px 0;">' . htmlspecialchars($subject) . '</td>
                     </tr>
                 </table>
-                <div style="background:#f9f5eb;padding:16px;border-radius:8px;margin-top:10px;">
-                    <p style="margin:0 0 6px;color:#666;font-size:13px;">Message:</p>
-                    <p style="margin:0;white-space:pre-wrap;">' . nl2br(htmlspecialchars($message)) . '</p>
+                <div style="background:#1C1C1C;padding:16px;border-radius:8px;margin-top:10px;">
+                    <p style="margin:0 0 6px;color:#999;font-size:13px;">Message:</p>
+                    <p style="margin:0;white-space:pre-wrap;color:#eee;">' . nl2br(htmlspecialchars($message)) . '</p>
                 </div>
                 <p style="color:#999;font-size:12px;margin-top:25px;">
                     Sent from the Contact Us page on ' . date('d M Y, H:i') . '
@@ -127,11 +127,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_contact'])) {
         $confirmSubject = 'We received your message – enono MARKET';
         $confirmBody = '
             <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-                <h2 style="color:#8B4513;">Thank you, ' . htmlspecialchars($name) . '!</h2>
+                <h2 style="color:#D4A017;">Thank you, ' . htmlspecialchars($name) . '!</h2>
                 <p>We have received your message and will get back to you within 24 hours.</p>
-                <div style="background:#f9f5eb;padding:16px;border-radius:8px;margin:20px 0;">
-                    <p style="margin:0 0 6px;color:#666;font-size:13px;">Your message:</p>
-                    <p style="margin:0;white-space:pre-wrap;">' . nl2br(htmlspecialchars($message)) . '</p>
+                <div style="background:#1C1C1C;padding:16px;border-radius:8px;margin:20px 0;">
+                    <p style="margin:0 0 6px;color:#999;font-size:13px;">Your message:</p>
+                    <p style="margin:0;white-space:pre-wrap;color:#eee;">' . nl2br(htmlspecialchars($message)) . '</p>
                 </div>
                 <p style="color:#666;">Warm regards,<br>The enono MARKET Team</p>
             </div>';
@@ -165,21 +165,22 @@ require_once __DIR__ . '/../includes/header.php';
 
 <style>
     .contact-hero {
-        background: linear-gradient(160deg, #2C1A0F 0%, #3d2618 50%, #5c3a22 100%);
+        background: linear-gradient(160deg, #0B0B0B 0%, #141414 50%, #1C1C1C 100%);
         position: relative;
         overflow: hidden;
+        border-bottom: 1px solid #2A2A2A;
     }
     .contact-hero::before {
         content: '';
         position: absolute;
         inset: 0;
         background: url('https://picsum.photos/id/1015/2000/900') center/cover;
-        opacity: 0.15;
+        opacity: 0.12;
     }
 
     .card {
-        background: #ffffff;
-        border: 1px solid #ebe4d9;
+        background: #141414;
+        border: 1px solid #2A2A2A;
         border-radius: 1.25rem;
     }
 
@@ -187,7 +188,7 @@ require_once __DIR__ . '/../includes/header.php';
         display: flex;
         gap: 1rem;
         padding: 1.1rem 0;
-        border-bottom: 1px solid #f3eee6;
+        border-bottom: 1px solid #2A2A2A;
     }
     .info-row:last-of-type {
         border-bottom: none;
@@ -198,40 +199,43 @@ require_once __DIR__ . '/../includes/header.php';
         width: 40px;
         height: 40px;
         border-radius: 10px;
-        background: #f7f0e6;
+        background: #1C1C1C;
+        border: 1px solid #2A2A2A;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #8B4513;
+        color: #D4A017;
         flex-shrink: 0;
         font-size: 0.95rem;
     }
 
     .form-input {
         width: 100%;
-        background: #faf8f4;
-        border: 1px solid #e5ddd2;
+        background: #1C1C1C;
+        border: 1px solid #2A2A2A;
         border-radius: 10px;
         padding: 0.85rem 1.1rem;
         font-size: 0.95rem;
-        color: #1f1f1f;
+        color: #ffffff;
         transition: border-color 0.15s, background 0.15s;
     }
     .form-input:focus {
         outline: none;
-        background: #fff;
-        border-color: #8B4513;
+        background: #141414;
+        border-color: #E8B923;
+        box-shadow: 0 0 0 3px rgba(232, 185, 35, 0.12);
     }
     .form-input::placeholder {
-        color: #b0a79a;
+        color: #6b7280;
     }
 
     .submit-btn {
-        background: #8B4513;
+        background: #E8B923;
+        color: #0B0B0B;
         transition: background 0.2s;
     }
     .submit-btn:hover {
-        background: #6B3410;
+        background: #F0C94A;
     }
     .submit-btn:disabled {
         opacity: 0.7;
@@ -243,13 +247,13 @@ require_once __DIR__ . '/../includes/header.php';
 <section class="contact-hero text-white relative">
     <div class="relative z-10 max-w-7xl mx-auto px-6 py-16 md:py-24">
         <div class="max-w-xl">
-            <p class="text-amber-200/80 text-xs font-medium tracking-[0.18em] uppercase mb-3">
+            <p class="text-[#D4A017] text-xs font-medium tracking-[0.18em] uppercase mb-3">
                 Enono Market
             </p>
             <h1 class="text-4xl sm:text-5xl font-semibold heading-font leading-tight mb-4">
-                Get in touch
+                Get in <span class="text-[#D4A017]">touch</span>
             </h1>
-            <p class="text-white/65 text-base leading-relaxed">
+            <p class="text-gray-400 text-base leading-relaxed">
                 Questions about our crafts, an order, or the artisans behind the work — we’d love to hear from you.
             </p>
         </div>
@@ -257,7 +261,7 @@ require_once __DIR__ . '/../includes/header.php';
 </section>
 
 <!-- ==================== MAIN ==================== -->
-<section class="py-14 md:py-20 bg-[#F9F5EB]">
+<section class="py-14 md:py-20 bg-[#0B0B0B]">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div class="grid lg:grid-cols-5 gap-8 lg:gap-10">
@@ -267,19 +271,19 @@ require_once __DIR__ . '/../includes/header.php';
 
                 <div class="card overflow-hidden">
                     <div class="relative h-48 sm:h-52">
-                        <img src="<?= e($locationImg) ?>"
+                        <img src="<?= htmlspecialchars($locationImg) ?>"
                              alt="Enono Market – Kampala"
                              class="w-full h-full object-cover"
                              onerror="this.src='https://picsum.photos/id/1015/800/500'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-5 right-5 flex items-end justify-between">
                             <div>
-                                <p class="text-white/75 text-[11px] tracking-wider uppercase">Studio</p>
-                                <p class="text-white text-lg font-semibold heading-font"><?= e($city) ?>, Uganda</p>
+                                <p class="text-white/70 text-[11px] tracking-wider uppercase">Studio</p>
+                                <p class="text-white text-lg font-semibold heading-font"><?= htmlspecialchars($city) ?>, Uganda</p>
                             </div>
                             <a href="https://maps.google.com/?q=<?= urlencode($address_line1 . ', ' . $city . ', ' . $country) ?>"
                                target="_blank" rel="noopener"
-                               class="bg-white/95 text-[#8B4513] text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-white transition">
+                               class="bg-[#E8B923] text-[#0B0B0B] text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-[#F0C94A] transition">
                                 <i class="fa-solid fa-map-location-dot text-[11px]"></i>
                                 Map
                             </a>
@@ -292,10 +296,10 @@ require_once __DIR__ . '/../includes/header.php';
                                 <i class="fa-solid fa-location-dot"></i>
                             </div>
                             <div>
-                                <p class="text-[11px] text-gray-400 uppercase tracking-wider mb-0.5">Address</p>
-                                <p class="text-gray-800 text-sm leading-relaxed">
-                                    <?= e($address_line1) ?><?= $address_line2 ? '<br>' . e($address_line2) : '' ?><br>
-                                    <?= e($city) ?>, <?= e($country) ?>
+                                <p class="text-[11px] text-gray-500 uppercase tracking-wider mb-0.5">Address</p>
+                                <p class="text-gray-200 text-sm leading-relaxed">
+                                    <?= htmlspecialchars($address_line1) ?><?= $address_line2 ? '<br>' . htmlspecialchars($address_line2) : '' ?><br>
+                                    <?= htmlspecialchars($city) ?>, <?= htmlspecialchars($country) ?>
                                 </p>
                             </div>
                         </div>
@@ -306,8 +310,8 @@ require_once __DIR__ . '/../includes/header.php';
                                 <i class="fa-regular fa-clock"></i>
                             </div>
                             <div>
-                                <p class="text-[11px] text-gray-400 uppercase tracking-wider mb-0.5">Hours</p>
-                                <p class="text-gray-800 text-sm"><?= e($working_hours) ?></p>
+                                <p class="text-[11px] text-gray-500 uppercase tracking-wider mb-0.5">Hours</p>
+                                <p class="text-gray-200 text-sm"><?= htmlspecialchars($working_hours) ?></p>
                             </div>
                         </div>
                         <?php endif; ?>
@@ -317,9 +321,9 @@ require_once __DIR__ . '/../includes/header.php';
                                 <i class="fa-solid fa-envelope"></i>
                             </div>
                             <div>
-                                <p class="text-[11px] text-gray-400 uppercase tracking-wider mb-0.5">Email</p>
-                                <a href="mailto:<?= e($email) ?>" class="text-[#8B4513] text-sm font-medium hover:underline">
-                                    <?= e($email) ?>
+                                <p class="text-[11px] text-gray-500 uppercase tracking-wider mb-0.5">Email</p>
+                                <a href="mailto:<?= htmlspecialchars($email) ?>" class="text-[#D4A017] text-sm font-medium hover:text-[#E8B923] hover:underline">
+                                    <?= htmlspecialchars($email) ?>
                                 </a>
                             </div>
                         </div>
@@ -330,8 +334,8 @@ require_once __DIR__ . '/../includes/header.php';
                                 <i class="fa-solid fa-phone"></i>
                             </div>
                             <div>
-                                <p class="text-[11px] text-gray-400 uppercase tracking-wider mb-0.5">Phone</p>
-                                <p class="text-gray-800 text-sm"><?= e($phone ?: $whatsapp) ?></p>
+                                <p class="text-[11px] text-gray-500 uppercase tracking-wider mb-0.5">Phone</p>
+                                <p class="text-gray-200 text-sm"><?= htmlspecialchars($phone ?: $whatsapp) ?></p>
                             </div>
                         </div>
                         <?php endif; ?>
@@ -339,7 +343,7 @@ require_once __DIR__ . '/../includes/header.php';
                 </div>
 
                 <p class="text-xs text-gray-500 leading-relaxed px-1 flex gap-2">
-                    <i class="fa-solid fa-circle-info text-amber-600/60 mt-0.5 flex-shrink-0"></i>
+                    <i class="fa-solid fa-circle-info text-[#D4A017]/70 mt-0.5 flex-shrink-0"></i>
                     <span>This is our studio address. Returns are handled online — please do not send items here.</span>
                 </p>
             </div>
@@ -349,44 +353,44 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="card p-7 sm:p-8 h-full">
 
                     <div class="mb-7">
-                        <h2 class="text-2xl font-semibold heading-font text-gray-900">
+                        <h2 class="text-2xl font-semibold heading-font text-white">
                             Send a message
                         </h2>
-                        <p class="text-gray-500 text-sm mt-1.5">
+                        <p class="text-gray-400 text-sm mt-1.5">
                             We usually reply within one business day.
                         </p>
                     </div>
 
                     <!-- AJAX Alerts (hidden by default) -->
-                    <div id="successAlert" class="mb-6 p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex gap-3 hidden">
-                        <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+                    <div id="successAlert" class="mb-6 p-4 bg-emerald-900/30 border border-emerald-700/40 rounded-xl flex gap-3 hidden">
+                        <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5"></i>
                         <div>
-                            <p class="text-emerald-800 font-medium text-sm">Message sent</p>
-                            <p class="text-emerald-700/80 text-sm mt-0.5" id="successText"></p>
+                            <p class="text-emerald-300 font-medium text-sm">Message sent</p>
+                            <p class="text-emerald-400/80 text-sm mt-0.5" id="successText"></p>
                         </div>
                     </div>
 
-                    <div id="errorAlert" class="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex gap-3 hidden">
-                        <i class="fa-solid fa-circle-exclamation text-red-500 mt-0.5"></i>
+                    <div id="errorAlert" class="mb-6 p-4 bg-red-900/30 border border-red-700/40 rounded-xl flex gap-3 hidden">
+                        <i class="fa-solid fa-circle-exclamation text-red-400 mt-0.5"></i>
                         <div>
-                            <p class="text-red-800 font-medium text-sm">Please check the form</p>
-                            <p class="text-red-700/80 text-sm mt-0.5" id="errorText"></p>
+                            <p class="text-red-300 font-medium text-sm">Please check the form</p>
+                            <p class="text-red-400/80 text-sm mt-0.5" id="errorText"></p>
                         </div>
                     </div>
 
                     <form id="contactForm" class="space-y-5">
                         <div class="grid sm:grid-cols-2 gap-5">
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
-                                    Full name <span class="text-[#8B4513]">*</span>
+                                <label class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
+                                    Full name <span class="text-[#D4A017]">*</span>
                                 </label>
                                 <input type="text" name="name" id="name" required
                                        class="form-input"
                                        placeholder="Your name">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
-                                    Email <span class="text-[#8B4513]">*</span>
+                                <label class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
+                                    Email <span class="text-[#D4A017]">*</span>
                                 </label>
                                 <input type="email" name="email" id="email" required
                                        class="form-input"
@@ -395,7 +399,7 @@ require_once __DIR__ . '/../includes/header.php';
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+                            <label class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
                                 Subject
                             </label>
                             <input type="text" name="subject" id="subject"
@@ -404,8 +408,8 @@ require_once __DIR__ . '/../includes/header.php';
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">
-                                Message <span class="text-[#8B4513]">*</span>
+                            <label class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1.5">
+                                Message <span class="text-[#D4A017]">*</span>
                             </label>
                             <textarea name="message" id="message" rows="5" required
                                       class="form-input resize-none"
@@ -413,7 +417,7 @@ require_once __DIR__ . '/../includes/header.php';
                         </div>
 
                         <button type="submit" id="submitBtn"
-                                class="submit-btn w-full text-white py-3.5 rounded-xl font-medium text-sm flex items-center justify-center gap-2">
+                                class="submit-btn w-full py-3.5 rounded-xl font-medium text-sm flex items-center justify-center gap-2">
                             <i class="fa-solid fa-paper-plane text-xs opacity-90" id="sendIcon"></i>
                             <i class="fa-solid fa-spinner fa-spin hidden" id="loadingIcon"></i>
                             <span id="btnText">Send Message</span>

@@ -5,8 +5,8 @@ session_start();
 set_exception_handler(function ($e) {
     error_log($e->getMessage());
     // You can also redirect to an error page if you prefer
-    die('<div style="font-family:sans-serif;max-width:500px;margin:80px auto;padding:30px;border:1px solid #f5c2c7;background:#f8d7da;color:#842029;border-radius:12px;">
-            <h2>Something went wrong</h2>
+    die('<div style="font-family:sans-serif;max-width:500px;margin:80px auto;padding:30px;border:1px solid rgba(232,169,43,0.4);background:#0D0D0D;color:#f3f4f6;border-radius:12px;">
+            <h2 style="color:#F2B84B;">Something went wrong</h2>
             <p>We encountered an unexpected error. Please try again later or contact support.</p>
          </div>');
 });
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $existing = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($existing && (int)$existing['email_verified'] === 1) {
-                $error = 'This email is already registered. Please <a href="signin.php" class="underline font-medium">sign in</a>.';
+                $error = 'This email is already registered. Please <a href="signin.php" class="underline font-medium text-[#E8A92B] hover:text-[#F2B84B]">sign in</a>.';
             } else {
                 $token   = bin2hex(random_bytes(32));
                 $expires = date('Y-m-d H:i:s', strtotime('+30 minutes'));
@@ -103,15 +103,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
     <title>Create Account - enono MARKET</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
-        .heading-font { font-family: 'Playfair Display', sans-serif; }
+        .heading-font { font-family: 'Playfair Display', serif; }
+        body { font-family: 'Inter', system-ui, sans-serif; }
+
+        /* Keep browser autofill dark instead of turning the field white/yellow */
+        input:-webkit-autofill,
+        input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #ffffff;
+            -webkit-box-shadow: 0 0 0 1000px #000000 inset;
+            caret-color: #ffffff;
+        }
     </style>
 </head>
-<body class="bg-white min-h-screen flex items-center justify-center py-12">
+<body class="bg-[#050505] text-gray-100 min-h-screen flex items-center justify-center py-12">
     <div class="max-w-md w-full px-6">
 
         <!-- Logo -->
@@ -119,38 +129,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="flex items-center gap-3">
                 <img src="../images/drum_logo.jpg" alt="" class="h-14 w-12">
                 <div>
-                    <div class="heading-font text-5xl font-bold tracking-tighter text-black">Enono</div>
-                    <div class="pl-2 text-sm tracking-widest text-amber-600 -mt-1">MARKET</div>
+                    <div class="heading-font text-5xl font-bold tracking-tighter text-[#F2B84B]">Enono</div>
+                    <div class="pl-2 text-sm tracking-widest text-[#E8A92B] -mt-1">MARKET</div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow border border-gray-100 p-8">
-            <h1 class="text-2xl font-semibold mb-6">Create account</h1>
+        <div class="bg-[#0D0D0D] rounded-2xl shadow-xl shadow-black/60 border border-[#E8A92B]/30 p-8">
+            <h1 class="heading-font text-2xl font-semibold mb-6 text-white">Create account</h1>
 
             <?php if ($error): ?>
-                <div class="mb-5 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                <div class="mb-5 p-4 bg-red-500/10 border border-red-500/40 text-red-300 rounded-lg text-sm">
                     <?= $error ?>
                 </div>
             <?php endif; ?>
 
             <?php if ($success): ?>
-                <div class="mb-5 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
+                <div class="mb-5 p-4 bg-green-500/10 border border-green-500/40 text-green-300 rounded-lg text-sm">
                     <?= $success ?>
                 </div>
             <?php else: ?>
 
             <form method="POST" action="">
                 <div class="mb-8">
-                    <label class="block text-sm font-medium mb-1">Email</label>
+                    <label class="block text-sm font-medium mb-1 text-gray-200">Email</label>
                     <input type="email" name="email" required
                            value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                            placeholder="Enter your email address"
-                           class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-400">
+                           class="w-full bg-black text-white placeholder-gray-500 border border-[#E8A92B]/40 rounded-lg px-4 py-3 focus:outline-none focus:border-[#E8A92B] focus:ring-1 focus:ring-[#E8A92B]/50">
                 </div>
 
                 <button type="submit"
-                        class="w-full bg-[#8B4513] hover:bg-amber-600 text-white font-semibold py-3.5 rounded-xl text-lg transition-colors">
+                        class="w-full bg-[#E8A92B] hover:bg-[#F2B84B] text-black font-semibold py-3.5 rounded-xl text-lg transition-colors">
                     Continue
                 </button>
             </form>
@@ -158,24 +168,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <div class="mt-8 text-center">
-                <p class="text-sm">
+                <p class="text-sm text-gray-300">
                     Already have an account?
-                    <a href="signin.php" class="text-amber-600 hover:underline">Sign in instead</a>
+                    <a href="signin.php" class="text-[#E8A92B] hover:text-[#F2B84B] hover:underline">Sign in instead</a>
                 </p>
             </div>
 
-            <div class="mt-8 text-[13px] text-gray-500 text-center">
+            <div class="mt-8 text-[13px] text-gray-400 text-center">
                 By creating an account, you agree to enono MARKET's<br>
-                <a href="#" class="text-amber-600 hover:underline">Conditions of Use</a> and
-                <a href="#" class="text-amber-600 hover:underline">Privacy Notice</a>
+                <a href="#" class="text-[#E8A92B] hover:text-[#F2B84B] hover:underline">Conditions of Use</a> and
+                <a href="#" class="text-[#E8A92B] hover:text-[#F2B84B] hover:underline">Privacy Notice</a>
             </div>
         </div>
 
         <div class="text-center mt-10 text-xs text-gray-500">
             <div class="flex justify-center gap-6 mb-4">
-                <a href="#" class="hover:text-gray-700">Conditions of Use</a>
-                <a href="#" class="hover:text-gray-700">Privacy Notice</a>
-                <a href="help.php" class="hover:text-gray-700">Help</a>
+                <a href="#" class="hover:text-[#E8A92B]">Conditions of Use</a>
+                <a href="#" class="hover:text-[#E8A92B]">Privacy Notice</a>
+                <a href="help.php" class="hover:text-[#E8A92B]">Help</a>
             </div>
             <p>© 2026 enono MARKET. All Rights Reserved.</p>
         </div>
